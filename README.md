@@ -4,6 +4,7 @@
 # Effects
    - Add Frames to webcam or any video
         ![Frame Video Image](GeneratedVisualisations/FrameEffect_1.PNG)
+        
    - Many Fun Effects including greyscale, binarise, dominant and least dominant channel, etc
    
    - Effects can also be used in combination with each other
