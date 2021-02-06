@@ -41,7 +41,7 @@ def GetFramesFromVideo(vid=None, path=None, max_frames=-1):
 
     return frames
 
-def DisplayVideo(vid=None, path=None, max_frames=-1):
+def DisplayVideo(vid=None, path=None, max_frames=-1, EffectFunc=None):
     if vid is None:
         vid = ReadVideo(path)
     
@@ -56,8 +56,11 @@ def DisplayVideo(vid=None, path=None, max_frames=-1):
         # Capture frame-by-frame
         ret, frame = vid.read()
         if ret == True:
+            # Apply Effect if needed
+            if EffectFunc is not None:
+                frame = EffectFunc(frame)
             # Display the resulting frame
-            cv2.imshow('Frame' + str(frameCount), frame)
+            cv2.imshow('Video', frame)
             frameCount += 1
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
@@ -73,9 +76,9 @@ def DisplayVideo(vid=None, path=None, max_frames=-1):
 
 # Driver Code
 # Params
-path = 'TestVids/test.mp4'
-# Params
+# path = 'TestVids/test.mp4'
+# # Params
 
-# RunCode
-webcam = WebcamVideo()
-DisplayVideo(webcam)
+# # RunCode
+# webcam = WebcamVideo()
+# DisplayVideo(webcam)
