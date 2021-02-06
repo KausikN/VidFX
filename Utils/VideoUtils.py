@@ -5,8 +5,29 @@ Library for basic video functions
 # Imports
 import cv2
 import numpy as np
+from tqdm import tqdm
 
 # Main Functions
+def ReadImage(imgPath, imgSize=None, keepAspectRatio=False):
+    I = cv2.imread(imgPath)
+    if not imgSize == None:
+        size_original = [I.shape[0], I.shape[1]]
+        print(size_original)
+        if keepAspectRatio:
+            if imgSize[1] > imgSize[0]:
+                imgSize = (size_original[0] * (imgSize[1] / size_original[1]), imgSize[1])
+            elif imgSize[0] > imgSize[1]:
+                imgSize = (imgSize[0], size_original[1] * (imgSize[0] / size_original[0]))
+            else:
+                if size_original[1] > size_original[0]:
+                    imgSize = (size_original[0] * (imgSize[1] / size_original[1]), imgSize[1])
+                else:
+                    imgSize = (imgSize[0], size_original[1] * (imgSize[0] / size_original[0]))
+            imgSize = (int(round(imgSize[1])), int(round(imgSize[0])))
+        I = cv2.resize(I, imgSize)
+    I = cv2.cvtColor(I, cv2.COLOR_BGR2RGB)
+    return I
+
 def ReadVideo(path):
     cap = cv2.VideoCapture(path)
     return cap
@@ -73,6 +94,18 @@ def DisplayVideo(vid=None, path=None, max_frames=-1, EffectFunc=None):
     vid.release()
 
     cv2.destroyAllWindows()
+
+def VideoEffect(pathIn, pathOut, EffectFunc, max_frames=-1, fps=24, size=None):
+    frames = GetFramesFromVideo(path=pathIn, max_frames=max_frames)
+    frames_effect = []
+    for frame in tqdm(frames):
+        frames_effect.append(EffectFunc(frame))
+    if size is None:
+        size = frames_effect[-1].shape[:2]
+    out = cv2.VideoWriter(pathOut, cv2.VideoWriter_fourcc(*'DIVX'), fps, frames_effect[-1].shape[:2])
+    for frame in frames_effect:
+        out.write(frame)
+    out.release()
 
 # Driver Code
 # Params

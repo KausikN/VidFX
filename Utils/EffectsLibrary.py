@@ -49,6 +49,9 @@ def ImageEffect_Binarise(I, threshold=127):
 def ImageEffect_GreyScale(I):
     return cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)
 
+def ImageEffect_Grey2RGB(I):
+    return cv2.cvtColor(I, cv2.COLOR_GRAY2RGB)
+
 def ImageEffect_BGR(I):
     return cv2.cvtColor(I, cv2.COLOR_RGB2BGR)
 
@@ -61,6 +64,10 @@ def ImageEffect_LeastDominantColor(I):
     I_dom = np.min(I, axis=2)
     I_dom = np.dstack((I_dom, I_dom, I_dom))
     return (I)*(I_dom == I)
+
+def ImageEffect_ScaleValues(I, scaleFactor=[0, 0, 0]):
+    I = np.multiply(I, np.array(scaleFactor, dtype=np.uint8), dtype=np.uint8)
+    return np.clip(I, 0, 255, dtype=np.uint8)
 
 def ImageEffect_ClipValues(I, threshold=[127, 128], replace=[127, 128]):
     I = np.clip(I, threshold[0], threshold[1])
@@ -77,6 +84,18 @@ def ImageEffect_BinValues(I, bins=np.array([0, 127, 255])):
 
 def ImageEffect_Resize(I, size=(480, 640)):
     return cv2.resize(I, size)
+
+def ImageEffect_AddFrame(I, FrameImage=None, ImageReplaceBox=[[0, 0], [0, 0]]):
+    ImageReplaceBox = [
+        [int(ImageReplaceBox[0][0]*FrameImage.shape[1]), int(ImageReplaceBox[0][1]*FrameImage.shape[1])],
+        [int(ImageReplaceBox[1][0]*FrameImage.shape[0]), int(ImageReplaceBox[1][1]*FrameImage.shape[0])]
+    ]
+    FitSize = (ImageReplaceBox[0][1] - ImageReplaceBox[0][0], ImageReplaceBox[1][1] - ImageReplaceBox[1][0])
+    I = cv2.resize(I, FitSize)
+    if I.ndim == 2:
+        I = cv2.cvtColor(I, cv2.COLOR_GRAY2RGB)
+    FrameImage[ImageReplaceBox[1][0]:ImageReplaceBox[1][1], ImageReplaceBox[0][0]:ImageReplaceBox[0][1]] = I
+    return FrameImage
 
 # Driver Code
 # I = [[[100, 22, 3], [10, 1, 0], [0, 9, 1]], [[1, 0, 0], [0, 1, 0], [0, 0, 1]], [[1, 0, 0], [0, 1, 0], [0, 0, 1]]]
