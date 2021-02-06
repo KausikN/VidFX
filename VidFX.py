@@ -15,7 +15,7 @@ from Utils import EffectsLibrary
 # Driver Code
 # Params
 webcamVideo = False
-videoPath = 'TestVids/Test_Earth.wmv'
+videoPath = 'TestVids/Test_Animation.wmv'
 
 fps = 20.0
 max_frames = 500
@@ -31,9 +31,14 @@ EffectFuncs = [
         functools.partial(EffectsLibrary.ImageEffect_None)
     ],
     [
-        functools.partial(EffectsLibrary.ImageEffect_Resize, size=(32*2, 24*2)),
-        functools.partial(EffectsLibrary.ImageEffect_Resize, size=(320, 240), interpolation=cv2.INTER_NEAREST),
-        functools.partial(EffectsLibrary.ImageEffect_BinValues, bins=list(range(0, 251, 50)))
+        functools.partial(EffectsLibrary.ImageEffect_MostDominantColor)
+    ],
+    [
+        functools.partial(EffectsLibrary.ImageEffect_Resize, size=(32, 24)),
+        functools.partial(EffectsLibrary.ImageEffect_Resize, size=(320, 240)),
+    ],
+    [
+        functools.partial(EffectsLibrary.ImageEffect_BinValues, bins=[0, 50, 100, 150, 200, 255])
     ]
 ]
 

@@ -113,7 +113,7 @@ def VideoEffect(pathIn, pathOut, EffectFunc, max_frames=-1, speedUp=1, fps=20.0,
         extraFrames = []
         if len(frames_effect) > 1:
             extraFrames = frames_effect[1:]
-        frames_effect[0].save(pathOut, save_all=True, append_images=extraFrames)
+        frames_effect[0].save(pathOut, save_all=True, append_images=extraFrames, format='GIF', loop=0)
     else:
         out = cv2.VideoWriter(pathOut, cv2.VideoWriter_fourcc(*'XVID'), fps, size)
         for frame in frames_effect:
