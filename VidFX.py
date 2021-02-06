@@ -15,7 +15,7 @@ from Utils import EffectsLibrary
 # Driver Code
 # Params
 webcamVideo = False
-videoPath = 'TestVids/Test_Animation.wmv'
+videoPath = 'TestVids/Test_Earth.wmv'
 
 fps = 20.0
 max_frames = 500
@@ -38,6 +38,7 @@ EffectFuncs = [
 ]
 
 display = False
+save = True
 # Params
 
 # RunCode
@@ -53,4 +54,5 @@ else:
 if display:
     VideoUtils.DisplayVideo(vid=videoFeed, EffectFunc=EffectFunc)
 
-VideoUtils.VideoEffect(videoPath, savePath, EffectFunc, max_frames=max_frames, speedUp=speedUp, fps=fps, size=None)
+if save:
+    VideoUtils.VideoEffect(videoPath, savePath, EffectFunc, max_frames=max_frames, speedUp=speedUp, fps=fps, size=None)

@@ -20,20 +20,24 @@ def GetFillBoxFromFrameName(framePath):
 # Driver Code
 # Params
 webcamVideo = True
-videoPath = 'TestVids/test.mp4'
+videoPath = 'TestVids/Test_Earth.wmv'
+
+fps = 20.0
+max_frames = 500
+speedUp = 5
+
+savePath = 'TestVids/Test_Effect.gif'
 
 framePath = 'Frames/Frame_Nintendo_111_303_430_107_285_607.PNG'
 frameSize = None
 
 EffectFuncs = [
-    functools.partial(EffectsLibrary.ImageEffect_Resize, size=(32, 24)),
-    # functools.partial(EffectsLibrary.ImageEffect_GreyScale),
-    # functools.partial(EffectsLibrary.ImageEffect_Grey2RGB),
-    functools.partial(EffectsLibrary.ImageEffect_MostDominantColor),
-    functools.partial(EffectsLibrary.ImageEffect_ScaleValues, scaleFactor=[1, 1, 1])
+    functools.partial(EffectsLibrary.ImageEffect_Resize, size=(32*2, 24*2)),
+    functools.partial(EffectsLibrary.ImageEffect_GreyScale),
+    functools.partial(EffectsLibrary.ImageEffect_ScaleValues, scaleFactor=[0, 1, 0])
 ]
 
-display = True
+display = False
 save = True
 # Params
 
@@ -54,3 +58,6 @@ else:
 
 if display:
     VideoUtils.DisplayVideo(vid=videoFeed, EffectFunc=EffectFunc)
+
+if save:
+    VideoUtils.VideoEffect(videoPath, savePath, EffectFunc, max_frames=max_frames, speedUp=speedUp, fps=fps, size=None)
