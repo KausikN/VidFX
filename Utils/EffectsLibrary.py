@@ -47,7 +47,7 @@ def ImageEffect_Binarise(I, threshold=127):
     return I
 
 def ImageEffect_GreyScale(I):
-    return cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)
+    return cv2.cvtColor(cv2.cvtColor(I, cv2.COLOR_RGB2GRAY), cv2.COLOR_GRAY2RGB)
 
 def ImageEffect_Grey2RGB(I):
     return cv2.cvtColor(I, cv2.COLOR_GRAY2RGB)
@@ -82,8 +82,8 @@ def ImageEffect_BinValues(I, bins=np.array([0, 127, 255])):
     binMaps = np.clip(binMaps, 0, bins.shape[0]-1)
     return bins[binMaps]
 
-def ImageEffect_Resize(I, size=(480, 640)):
-    return cv2.resize(I, size)
+def ImageEffect_Resize(I, size=(480, 640), interpolation=cv2.INTER_LINEAR):
+    return cv2.resize(I, size, interpolation=interpolation)
 
 def ImageEffect_AddFrame(I, FrameImage=None, ImageReplaceBox=[[0, 0], [0, 0]]):
     ImageReplaceBox = [
@@ -96,6 +96,21 @@ def ImageEffect_AddFrame(I, FrameImage=None, ImageReplaceBox=[[0, 0], [0, 0]]):
         I = cv2.cvtColor(I, cv2.COLOR_GRAY2RGB)
     FrameImage[ImageReplaceBox[1][0]:ImageReplaceBox[1][1], ImageReplaceBox[0][0]:ImageReplaceBox[0][1]] = I
     return FrameImage
+
+def ImageEffect_GaussianNoise(I, mean=0, SD=1):
+    return I + np.random.normal(mean, SD, size=I.shape).astype(int)
+
+def ImageEffect_SpeckleNoise(I):
+    noise = np.random.randn(I.shape[0], I.shape[1], I.shape[2]).astype(int)
+    I = I + (I*noise)
+    return I
+
+def ImageEffect_SaltPepperNoise(I, prob=0.5):
+    h, w, c = I.shape
+    mask = np.random.choice((0, 1, 2), size=(h, w), p=[1-prob, prob/2., prob/2.])
+    I[mask == 1] = 255
+    I[mask == 2] = 0
+    return I
 
 # Driver Code
 # I = [[[100, 22, 3], [10, 1, 0], [0, 9, 1]], [[1, 0, 0], [0, 1, 0], [0, 0, 1]], [[1, 0, 0], [0, 1, 0], [0, 0, 1]]]

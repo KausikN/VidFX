@@ -3,7 +3,9 @@ Library for basic video functions
 '''
 
 # Imports
+import os
 import cv2
+from PIL import Image
 import numpy as np
 from tqdm import tqdm
 
@@ -47,7 +49,7 @@ def GetFramesFromVideo(vid=None, path=None, max_frames=-1):
         print("Error opening video stream or file")
 
     # Read until video is completed
-    while(vid.isOpened() and ((frameCount == max_frames) or (max_frames == -1))):
+    while(vid.isOpened() and ((not (frameCount == max_frames)) or (max_frames == -1))):
         # Capture frame-by-frame
         ret, frame = vid.read()
         if ret == True:
@@ -73,7 +75,7 @@ def DisplayVideo(vid=None, path=None, max_frames=-1, EffectFunc=None):
         print("Error opening video stream or file")
 
     # Read until video is completed
-    while(vid.isOpened() and ((frameCount == max_frames) or (max_frames == -1))):
+    while(vid.isOpened() and ((not (frameCount == max_frames)) or (max_frames == -1))):
         # Capture frame-by-frame
         ret, frame = vid.read()
         if ret == True:
@@ -95,17 +97,28 @@ def DisplayVideo(vid=None, path=None, max_frames=-1, EffectFunc=None):
 
     cv2.destroyAllWindows()
 
-def VideoEffect(pathIn, pathOut, EffectFunc, max_frames=-1, fps=24, size=None):
+def VideoEffect(pathIn, pathOut, EffectFunc, max_frames=-1, speedUp=1, fps=20.0, size=None):
     frames = GetFramesFromVideo(path=pathIn, max_frames=max_frames)
     frames_effect = []
     for frame in tqdm(frames):
-        frames_effect.append(EffectFunc(frame))
+        frame = cv2.cvtColor(EffectFunc(frame), cv2.COLOR_BGR2RGB)
+        frames_effect.append(Image.fromarray(frame))
+
+    frames_effect = frames_effect[::int(speedUp)]
+
     if size is None:
-        size = frames_effect[-1].shape[:2]
-    out = cv2.VideoWriter(pathOut, cv2.VideoWriter_fourcc(*'DIVX'), fps, frames_effect[-1].shape[:2])
-    for frame in frames_effect:
-        out.write(frame)
-    out.release()
+        size = (640, 480)
+        
+    if os.path.splitext(pathOut)[-1] == '.gif':
+        extraFrames = []
+        if len(frames_effect) > 1:
+            extraFrames = frames_effect[1:]
+        frames_effect[0].save(pathOut, save_all=True, append_images=extraFrames)
+    else:
+        out = cv2.VideoWriter(pathOut, cv2.VideoWriter_fourcc(*'XVID'), fps, size)
+        for frame in frames_effect:
+            out.write(frame)
+        out.release()
 
 # Driver Code
 # Params
