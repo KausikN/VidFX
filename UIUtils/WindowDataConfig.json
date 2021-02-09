@@ -1,0 +1,32 @@
+{
+    "Save_Suffix": "_WindowData", 
+
+    "Window_MaxSize": [1388, 702], 
+
+    "Input_UI": "INPUT_UI", 
+    "Input_String": "INPUT_STRING", 
+    "Input_StringMultiLine": "INPUT_STRINGMULTILINE",
+    "Input_Bool": "INPUT_BOOL", 
+    "Input_Int": "INPUT_INT", 
+    "Input_Float": "INPUT_FLOAT", 
+    "Input_DropdownList": "INPUT_DROPDOWNLIST", 
+    "Input_FileSelect": "INPUT_FILESELECT", 
+    "Input_DirectorySelect": "INPUT_DIRSELECT", 
+    "Input_Array": "INPUT_ARRAY", 
+
+    "Output_UI": "OUTPUT_UI", 
+    "Output_Text": "TEXT", 
+
+    "Title_UI": "TITLE_UI", 
+    "Title_Label": "LABEL", 
+
+    "Additional_UI": "ADDITIONAL_UI", 
+    "Additional_NoneCheck": "NONECHECK", 
+    "Additional_DataShow": "DATASHOW", 
+    "Additional_FileShow": "FILESHOW", 
+    "Additional_FileSelect": "FILESELECT", 
+    "Additional_DirectorySelect": "DIRSELECT", 
+
+    "Button_UI": "BUTTON_UI", 
+    "Button_Function": "FUNCTION"
+}

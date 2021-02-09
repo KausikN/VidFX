@@ -1,0 +1,89 @@
+{
+    "WindowTitle": "VidFX",
+
+    "code_path": "VidFX.py",
+
+    "script_desc": "Set of tools for video editing and fun video effects",
+
+    "imports": [
+        "import os",
+        "import cv2",
+        "import functools",
+        "import numpy as np",
+        "from Utils import VideoUtils",
+        "from Utils import EffectsLibrary"
+    ],
+
+    "classes": [
+
+    ],
+
+    "functions": [
+
+    ],
+
+    "script_parameters": [
+        {
+            "name": "webcamVideo",
+            "value": "True"
+        },
+        {
+            "name": "videoPath",
+            "value": "'TestVids/Test_Animation.wmv' #TYPE: FILE"
+        },
+        {
+            "name": "fps",
+            "value": "20.0"
+        },
+        {
+            "name": "max_frames",
+            "value": "500"
+        },
+        {
+            "name": "speedUp",
+            "value": "5"
+        },
+        {
+            "name": "saveDir",
+            "value": "'TestVids/' #TYPE: DIR"
+        },
+        {
+            "name": "saveName",
+            "value": "'Test_Effect.gif'"
+        },
+        {
+            "name": "CommonEffects",
+            "value": "NOTYPE #MULTILINE"
+        },
+        {
+            "name": "EffectFuncs",
+            "value": "NOTYPE #MULTILINE"
+        },
+        {
+            "name": "display",
+            "value": "True"
+        },
+        {
+            "name": "save",
+            "value": "False"
+        }
+    ],
+
+    "driver_code": [
+        "savePath = os.path.join(saveDir, saveName)",
+        "# Get Video Feed",
+        "EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=2)",
+
+        "videoFeed = None",
+        "if webcamVideo:",
+        "    videoFeed = VideoUtils.WebcamVideo()",
+        "else:",
+        "    videoFeed = VideoUtils.ReadVideo(videoPath)",
+
+        "if display:",
+        "    VideoUtils.DisplayVideo(vid=videoFeed, EffectFunc=EffectFunc)",
+
+        "if save:",
+        "    VideoUtils.VideoEffect(videoPath, savePath, EffectFunc, max_frames=max_frames, speedUp=speedUp, fps=fps, size=None)"
+    ]
+}

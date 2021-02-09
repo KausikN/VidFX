@@ -14,8 +14,8 @@ from Utils import EffectsLibrary
 
 # Driver Code
 # Params
-webcamVideo = False
-videoPath = 'TestVids/Test_Animation.wmv'
+webcamVideo = True
+videoPath = 'TestVids/Test_Animation.wmv' #TYPE: FILE
 
 fps = 20.0
 max_frames = 500

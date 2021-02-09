@@ -1,0 +1,38 @@
+{
+    "Save_Suffix": "_ParsedCode", 
+
+    "Image_Extensions": [".png", ".jpg", ".jpeg", ".bmp", ".JPG", ".PNG"], 
+    "Text_Extensions": [".txt", ".md", ".py", ".c", ".cpp", ".js", ".html", ".htm", ".css"], 
+
+    "SpecificType_Declare": "#TYPE:", 
+    "SpecificTypes": {
+        "Dropdown": "SELECTVAL", 
+        "FileSelect": "FILE", 
+        "DirectorySelect": "DIR"
+    }, 
+    "NoType_Declare": "NOTYPE", 
+
+    "String_Detect": ["\"", "'"], 
+    "String_MultiLine_Declare": "#MULTILINE", 
+    
+    "ArrayType_Declare": "LIST", 
+    "ArrayType_SizeRestrict_Declare": "#SIZE", 
+    "Array_Detect": [["[", "]"], ["(", ")"]], 
+
+    "Desc_Detect": ["\"\"\"", "'''"], 
+
+    "Import_Detect": ["^import", "^from .* import"], 
+
+    "Class_Start": "^class", 
+    "Class_End": "#CEND", 
+    "Class_Name_Detect": "^class(.*):", 
+    "Function_Start": "^def", 
+    "Function_End": "#FEND", 
+    "Function_Name_Detect": "^def(.*)\\(", 
+    "Function_Parameters_Detect": "^def.*\\((.*)\\)", 
+
+    "ScriptParams_Start": "# Params", 
+    "ScriptParams_End": "# Params", 
+    "ScriptParams_Name_Detect": "^(.*)=", 
+    "ScriptParams_Value_Detect": "^.*=(.*)"
+}
