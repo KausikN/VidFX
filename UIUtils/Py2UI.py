@@ -6,6 +6,7 @@ Script to generate UI for a Python Code File
 import os
 import json
 import pickle
+import functools
 
 from UIUtils import PythonCodeTokenizer as pct
 
@@ -130,7 +131,7 @@ def GenerateWindowData(ScriptParameters, RunScriptFunc, OtherFuncs):
     return WindowData
 
 # Driver Code
-def Code2UI(codePath=None):
+def Code2UI(codePath, EffectsCodeProcessFuncs):
     # Params
     loadData = False
     saveData = False
@@ -141,7 +142,7 @@ def Code2UI(codePath=None):
     # codefileName = 'Test.py'
 
     WindowTitle = 'Generated UI'
-    RunScriptFunc = uigen.RunScript_Basic
+    RunScriptFunc = functools.partial(uigen.RunScript_WithEffectsCodeProcess, EffectsCodeProcessFuncs=EffectsCodeProcessFuncs)
     OtherFuncs = {
                     config['Additional_NoneCheck']: uigen.SetNoneCommand_EntryDisable, 
                     config['Additional_FileSelect']: uigen.SelectFile_ExtCheck, 
@@ -173,9 +174,9 @@ def Code2UI(codePath=None):
     # Display Window
     uigen.CreateWindow(ParsedCode, WindowData, WindowTitle)
 
-def JSON2UI(jsonPath):
+def JSON2UI(jsonPath, EffectsCodeProcessFuncs):
     WindowTitle = 'Generated UI'
-    RunScriptFunc = uigen.RunScript_Basic
+    RunScriptFunc = functools.partial(uigen.RunScript_WithEffectsCodeProcess, EffectsCodeProcessFuncs=EffectsCodeProcessFuncs)
     OtherFuncs = {
                     config['Additional_NoneCheck']: uigen.SetNoneCommand_EntryDisable, 
                     config['Additional_FileSelect']: uigen.SelectFile_ExtCheck, 

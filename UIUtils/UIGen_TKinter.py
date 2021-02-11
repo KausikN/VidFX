@@ -543,6 +543,82 @@ def RunScript_Basic(ui_items, ParsedCode):
             # ui_items[config['Output_UI']][config['Output_Text']][i][1].insert(tk.END, output)
             # ui_items[config['Output_UI']][config['Output_Text']][i][1].configure(state=tk.DISABLED)
             ui_items[config['Output_UI']][config['Output_Text']][i][2].set(str(output))
+
+def RunScript_WithEffectsCodeProcess(ui_items, ParsedCode, EffectsCodeProcessFuncs):
+    if ui_items is None:
+        return
+    inputs = {}
+
+    # Check for None Input
+    NoneInputNames = []
+    for item in ui_items[config['Additional_UI']][config['Additional_NoneCheck']]:
+        for i in range(len(ParsedCode.script_parameters)):
+            if ParsedCode.script_parameters[i].name == item[0]:
+                if item[3] is not None:
+                    check = item[3](item[2].get())
+                    if check:
+                        NoneInputNames.append(item[0])
+                    break
+
+    # Gather Inputs from UI
+    for itemTypeKey in ui_items[config['Input_UI']].keys():
+        for item in ui_items[config['Input_UI']][itemTypeKey]:
+            for i in range(len(ParsedCode.script_parameters)):
+                if ParsedCode.script_parameters[i].name == item[0]:
+                    if item[3] is not None:
+                        # Check for None Input and assign
+                        if item[0] in NoneInputNames:
+                            ParsedCode.script_parameters[i].value = None
+                            ParsedCode.script_parameters[i].type = type(None)
+                        elif type(item[1]) == list:
+                            ParsedCode.script_parameters[i].otherData['ListData'] = []
+                            for it in range(1, int(item[2].get())+1):
+                                dat = item[1][it][2]
+                                if dat is None:
+                                    dat = item[1][it][1].get("1.0", tk.END)
+                                else:
+                                    dat = dat.get()
+
+                                # Specific Code Processing
+                                for name in list(EffectsCodeProcessFuncs.keys()):
+                                    if item[0] == name:
+                                        dat = EffectsCodeProcessFuncs[name](dat)
+
+                                ParsedCode.script_parameters[i].otherData['ListData'].append((item[1][it][3](dat)))
+                        else:
+                            dat = item[2]
+                            if dat is None:
+                                dat = item[1].get("1.0", tk.END)
+                            else:
+                                dat = dat.get()
+
+                            # Specific Code Processing
+                            for name in list(EffectsCodeProcessFuncs.keys()):
+                                if item[0] == name:
+                                    dat = EffectsCodeProcessFuncs[name](dat)
+
+                            ParsedCode.script_parameters[i].value = item[3](dat)
+                        break
+
+    # Reconstruct new code using Inputs from UI
+    code_RE = pct.ReconstructCodeText(ParsedCode)
+
+    # print(code_RE)
+    print('\n\n')
+
+    # Run the reconstructed Code
+    print("Script Output:\n\n")
+    output = Utils.RunPythonCode(code_RE)
+    print(output)
+
+    # Set Output text to Output Text UI'
+    if config['Output_Text'] in ui_items[config['Output_UI']].keys():
+        for i in range(len(ui_items[config['Output_UI']][config['Output_Text']])):
+            print("Setting Output Text")
+            # ui_items[config['Output_UI']][config['Output_Text']][i][1].configure(state=tk.NORMAL)
+            # ui_items[config['Output_UI']][config['Output_Text']][i][1].insert(tk.END, output)
+            # ui_items[config['Output_UI']][config['Output_Text']][i][1].configure(state=tk.DISABLED)
+            ui_items[config['Output_UI']][config['Output_Text']][i][2].set(str(output))
     
 
 

@@ -1,7 +1,16 @@
 # VidFX
- A python tool for editing videos and adding fun effects
+ A python tool (UI and Code) for editing videos and adding fun effects to webcam and video
+
+# UI Effects Visualiser
+
+   - View effects easily for webcam or any video
+
+     ![UI Image](DocImages/UI.PNG)
+
+     ![UI Output Image](DocImages/UIOutput.PNG)
 
 # Effects
+
    - Add Frames to webcam or any video
 
      ![Frame Video Image](GeneratedVisualisations/FrameEffect_1.gif)
