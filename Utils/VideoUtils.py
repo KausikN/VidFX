@@ -120,6 +120,13 @@ def VideoEffect(pathIn, pathOut, EffectFunc, max_frames=-1, speedUp=1, fps=20.0,
             out.write(frame)
         out.release()
 
+# Frame Functions
+def GetFillBoxFromFrameName(framePath):
+    frameName = os.path.splitext(os.path.basename(framePath))[0]
+    frameData = frameName.split('_')[2:]
+    FillBox = [[int(frameData[0])/int(frameData[2]), int(frameData[1])/int(frameData[2])], [int(frameData[3])/int(frameData[5]), int(frameData[4])/int(frameData[5])]]
+    return FillBox
+
 # Driver Code
 # Params
 # path = 'TestVids/test.mp4'

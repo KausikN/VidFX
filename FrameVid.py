@@ -11,11 +11,6 @@ from Utils import VideoUtils
 from Utils import EffectsLibrary
 
 # Main Functions
-def GetFillBoxFromFrameName(framePath):
-    frameName = os.path.splitext(os.path.basename(framePath))[0]
-    frameData = frameName.split('_')[2:]
-    FillBox = [[int(frameData[0])/int(frameData[2]), int(frameData[1])/int(frameData[2])], [int(frameData[3])/int(frameData[5]), int(frameData[4])/int(frameData[5])]]
-    return FillBox
 
 # Driver Code
 # Params
@@ -43,7 +38,7 @@ save = True
 
 # RunCode
 Frame = VideoUtils.ReadImage(framePath, imgSize=frameSize, keepAspectRatio=False)
-fillBox = GetFillBoxFromFrameName(framePath)
+fillBox = VideoUtils.GetFillBoxFromFrameName(framePath)
 EffectFuncs = EffectFuncs + [
     functools.partial(EffectsLibrary.ImageEffect_AddFrame, FrameImage=Frame, ImageReplaceBox=fillBox)
 ]
