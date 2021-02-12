@@ -9,6 +9,13 @@ import numpy as np
 
 from Utils import VideoUtils
 
+from pixellib.semantic import semantic_segmentation
+from pixellib.instance import instance_segmentation
+Segmenter_Semantic = semantic_segmentation()
+Segmenter_Semantic.load_pascalvoc_model("Models/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5")
+Segmenter_Instance = instance_segmentation()
+Segmenter_Instance.load_model("Models/mask_rcnn_coco.h5")
+
 # Main Functions
 # Effect Applier Functions
 def Image_MultipleImages(I, CommonEffects, EffectFuncs, nCols=2):
@@ -140,6 +147,27 @@ def ImageEffect_SaltPepperNoise(I, prob=0.5):
     I[mask == 2] = 0
     return I
 
+def ImageEffect_SemanticSegmentation(I, overlay=False):
+    # cv2.imwrite('Utils/SemSeg.png', I)
+    # segmap, output = Segmenter_Semantic.segmentAsPascalvoc('Utils/SemSeg.png', overlay=overlay)
+    segmap, output = Segmenter_Semantic.segmentFrameAsPascalvoc(I, overlay=overlay)
+    output = np.array(output)
+    return output
+
+def ImageEffect_InstanceSegmentation(I, show_bboxes=False):
+    # cv2.imwrite('Utils/InsSeg.png', I)
+    # segmap, output = Segmenter_Instance.segmentAsPascalvoc('Utils/InsSeg.png', show_bboxes=show_bboxes)
+    segmap, output = Segmenter_Instance.segmentFrame(I, show_bboxes=show_bboxes)
+    output = np.array(output)
+    return output
+
+# Direct Video Effects
+def VideoEffect_SemanticSegmentation(videoPath, outputPath, overlay=False, fps=20):
+    Segmenter_Semantic.process_video_pascalvoc(videoPath, overlay=overlay, frames_per_second=fps, output_video_name=outputPath)
+
+def VideoEffect_InstanceSegmentation(videoPath, outputPath, overlay=False, fps=20, verbose=True):
+    Segmenter_Instance.process_video_pascalvoc(videoPath, overlay=overlay, frames_per_second=fps, output_video_name=outputPath)
+
 # Driver Code
 # I = [[[100, 22, 3], [10, 1, 0], [0, 9, 1]], [[1, 0, 0], [0, 1, 0], [0, 0, 1]], [[1, 0, 0], [0, 1, 0], [0, 0, 1]]]
 # I = np.array(I)
@@ -149,3 +177,7 @@ def ImageEffect_SaltPepperNoise(I, prob=0.5):
 # ImageEffect_BinValues(I, bins=bins)
 
 #AddFrame(FrameFileData={"imgPath": 'Frames/Frame_Nintendo_111_303_430_107_285_607.PNG'})
+
+# I = cv2.imread('Test.png')
+# cv2.imshow('', ImageEffect_SemanticSegmentation(I))
+# cv2.waitKey(0)

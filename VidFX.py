@@ -29,16 +29,6 @@ CommonEffects = [
 EffectFuncs = [
     [
         functools.partial(EffectsLibrary.ImageEffect_None)
-    ],
-    [
-        functools.partial(EffectsLibrary.ImageEffect_MostDominantColor)
-    ],
-    [
-        functools.partial(EffectsLibrary.ImageEffect_Resize, size=(32, 24)),
-        functools.partial(EffectsLibrary.ImageEffect_Resize, size=(320, 240)),
-    ],
-    [
-        functools.partial(EffectsLibrary.ImageEffect_BinValues, bins=[0, 50, 100, 150, 200, 255])
     ]
 ]
 

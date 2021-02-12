@@ -81,6 +81,7 @@
         "    videoFeed = VideoUtils.ReadVideo(videoPath)",
 
         "if display:",
+        "    print('Displaying Video...')",
         "    VideoUtils.DisplayVideo(vid=videoFeed, EffectFunc=EffectFunc)",
 
         "if save:",

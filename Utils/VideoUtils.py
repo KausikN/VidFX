@@ -99,12 +99,12 @@ def DisplayVideo(vid=None, path=None, max_frames=-1, EffectFunc=None):
 
 def VideoEffect(pathIn, pathOut, EffectFunc, max_frames=-1, speedUp=1, fps=20.0, size=None):
     frames = GetFramesFromVideo(path=pathIn, max_frames=max_frames)
+    frames = frames[::int(speedUp)]
+
     frames_effect = []
     for frame in tqdm(frames):
         frame = cv2.cvtColor(EffectFunc(frame), cv2.COLOR_BGR2RGB)
         frames_effect.append(Image.fromarray(frame))
-
-    frames_effect = frames_effect[::int(speedUp)]
 
     if size is None:
         size = (640, 480)
