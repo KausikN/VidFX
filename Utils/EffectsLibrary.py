@@ -9,14 +9,23 @@ import numpy as np
 
 from Utils import VideoUtils
 
-from pixellib.semantic import semantic_segmentation
-from pixellib.instance import instance_segmentation
-Segmenter_Semantic = semantic_segmentation()
-Segmenter_Semantic.load_pascalvoc_model("Models/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5")
-Segmenter_Instance = instance_segmentation()
-Segmenter_Instance.load_model("Models/mask_rcnn_coco.h5")
+Segmenter_Semantic = None
+Segmenter_Instance = None
 
 # Main Functions
+# Loader Functions
+def LoadSemanticSegmenter():
+    from pixellib.semantic import semantic_segmentation
+    global Segmenter_Semantic
+    Segmenter_Semantic = semantic_segmentation()
+    Segmenter_Semantic.load_pascalvoc_model("Models/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5")
+
+def LoadInstanceSegmenter():
+    from pixellib.instance import instance_segmentation
+    global Segmenter_Instance
+    Segmenter_Instance = instance_segmentation()
+    Segmenter_Instance.load_model("Models/mask_rcnn_coco.h5")
+
 # Effect Applier Functions
 def Image_MultipleImages(I, CommonEffects, EffectFuncs, nCols=2):
     for CommonEffect in CommonEffects:
@@ -58,6 +67,7 @@ def Image_MultipleImages(I, CommonEffects, EffectFuncs, nCols=2):
         curPos = [curPos[0], curPos[1]+1]
         if curPos[1] >= nCols:
             curPos = [curPos[0]+1, 0]
+
     return I_full
 
 def Image_ApplyEffects(I, EffectFuncs):
@@ -79,7 +89,7 @@ def ImageEffect_GreyScale(I):
 def ImageEffect_Grey2RGB(I):
     return cv2.cvtColor(I, cv2.COLOR_GRAY2RGB)
 
-def ImageEffect_BGR(I):
+def ImageEffect_RGB2BGR(I):
     return cv2.cvtColor(I, cv2.COLOR_RGB2BGR)
 
 def ImageEffect_MostDominantColor(I):
@@ -93,8 +103,9 @@ def ImageEffect_LeastDominantColor(I):
     return (I)*(I_dom == I)
 
 def ImageEffect_ScaleValues(I, scaleFactor=[0, 0, 0]):
-    I = np.multiply(I, np.array(scaleFactor, dtype=np.uint8), dtype=np.uint8)
-    return np.clip(I, 0, 255, dtype=np.uint8)
+    I = np.multiply(I, np.array(scaleFactor, dtype=float)).astype(int)
+    I = np.clip(I, 0, 255, dtype=int).astype(np.uint8)
+    return I
 
 def ImageEffect_ClipValues(I, threshold=[127, 128], replace=[127, 128]):
     I = np.clip(I, threshold[0], threshold[1])
@@ -103,7 +114,7 @@ def ImageEffect_ClipValues(I, threshold=[127, 128], replace=[127, 128]):
     I = lowCheck*np.ones(I.shape, dtype=np.uint8)*replace[0] + highCheck*np.ones(I.shape, dtype=np.uint8)*replace[1] + np.logical_not(np.logical_or(lowCheck, highCheck))*I
     return I
 
-def ImageEffect_BinValues(I, bins=np.array([0, 127, 255])):
+def ImageEffect_BinValues(I, bins=[0, 127, 255]):
     bins = np.array(bins)
     binMaps = np.digitize(I, bins)
     binMaps = np.clip(binMaps, 0, bins.shape[0]-1)
@@ -148,25 +159,29 @@ def ImageEffect_SaltPepperNoise(I, prob=0.5):
     return I
 
 def ImageEffect_SemanticSegmentation(I, overlay=False):
-    # cv2.imwrite('Utils/SemSeg.png', I)
-    # segmap, output = Segmenter_Semantic.segmentAsPascalvoc('Utils/SemSeg.png', overlay=overlay)
+    if Segmenter_Semantic is None:
+        LoadSemanticSegmenter()
     segmap, output = Segmenter_Semantic.segmentFrameAsPascalvoc(I, overlay=overlay)
     output = np.array(output)
     return output
 
 def ImageEffect_InstanceSegmentation(I, show_bboxes=False):
-    # cv2.imwrite('Utils/InsSeg.png', I)
-    # segmap, output = Segmenter_Instance.segmentAsPascalvoc('Utils/InsSeg.png', show_bboxes=show_bboxes)
+    if Segmenter_Instance is None:
+        LoadInstanceSegmenter()
     segmap, output = Segmenter_Instance.segmentFrame(I, show_bboxes=show_bboxes)
     output = np.array(output)
     return output
 
 # Direct Video Effects
 def VideoEffect_SemanticSegmentation(videoPath, outputPath, overlay=False, fps=20):
+    if Segmenter_Semantic is None:
+        LoadSemanticSegmenter()
     Segmenter_Semantic.process_video_pascalvoc(videoPath, overlay=overlay, frames_per_second=fps, output_video_name=outputPath)
 
-def VideoEffect_InstanceSegmentation(videoPath, outputPath, overlay=False, fps=20, verbose=True):
-    Segmenter_Instance.process_video_pascalvoc(videoPath, overlay=overlay, frames_per_second=fps, output_video_name=outputPath)
+def VideoEffect_InstanceSegmentation(videoPath, outputPath, show_bboxes=False, fps=20):
+    if Segmenter_Instance is None:
+        LoadInstanceSegmenter()
+    Segmenter_Instance.process_video(videoPath, show_bboxes=show_bboxes, frames_per_second=fps, output_video_name=outputPath)
 
 # Driver Code
 # I = [[[100, 22, 3], [10, 1, 0], [0, 9, 1]], [[1, 0, 0], [0, 1, 0], [0, 0, 1]], [[1, 0, 0], [0, 1, 0], [0, 0, 1]]]

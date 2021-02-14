@@ -7,6 +7,7 @@ import os
 import cv2
 from PIL import Image
 import numpy as np
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 # Main Functions
@@ -27,8 +28,17 @@ def ReadImage(imgPath, imgSize=None, keepAspectRatio=False):
                     imgSize = (imgSize[0], size_original[1] * (imgSize[0] / size_original[0]))
             imgSize = (int(round(imgSize[1])), int(round(imgSize[0])))
         I = cv2.resize(I, imgSize)
-    I = cv2.cvtColor(I, cv2.COLOR_BGR2RGB)
+    # I = cv2.cvtColor(I, cv2.COLOR_BGR2RGB)
     return I
+
+def DisplayImage(I, title=''):
+    I = cv2.cvtColor(I, cv2.COLOR_BGR2RGB)
+    plt.imshow(I, 'gray')
+    plt.title.set_text(title)
+    plt.show()
+
+def SaveImage(I, path):
+    cv2.imwrite(path, I)
 
 def ReadVideo(path):
     cap = cv2.VideoCapture(path)

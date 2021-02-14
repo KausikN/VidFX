@@ -66,13 +66,17 @@
         {
             "name": "save",
             "value": "False"
+        },
+        {
+            "name": "nCols",
+            "value": "2"
         }
     ],
 
     "driver_code": [
         "savePath = os.path.join(saveDir, saveName)",
         "# Get Video Feed",
-        "EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=2)",
+        "EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=nCols)",
 
         "videoFeed = None",
         "if webcamVideo:",

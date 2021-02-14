@@ -12,13 +12,13 @@ from Utils import EffectsLibrary
 
 # Driver Code
 # Params
-videoPath = 'TestVids/Test_Animation.wmv' #TYPE: FILE
+videoPath = 'TestVids/Test_Car.mp4' #TYPE: FILE
 
 fps = 20
 
-SegmentFunc = functools.partial(EffectsLibrary.VideoEffect_SemanticSegmentation, overlay=False)
+SegmentFunc = functools.partial(EffectsLibrary.VideoEffect_InstanceSegmentation, show_bboxes=True)
 
-savePath = 'TestVids/Test_Effect.wmv'
+savePath = 'TestVids/CarVidSeg_Video.wmv'
 # Params
 
 # RunCode

@@ -1,0 +1,84 @@
+{
+    "WindowTitle": "ImageFX",
+
+    "code_path": "ImageFX.py",
+
+    "script_desc": "Set of tools for fun effects on images",
+
+    "imports": [
+        "import os",
+        "import cv2",
+        "import functools",
+        "import numpy as np",
+        "from Utils import VideoUtils",
+        "from Utils import EffectsLibrary"
+    ],
+
+    "classes": [
+
+    ],
+
+    "functions": [
+
+    ],
+
+    "script_parameters": [
+        {
+            "name": "imgPath",
+            "value": "'TestImgs/Test_Small.jpg' #TYPE: FILE"
+        },
+        {
+            "name": "imgSize",
+            "value": "None NOTYPE"
+        },
+        {
+            "name": "keepAspectRatio",
+            "value": "False"
+        },
+        {
+            "name": "saveDir",
+            "value": "'GeneratedVisualisations/' #TYPE: DIR"
+        },
+        {
+            "name": "saveName",
+            "value": "'Effect_None.jpg'"
+        },
+        {
+            "name": "CommonEffects",
+            "value": "NOTYPE #MULTILINE"
+        },
+        {
+            "name": "EffectFuncs",
+            "value": "NOTYPE #MULTILINE"
+        },
+        {
+            "name": "display",
+            "value": "True"
+        },
+        {
+            "name": "save",
+            "value": "False"
+        },
+        {
+            "name": "nCols",
+            "value": "2"
+        }
+    ],
+
+    "driver_code": [
+        "savePath = os.path.join(saveDir, saveName)",
+        "EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=nCols)",
+
+        "# Get Image",
+        "I = VideoUtils.ReadImage(imgPath, imgSize=imgSize, keepAspectRatio=keepAspectRatio)",
+
+        "# Apply Effects",
+        "I_effect = EffectFunc(I)",
+
+        "if display:",
+        "    VideoUtils.DisplayImage(I_effect, 'Effect Image')",
+
+        "if save:",
+        "    VideoUtils.SaveImage(I_effect, savePath)"
+    ]
+}

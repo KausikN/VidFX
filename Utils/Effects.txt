@@ -1,0 +1,16 @@
+None
+Binarise(threshold=127)
+GreyScale
+RGB2BGR
+MostDominantColor
+LeastDominantColor
+ScaleValues(scaleFactor=[1.75, 1.75, 1.75])
+ClipValues(threshold=[100, 200], replace=[100, 200])
+BinValues(bins=[0, 64, 128, 196, 255])
+Resize(size=(640, 480), interpolation=cv2.INTER_LINEAR)
+AddFrame(FrameFileData={"imgPath": 'Frames/Frame_Nintendo_111_303_430_107_285_607.PNG', "imgSize": None, "keepAspectRatio": False})
+GaussianNoise(mean=50, SD=25)
+SpeckleNoise
+SaltPepperNoise(prob=0.5)
+SemanticSegmentation(overlay=True)
+InstanceSegmentation(show_bboxes=True)
