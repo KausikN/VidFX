@@ -21,7 +21,7 @@ imgSize = None
 keepAspectRatio = False
 
 saveDir = 'GeneratedVisualisations/Effects/'
-saveName = 'Effect_ScaleValues.jpg'
+saveName = 'Effect_CannyEdges.jpg'
 
 CommonEffects = [
     functools.partial(EffectsLibrary.ImageEffect_Resize, size=(320, 240))
@@ -31,7 +31,7 @@ EffectFuncs = [
         functools.partial(EffectsLibrary.ImageEffect_None)
     ],
     [
-        functools.partial(EffectsLibrary.ImageEffect_ScaleValues, scaleFactor=[1.75, 1.75, 1.75])
+        functools.partial(EffectsLibrary.ImageEffect_CannyEdges, sigma=0.0, low_threshold=0.1, high_threshold=0.9)
     ]
 ]
 

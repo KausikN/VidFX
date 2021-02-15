@@ -6,6 +6,8 @@ Image Effects Library
 import cv2
 import math
 import numpy as np
+import skimage
+import skimage.feature
 
 from Utils import VideoUtils
 
@@ -78,6 +80,17 @@ def Image_ApplyEffects(I, EffectFuncs):
     for EffectFunc in EffectFuncs:
         I = EffectFunc(I)
     return I
+
+# Direct Video Effects
+def VideoEffect_SemanticSegmentation(videoPath, outputPath, overlay=False, fps=20):
+    if Segmenter_Semantic is None:
+        LoadSemanticSegmenter()
+    Segmenter_Semantic.process_video_pascalvoc(videoPath, overlay=overlay, frames_per_second=fps, output_video_name=outputPath)
+
+def VideoEffect_InstanceSegmentation(videoPath, outputPath, show_bboxes=False, fps=20):
+    if Segmenter_Instance is None:
+        LoadInstanceSegmenter()
+    Segmenter_Instance.process_video(videoPath, show_bboxes=show_bboxes, frames_per_second=fps, output_video_name=outputPath)
 
 # Effect Functions
 def ImageEffect_None(I):
@@ -185,16 +198,11 @@ def ImageEffect_InstanceSegmentation(I, show_bboxes=False):
     output = np.array(output)
     return output
 
-# Direct Video Effects
-def VideoEffect_SemanticSegmentation(videoPath, outputPath, overlay=False, fps=20):
-    if Segmenter_Semantic is None:
-        LoadSemanticSegmenter()
-    Segmenter_Semantic.process_video_pascalvoc(videoPath, overlay=overlay, frames_per_second=fps, output_video_name=outputPath)
-
-def VideoEffect_InstanceSegmentation(videoPath, outputPath, show_bboxes=False, fps=20):
-    if Segmenter_Instance is None:
-        LoadInstanceSegmenter()
-    Segmenter_Instance.process_video(videoPath, show_bboxes=show_bboxes, frames_per_second=fps, output_video_name=outputPath)
+def ImageEffect_CannyEdges(I, sigma=0.0, low_threshold=0.1, high_threshold=0.9):
+    I = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)
+    edges = skimage.feature.canny(image=np.array(I/255), sigma=sigma, low_threshold=low_threshold, high_threshold=high_threshold)
+    edges = np.array(edges*255, dtype=np.uint8)
+    return edges
 
 # Driver Code
 # I = [[[100, 22, 3], [10, 1, 0], [0, 9, 1]], [[1, 0, 0], [0, 1, 0], [0, 0, 1]], [[1, 0, 0], [0, 1, 0], [0, 0, 1]]]

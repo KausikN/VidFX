@@ -17,3 +17,4 @@ SpeckleNoise
 SaltPepperNoise(prob=0.5)
 SemanticSegmentation(overlay=True)
 InstanceSegmentation(show_bboxes=True)
+CannyEdges(sigma=0.0, low_threshold=0.1, high_threshold=0.9)

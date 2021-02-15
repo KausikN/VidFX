@@ -106,3 +106,7 @@
    - InstanceSegmentation
 
      ![InstanceSegmentation Effect](GeneratedVisualisations/Effects/Effect_InstanceSegmentation.jpg)
+
+   - CannyEdges
+
+     ![CannyEdges Effect](GeneratedVisualisations/Effects/Effect_CannyEdges.jpg)
