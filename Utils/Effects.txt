@@ -2,6 +2,9 @@ None
 Binarise(threshold=127)
 GreyScale
 RGB2BGR
+RedChannel
+BlueChannel
+GreenChannel
 MostDominantColor
 LeastDominantColor
 ScaleValues(scaleFactor=[1.75, 1.75, 1.75])

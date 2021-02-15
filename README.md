@@ -47,6 +47,18 @@
 
      ![RGB2BGR Effect](GeneratedVisualisations/Effects/Effect_RGB2BGR.jpg)
 
+   - RedChannel
+
+     ![RedChannel Effect](GeneratedVisualisations/Effects/Effect_RedChannel.jpg)
+
+   - BlueChannel
+
+     ![BlueChannel Effect](GeneratedVisualisations/Effects/Effect_BlueChannel.jpg)
+
+   - GreenChannel
+
+     ![GreenChannel Effect](GeneratedVisualisations/Effects/Effect_GreenChannel.jpg)
+
    - MostDominantColor
 
      ![MostDominantColor Effect](GeneratedVisualisations/Effects/Effect_MostDominantColor.jpg)

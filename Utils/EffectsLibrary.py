@@ -28,6 +28,8 @@ def LoadInstanceSegmenter():
 
 # Effect Applier Functions
 def Image_MultipleImages(I, CommonEffects, EffectFuncs, nCols=2):
+    I = cv2.cvtColor(I, cv2.COLOR_BGR2RGB)
+
     for CommonEffect in CommonEffects:
         I = CommonEffect(I)
 
@@ -68,6 +70,8 @@ def Image_MultipleImages(I, CommonEffects, EffectFuncs, nCols=2):
         if curPos[1] >= nCols:
             curPos = [curPos[0]+1, 0]
 
+    I_full = cv2.cvtColor(I_full, cv2.COLOR_RGB2BGR)
+
     return I_full
 
 def Image_ApplyEffects(I, EffectFuncs):
@@ -91,6 +95,15 @@ def ImageEffect_Grey2RGB(I):
 
 def ImageEffect_RGB2BGR(I):
     return cv2.cvtColor(I, cv2.COLOR_RGB2BGR)
+
+def ImageEffect_RedChannel(I):
+    return I[:, :, :] * np.array([1, 0, 0])
+
+def ImageEffect_BlueChannel(I):
+    return I[:, :, :] * np.array([0, 0, 1])
+
+def ImageEffect_GreenChannel(I):
+    return I[:, :, :] * np.array([0, 1, 0])
 
 def ImageEffect_MostDominantColor(I):
     I_dom = np.max(I, axis=2)
