@@ -8,7 +8,7 @@ import functools
 import numpy as np
 
 from Utils import VideoUtils
-from Utils import EffectsLibrary
+from EffectsLibrary import EffectsLibrary
 
 # Main Functions
 

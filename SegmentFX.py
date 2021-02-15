@@ -5,7 +5,7 @@ Segmentation based Effects in video and images
 # Imports
 import functools
 
-from Utils import EffectsLibrary
+from EffectsLibrary import EffectsLibrary
 
 # Main Functions
 

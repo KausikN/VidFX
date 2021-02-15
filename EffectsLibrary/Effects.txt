@@ -17,6 +17,18 @@ SpeckleNoise
 SaltPepperNoise(prob=0.5)
 SemanticSegmentation(overlay=True)
 InstanceSegmentation(show_bboxes=True)
+GaussianFilter(sigma=2)
+SobelFilter
+SobelVerticalFilter
+SobelHorizontalFilter
+RobertsFilter
+ScharrFilter
+ScharrVerticalFilter
+ScharrHorizontalFilter
+PrewittFilter
+MedianFilter
+LaplaceFilter(ksize=3)
+FaridEdges
+FaridVerticalEdges
+FaridHorizontalEdges
 CannyEdges(sigma=0.0, low_threshold=0.1, high_threshold=0.9)
-SobelEdges
-LaplaceEdges(ksize=3)

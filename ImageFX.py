@@ -9,7 +9,7 @@ import functools
 import numpy as np
 
 from Utils import VideoUtils
-from Utils import EffectsLibrary
+from EffectsLibrary import EffectsLibrary
 
 # Main Functions
 
@@ -21,7 +21,7 @@ imgSize = None
 keepAspectRatio = False
 
 saveDir = 'GeneratedVisualisations/Effects/'
-saveName = 'Effect_CannyEdges.jpg'
+saveName = 'Effect_GaussianFilter.jpg'
 
 CommonEffects = [
     functools.partial(EffectsLibrary.ImageEffect_Resize, size=(320, 240))
@@ -31,7 +31,7 @@ EffectFuncs = [
         functools.partial(EffectsLibrary.ImageEffect_None)
     ],
     [
-        functools.partial(EffectsLibrary.ImageEffect_CannyEdges, sigma=0.0, low_threshold=0.1, high_threshold=0.9)
+        functools.partial(EffectsLibrary.ImageEffect_GaussianFilter, sigma=2)
     ]
 ]
 
