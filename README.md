@@ -113,4 +113,4 @@
 
    - And many more! 
    
-     For full list of effects with their parameters see [Effect List](EffectLibrary/Effects.txt)
+     For full list of effects with their parameters see [Effect List](EffectsLibrary/Effects.txt)
