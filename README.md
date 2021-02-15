@@ -110,3 +110,7 @@
    - CannyEdges
 
      ![CannyEdges Effect](GeneratedVisualisations/Effects/Effect_CannyEdges.jpg)
+
+   - And many more! 
+   
+     For full list of effects with their parameters see ![Effect List](EffectLibrary/Effects.txt)
