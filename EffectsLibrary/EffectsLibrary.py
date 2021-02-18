@@ -16,6 +16,7 @@ from EffectsLibrary.FrameEffects import *
 from EffectsLibrary.NoiseEffects import *
 from EffectsLibrary.FilterEffects import *
 from EffectsLibrary.SegmentationEffects import *
+from EffectsLibrary.MorphologicalEffects import *
 
 # Main Functions
 # Effect Applier Functions
@@ -24,6 +25,8 @@ def Image_MultipleImages(I, CommonEffects, EffectFuncs, nCols=2):
 
     for CommonEffect in CommonEffects:
         I = CommonEffect(I)
+        if I.ndim == 2:
+            I = cv2.cvtColor(I, cv2.COLOR_GRAY2RGB)
 
     if len(EffectFuncs) < nCols:
         nCols = len(EffectFuncs)
@@ -37,8 +40,8 @@ def Image_MultipleImages(I, CommonEffects, EffectFuncs, nCols=2):
         I_this = np.copy(I)
         for EffectFunc in EffectFuncs_Image:
             I_this = EffectFunc(I_this)
-        if I_this.ndim == 2:
-            I_this = cv2.cvtColor(I_this, cv2.COLOR_GRAY2RGB)
+            if I_this.ndim == 2:
+                I_this = cv2.cvtColor(I_this, cv2.COLOR_GRAY2RGB)
         # if not np.equal(I.shape[:2], I_this.shape[:2]).all():
         #     I_this = cv2.resize(I_this, (I.shape[1], I.shape[0]))
         EffectedIs.append(I_this)

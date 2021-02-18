@@ -15,7 +15,7 @@ from EffectsLibrary import EffectsLibrary
 
 # Driver Code
 # Params
-imgPath = 'TestImgs/Test_Small.jpg' #TYPE: FILE
+imgPath = 'TestImgs/Horse.PNG' #TYPE: FILE
 
 imgSize = None
 keepAspectRatio = False
@@ -24,19 +24,20 @@ saveDir = 'GeneratedVisualisations/Effects/'
 saveName = 'Effect_GaussianFilter.jpg'
 
 CommonEffects = [
-    functools.partial(EffectsLibrary.ImageEffect_Resize, size=(320, 240))
+    functools.partial(EffectsLibrary.ImageEffect_None)
 ]
 EffectFuncs = [
     [
-        functools.partial(EffectsLibrary.ImageEffect_None)
+        functools.partial(EffectsLibrary.ImageEffect_GreyScale),
+        functools.partial(EffectsLibrary.ImageEffect_Binarise, threshold=127)
     ],
     [
-        functools.partial(EffectsLibrary.ImageEffect_GaussianFilter, sigma=2)
+        functools.partial(EffectsLibrary.ImageEffect_Skeleton)
     ]
 ]
 
-display = False
-save = True
+display = True
+save = False
 # Params
 
 # RunCode

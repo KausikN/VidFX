@@ -32,3 +32,5 @@ FaridEdges
 FaridVerticalEdges
 FaridHorizontalEdges
 CannyEdges(sigma=0.0, low_threshold=0.1, high_threshold=0.9)
+Skeleton(method=None, bin_threshold=127)
+Thin(max_iters=None, bin_threshold=127)

@@ -34,7 +34,7 @@ def ReadImage(imgPath, imgSize=None, keepAspectRatio=False):
 def DisplayImage(I, title=''):
     I = cv2.cvtColor(I, cv2.COLOR_BGR2RGB)
     plt.imshow(I, 'gray')
-    plt.title.set_text(title)
+    plt.title(title)
     plt.show()
 
 def SaveImage(I, path):
