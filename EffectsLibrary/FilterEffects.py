@@ -21,16 +21,19 @@ def ImageEffect_SobelFilter(I):
     return I_filtered
 
 def ImageEffect_SobelVerticalFilter(I):
+    I = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)
     I_filtered = skimage.filters.sobel_v(image=np.array(I/255))
     I_filtered = np.array(I_filtered*255, dtype=np.uint8)
     return I_filtered
 
 def ImageEffect_SobelHorizontalFilter(I):
+    I = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)
     I_filtered = skimage.filters.sobel_h(image=np.array(I/255))
     I_filtered = np.array(I_filtered*255, dtype=np.uint8)
     return I_filtered
 
 def ImageEffect_RobertsFilter(I):
+    I = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)
     I_filtered = skimage.filters.roberts(image=np.array(I/255))
     I_filtered = np.array(I_filtered*255, dtype=np.uint8)
     return I_filtered
@@ -41,11 +44,13 @@ def ImageEffect_ScharrFilter(I):
     return I_filtered
 
 def ImageEffect_ScharrVerticalFilter(I):
+    I = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)
     I_filtered = skimage.filters.scharr_v(image=np.array(I/255))
     I_filtered = np.array(I_filtered*255, dtype=np.uint8)
     return I_filtered
 
 def ImageEffect_ScharrHorizontalFilter(I):
+    I = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)
     I_filtered = skimage.filters.scharr_h(image=np.array(I/255))
     I_filtered = np.array(I_filtered*255, dtype=np.uint8)
     return I_filtered
@@ -67,16 +72,19 @@ def ImageEffect_LaplaceFilter(I, ksize=3):
     return I_filtered
 
 def ImageEffect_FaridEdges(I):
+    I = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)
     I_filtered = skimage.filters.farid(image=np.array(I/255))
     I_filtered = np.array(I_filtered*255, dtype=np.uint8)
     return I_filtered
 
 def ImageEffect_FaridVerticalEdges(I):
+    I = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)
     I_filtered = skimage.filters.farid_v(image=np.array(I/255))
     I_filtered = np.array(I_filtered*255, dtype=np.uint8)
     return I_filtered
 
 def ImageEffect_FaridHorizontalEdges(I):
+    I = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)
     I_filtered = skimage.filters.farid_h(image=np.array(I/255))
     I_filtered = np.array(I_filtered*255, dtype=np.uint8)
     return I_filtered
