@@ -19,6 +19,8 @@
 
          - Set of Sequences of effects are applied and all of them are appended as a single frame for an input frame from the video
 
+         - For full list of effects with their parameters see [Effect List](EffectsLibrary/Effects.txt)
+
      ![UI Image](DocImages/UI.PNG)
 
      ![UI Output Image](DocImages/UIOutput.PNG)
