@@ -5,7 +5,19 @@
    
    - Run VidFXUI.py file
    
-     View effects easily for webcam or any video
+     View/Save effects easily for webcam or any video
+
+     CommonEffects:
+     
+         Effects that are applied to Input Video before applying further effects
+
+     EffectFuncs:
+
+         - Effects applied for video to display
+
+         - Multiple effect sequences are separated by a ',' line
+
+         - Set of Sequences of effects are applied and all of them are appended as a single frame for an input frame from the video
 
      ![UI Image](DocImages/UI.PNG)
 
