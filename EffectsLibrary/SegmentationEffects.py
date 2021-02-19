@@ -5,6 +5,7 @@ Segmentation Image Effects Library
 # Imports
 import cv2
 import numpy as np
+from skimage import segmentation
 
 Segmenter_Semantic = None
 Segmenter_Instance = None
@@ -48,5 +49,11 @@ def ImageEffect_InstanceSegmentation(I, show_bboxes=False):
     segmap, output = Segmenter_Instance.segmentFrame(I, show_bboxes=show_bboxes)
     output = np.array(output)
     return output
+
+def ImageEffect_Watershed(I, watershed_line=True):#, bin_threshold=127):
+    # I = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)# >= bin_threshold
+    I_filtered = segmentation.watershed(I, watershed_line=watershed_line)
+    I_filtered = np.array(I_filtered*255, dtype=np.uint8)
+    return I_filtered
 
 # Driver Code
