@@ -131,7 +131,7 @@ def GenerateWindowData(ScriptParameters, RunScriptFunc, OtherFuncs):
     return WindowData
 
 # Driver Code
-def Code2UI(codePath, EffectsCodeProcessFuncs):
+def Code2UI(codePath, EffectsCodeProcessFuncs={}):
     # Params
     loadData = False
     saveData = False
@@ -174,7 +174,7 @@ def Code2UI(codePath, EffectsCodeProcessFuncs):
     # Display Window
     uigen.CreateWindow(ParsedCode, WindowData, WindowTitle)
 
-def JSON2UI(jsonPath, EffectsCodeProcessFuncs):
+def JSON2UI(jsonPath, EffectsCodeProcessFuncs={}):
     WindowTitle = 'Generated UI'
     RunScriptFunc = functools.partial(uigen.RunScript_WithEffectsCodeProcess, EffectsCodeProcessFuncs=EffectsCodeProcessFuncs)
     OtherFuncs = {

@@ -197,6 +197,7 @@ class ScriptParameter:
             self.value = value.replace(config['NoType_Declare'], '').strip()
             self.type = str
             NoType = True
+            return
         # Specified Type
         SpecifiedType = True
         if config['SpecificType_Declare'] in value:
