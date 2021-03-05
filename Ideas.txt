@@ -1,0 +1,3 @@
+VidFX
+ - Saving Mechanism to not recompute effects on same inputs -- DONE
+ - Addition, Subtraction, etc binary effects

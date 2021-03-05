@@ -24,21 +24,30 @@ speedUp = 5
 savePath = 'TestVids/Test_Effect.gif'
 
 CommonEffects = [
-    functools.partial(EffectsLibrary.ImageEffect_Resize, size=(320, 240)),
+    functools.partial(EffectsLibrary.ImageEffect_Resize, size=(320, 240))
 ]
 EffectFuncs = [
     [
-        functools.partial(EffectsLibrary.ImageEffect_None)
+        functools.partial(EffectsLibrary.ImageEffect_Binarise, threshold=127)
+    ], 
+    [
+        functools.partial(EffectsLibrary.ImageEffect_Binarise, threshold=127)
     ]
 ]
 
-display = False
-save = True
+display = True
+save = False
+nCols = 2
+fastExec = True
 # Params
 
 # RunCode
 # Get Video Feed
-EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=2)
+if fastExec:
+    EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=True)
+    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=nCols, saveI_keys=saveI_keys)
+else:
+    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=nCols)
 
 videoFeed = None
 if webcamVideo:
