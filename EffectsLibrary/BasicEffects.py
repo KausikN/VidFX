@@ -5,17 +5,21 @@ Basic Image Effects Library
 # Imports
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Main Functions
 def ImageEffect_None(I):
     return I
 
 def ImageEffect_Binarise(I, threshold=127):
-    I = np.zeros(I.shape, dtype=np.uint8) + (I > threshold)*np.ones(I.shape, dtype=np.uint8)*255
+    I = np.zeros(I.shape, dtype=np.uint8) + (I >= threshold)*np.ones(I.shape, dtype=np.uint8)*255
     return I
 
 def ImageEffect_GreyScale(I):
-    return cv2.cvtColor(cv2.cvtColor(I, cv2.COLOR_RGB2GRAY), cv2.COLOR_GRAY2RGB)
+    # I_effect = cv2.cvtColor(cv2.cvtColor(I, cv2.COLOR_RGB2GRAY), cv2.COLOR_GRAY2RGB)
+    I_effect = np.mean(I, axis=2)
+    I_effect = np.dstack((I_effect, I_effect, I_effect))
+    return I_effect
 
 def ImageEffect_Grey2RGB(I):
     return cv2.cvtColor(I, cv2.COLOR_GRAY2RGB)
@@ -31,6 +35,9 @@ def ImageEffect_BlueChannel(I):
 
 def ImageEffect_GreenChannel(I):
     return I[:, :, :] * np.array([0, 1, 0])
+
+def ImageEffect_Invert(I):
+    return 255 - I
 
 def ImageEffect_MostDominantColor(I):
     I_dom = np.max(I, axis=2)

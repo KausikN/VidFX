@@ -23,6 +23,115 @@ from EffectsLibrary.MorphologicalEffects import *
 savedIs = None
 
 # Main Functions
+def NormaliseSize(keys, keepOriginalSizes=False):
+    global savedIs
+
+    size = [100, 100, 3]
+    if keepOriginalSizes:
+        for key in keys:
+            if key in savedIs.keys():
+                size = [max(size[0], savedIs[key].shape[0]), max(size[1], savedIs[key].shape[1])]
+    else:
+        if len(keys) > 0 and keys[0] in savedIs.keys():
+            size = list(savedIs[keys[0]].shape)[:2] + [3]
+
+    return size
+
+def NormaliseValues(I, normaliseFit=False):
+    if normaliseFit:
+        I = ((I - np.min(I)) / (np.max(I) - np.min(I))) * 255
+    else:
+        I = np.clip(I, a_min=0, a_max=255)
+    I = I.astype(np.uint8)
+    return I
+
+# Image Redundant Remove Functions
+def StartSameFuncsCount(FD1, FD2):
+    startsameCount = 0
+    for f1, f2 in zip(FD1, FD2):
+        if f1 == f2:
+            startsameCount += 1
+        else:
+            break
+    return startsameCount
+
+def Image_ReplaceRedundantEffectChains(EffectFuncs, display=False):
+    EffectFuncsData = []
+    # Get Funcs Data
+    for EFs in EffectFuncs:
+        EFKeys = []
+        for e in EFs:
+            data = {}
+            data['name'] = str(e.func.__name__)
+            data['params'] = e.keywords
+            EFKeys.append(data)
+        EffectFuncsData.append(EFKeys)
+    
+    # Compare to identify redundancies
+    reductionCounts = [0]
+    reductionReferences = [-1]
+    for i in range(1, len(EffectFuncsData)):
+        max_red_j = -1
+        max_red = 0
+        for j in range(0, i):
+            redCount = StartSameFuncsCount(EffectFuncsData[i], EffectFuncsData[j])
+            if redCount > max_red:
+                max_red_j = j
+                max_red = redCount
+
+        reductionCounts.append(max_red)
+        reductionReferences.append(max_red_j)
+
+    reducedStarts = []
+    for i in range(len(reductionCounts)):
+        if reductionReferences[i] >= 0:
+            reducedStarts.append(reductionCounts[i] - reducedStarts[reductionReferences[i]])
+        else:
+            reducedStarts.append(reductionCounts[i])
+
+    ReducedEffectFuncs = []
+    saveI_keys = []
+    # Preliminary Checking for keys in functions
+    for i in range(len(EffectFuncsData)):
+        for j in range(len(EffectFuncsData[i])):
+            if 'key' in EffectFuncsData[i][j]['params'].keys():
+                saveI_keys.append(EffectFuncsData[i][j]['params']['key'])
+            elif 'keys' in EffectFuncsData[i][j]['params'].keys():
+                saveI_keys.extend(EffectFuncsData[i][j]['params']['keys'])
+    # Add new keys
+    for i in range(len(EffectFuncsData)):
+        Funcs = []
+        if reductionReferences[i] >= 0:
+            key = str(reductionReferences[i]) + "_" + str(reducedStarts[i]-1)
+            Funcs = [functools.partial(ImageEffect_Substitute, key=key)] + EffectFuncs[i][reductionCounts[i]:]
+            saveI_keys.append(key)
+        else:
+            Funcs = EffectFuncs[i]
+        ReducedEffectFuncs.append(Funcs)
+
+    if display:
+        print("EffectFuncs Original:")
+        for i in range(len(EffectFuncs)):
+            print(str(i+1) + ":")
+            for e in EffectFuncs[i]:
+                params = []
+                for k in e.keywords.keys():
+                    params.append(k + "=" + str(e.keywords[k]))
+                Text = str(e.func.__name__) + '(' + ', '.join(params) + ")"
+                print("\t", Text)
+        print()
+        print("EffectFuncs Reduced:")
+        for i in range(len(ReducedEffectFuncs)):
+            print(str(i+1) + ":")
+            for e in ReducedEffectFuncs[i]:
+                params = []
+                for k in e.keywords.keys():
+                    params.append(k + "=" + str(e.keywords[k]))
+                Text = str(e.func.__name__) + '(' + ', '.join(params) + ")"
+                print("\t", Text)
+    
+    return ReducedEffectFuncs, saveI_keys
+
 # Effect Applier Functions
 def Image_MultipleImages(I, CommonEffects, EffectFuncs, nCols=2):
     I = cv2.cvtColor(I, cv2.COLOR_BGR2RGB)
@@ -74,6 +183,7 @@ def Image_MultipleImages(I, CommonEffects, EffectFuncs, nCols=2):
     return I_full
 
 def Image_MultipleImages_RemovedRecompute(I, CommonEffects, EffectFuncs, nCols=2, saveI_keys=[]):
+    # print("saveI_keys", saveI_keys)
     I = cv2.cvtColor(I, cv2.COLOR_BGR2RGB)
 
     for CommonEffect in CommonEffects:
@@ -149,85 +259,67 @@ def ImageEffect_Substitute(I, key):
         # print(key, savedIs.keys())
         return I
 
-# Image Redundant Remove Functions
-def StartSameFuncsCount(FD1, FD2):
-    startsameCount = 0
-    for f1, f2 in zip(FD1, FD2):
-        if f1 == f2:
-            startsameCount += 1
-        else:
-            break
-    return startsameCount
+# Combination Effects
+def ImageEffect_Add(I, keys, keepOriginalSizes=False, normaliseFit=False):
+    global savedIs
 
+    size = NormaliseSize(keys, keepOriginalSizes=keepOriginalSizes)
 
-def Image_ReplaceRedundantEffectChains(EffectFuncs, display=False):
-    EffectFuncsData = []
-    # Get Funcs Data
-    for EFs in EffectFuncs:
-        EFKeys = []
-        for e in EFs:
-            data = {}
-            data['name'] = str(e.func.__name__)
-            data['params'] = e.keywords
-            EFKeys.append(data)
-        EffectFuncsData.append(EFKeys)
-    
-    # Compare to identify redundancies
-    reductionCounts = [0]
-    reductionReferences = [-1]
-    for i in range(1, len(EffectFuncsData)):
-        max_red_j = -1
-        max_red = 0
-        for j in range(0, i):
-            redCount = StartSameFuncsCount(EffectFuncsData[i], EffectFuncsData[j])
-            if redCount > max_red:
-                max_red_j = j
-                max_red = redCount
+    I_effect = np.zeros(tuple(size), dtype=int)
+    for key in keys:
+        if key in savedIs.keys():
+            I_effect = I_effect + cv2.resize(savedIs[key], tuple(size[:2][::-1]))
 
-        reductionCounts.append(max_red)
-        reductionReferences.append(max_red_j)
+    I_effect = NormaliseValues(I_effect, normaliseFit=normaliseFit)
 
-    reducedStarts = []
-    for i in range(len(reductionCounts)):
-        if reductionReferences[i] >= 0:
-            reducedStarts.append(reductionCounts[i] - reducedStarts[reductionReferences[i]])
-        else:
-            reducedStarts.append(reductionCounts[i])
+    return I_effect
 
-    ReducedEffectFuncs = []
-    saveI_keys = []
-    for i in range(len(EffectFuncsData)):
-        Funcs = []
-        if reductionReferences[i] >= 0:
-            key = str(reductionReferences[i]) + "_" + str(reducedStarts[i]-1)
-            Funcs = [functools.partial(ImageEffect_Substitute, key=key)] + EffectFuncs[i][reductionCounts[i]:]
-            saveI_keys.append(key)
-        else:
-            Funcs = EffectFuncs[i]
-        ReducedEffectFuncs.append(Funcs)
+def ImageEffect_Sub(I, keys, keepOriginalSizes=False, normaliseFit=False):
+    global savedIs
 
-    if display:
-        print("EffectFuncs Original:")
-        for i in range(len(EffectFuncs)):
-            print(str(i+1) + ":")
-            for e in EffectFuncs[i]:
-                params = []
-                for k in e.keywords.keys():
-                    params.append(k + "=" + str(e.keywords[k]))
-                Text = str(e.func.__name__) + '(' + ', '.join(params) + ")"
-                print("\t", Text)
-        print()
-        print("EffectFuncs Reduced:")
-        for i in range(len(ReducedEffectFuncs)):
-            print(str(i+1) + ":")
-            for e in ReducedEffectFuncs[i]:
-                params = []
-                for k in e.keywords.keys():
-                    params.append(k + "=" + str(e.keywords[k]))
-                Text = str(e.func.__name__) + '(' + ', '.join(params) + ")"
-                print("\t", Text)
-    
-    return ReducedEffectFuncs, saveI_keys
+    size = NormaliseSize(keys, keepOriginalSizes=keepOriginalSizes)
+
+    I_effect = np.ones(tuple(size), dtype=int) * 255
+    if len(keys) > 0:
+        I_effect = cv2.resize(savedIs[keys[0]], tuple(size[:2][::-1]))
+    for i in range(1, len(keys)):
+        key = keys[i]
+        if key in savedIs.keys():
+            I_effect = I_effect - cv2.resize(savedIs[key], tuple(size[:2][::-1]))
+
+    I_effect = NormaliseValues(I_effect, normaliseFit=normaliseFit)
+
+    return I_effect
+
+def ImageEffect_Avg(I, keys, keepOriginalSizes=False, normaliseFit=False):
+    global savedIs
+
+    size = NormaliseSize(keys, keepOriginalSizes=keepOriginalSizes)
+
+    I_effect = np.zeros(tuple(size), dtype=int)
+    for key in keys:
+        if key in savedIs.keys():
+            I_effect = I_effect + cv2.resize(savedIs[key], tuple(size[:2][::-1]))
+    if len(keys) > 0:
+        I_effect = I_effect / len(keys)
+
+    I_effect = NormaliseValues(I_effect, normaliseFit=normaliseFit)
+
+    return I_effect
+
+def ImageEffect_Mul(I, keys, keepOriginalSizes=False, normaliseFit=False):
+    global savedIs
+
+    size = NormaliseSize(keys, keepOriginalSizes=keepOriginalSizes)
+
+    I_effect = np.ones(tuple(size), dtype=int)
+    for key in keys:
+        if key in savedIs.keys():
+            I_effect = I_effect * cv2.resize(savedIs[key], tuple(size[:2][::-1]))
+
+    I_effect = NormaliseValues(I_effect, normaliseFit=normaliseFit)
+
+    return I_effect
 
 
 # Driver Code
