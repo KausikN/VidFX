@@ -12,6 +12,7 @@ import skimage.feature
 
 from Utils import VideoUtils
 
+from EffectsLibrary.TimeEffects import *
 from EffectsLibrary.BasicEffects import *
 from EffectsLibrary.FrameEffects import *
 from EffectsLibrary.NoiseEffects import *

@@ -28,22 +28,16 @@ CommonEffects = [
 ]
 EffectFuncs = [
     [
-        functools.partial(EffectsLibrary.ImageEffect_GreyScale)
+        functools.partial(EffectsLibrary.ImageEffect_None)
     ], 
     [
-        functools.partial(EffectsLibrary.ImageEffect_MostDominantColor),
-        functools.partial(EffectsLibrary.ImageEffect_RedChannel),
-        functools.partial(EffectsLibrary.ImageEffect_GreyScale),
-        functools.partial(EffectsLibrary.ImageEffect_Binarise, threshold=100),
-        functools.partial(EffectsLibrary.ImageEffect_Invert),
-        functools.partial(EffectsLibrary.ImageEffect_ClipValues, threshold=[0, 1], replace=[0, 1]),
-        functools.partial(EffectsLibrary.ImageEffect_ScaleValues, scaleFactor=[255, 255, 255])
+        functools.partial(EffectsLibrary.ImageEffect_FrameDelay, delay=12, funcKey='FrameDelay_0')
     ], 
     [
-        functools.partial(EffectsLibrary.ImageEffect_Mul, keys=['0_0', '1_5'])
+        functools.partial(EffectsLibrary.ImageEffect_FrameDelay, delay=24, funcKey='FrameDelay_1')
     ],
     [
-        functools.partial(EffectsLibrary.ImageEffect_Add, keys=['1_1', '2_0'])
+        functools.partial(EffectsLibrary.ImageEffect_FrameDelay, delay=36, funcKey='FrameDelay_2')
     ]
 ]
 

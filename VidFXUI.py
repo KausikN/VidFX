@@ -5,12 +5,17 @@ UI File for VidFX
 # Imports
 from UIUtils import Py2UI
 
+# Main Vars
+funcKeyVals = {}
+
 # Main Functions
-def UICommonEffectsCodeParser(data):
+def UICommonEffectsCodeParser(data, funcKeyFuncs=['FrameDelay']):
     # INPUT FORMAT
     # <EffectFuncName>(<Param1Name>=<Param1Value>, <Param2Name>=<Param2Value>, ...)
     # OUTPUT FORMAT
     # functools.partial(<EffectFuncName>, <Param1Name>=<Param1Value>, <Param2Name>=<Param2Value>, ...)
+
+    global funcKeyVals
 
     data = data.split('\n')
 
@@ -20,12 +25,22 @@ def UICommonEffectsCodeParser(data):
         if line in ['', '[', ']', ',']:
             continue
         else:
-            funcname = "EffectsLibrary.ImageEffect_" + line.split('(')[0].strip()
+            funcnameShort = line.split('(')[0].strip()
+            funcname = "EffectsLibrary.ImageEffect_" + funcnameShort
             paramText = '('.join(line.split('(')[1:]).rstrip(',')
             if paramText.endswith(')'):
                 paramText = paramText[:-1]
             if not paramText.strip() == "":
                 paramText = ", " + paramText
+
+            # Check for funcKey needing Funcs
+            if funcnameShort in funcKeyFuncs:
+                if funcnameShort in funcKeyVals.keys():
+                    funcKeyVals[funcnameShort] += 1
+                else:
+                    funcKeyVals[funcnameShort] = 0
+                paramText = paramText + ", funcKey=" + "'" + funcnameShort + "_" + str(funcKeyVals[funcnameShort]) + "'"
+
             parsedData.append('functools.partial(' + funcname + paramText + ')')
     
     parsedData = "[\n" + ',\n'.join(parsedData) + "\n]"

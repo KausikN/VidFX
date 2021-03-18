@@ -43,3 +43,4 @@ Dilate
 RemoveSmallObjects(min_size=64)
 Erode
 ConvexHull(obj=False)
+FrameDelay(delay=12)
