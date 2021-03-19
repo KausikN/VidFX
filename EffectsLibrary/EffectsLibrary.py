@@ -19,6 +19,7 @@ from EffectsLibrary.NoiseEffects import *
 from EffectsLibrary.FilterEffects import *
 from EffectsLibrary.SegmentationEffects import *
 from EffectsLibrary.MorphologicalEffects import *
+from EffectsLibrary.TerrainGenEffects import *
 
 # Main Vars
 savedIs = None
