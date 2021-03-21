@@ -66,5 +66,5 @@ def ImageEffect_Archipelago(I, thresholds=[0.25, 0.4, 0.85, 0.95]):
     # Colorise
     I_colourised = ColoriseTerrain2D_ArchipelagoSimple(I_greynorm, thresholds=thresholds)
     output = I_colourised
-
+    
     return output

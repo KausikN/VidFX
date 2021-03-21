@@ -70,4 +70,8 @@ def ImageEffect_BinValues(I, bins=[0, 127, 255]):
 def ImageEffect_Resize(I, size=(480, 640), interpolation=cv2.INTER_LINEAR):
     return cv2.resize(I, size, interpolation=interpolation)
 
+def ImageEffect_Mirror(I):
+    I_effect = I[:, ::-1]
+    return I_effect
+
 # Driver Code
