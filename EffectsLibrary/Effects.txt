@@ -46,4 +46,6 @@ ConvexHull(obj=False)
 FrameDelay(delay=12)
 TerrainGen(random_seed=False, seed=0, thresholds=[0.25, 0.4, 0.85, 0.95], scale=100.0, octaves=6, persistence=0.5, lacunarity=2.0, repeatx=1024, repeaty=1024)
 Archipelago(thresholds=[0.25, 0.4, 0.85, 0.95])
-PlotValueCount
+ValueCount_BarPlot
+ValueCount_LinePlot
+ValueCount_PointPlot

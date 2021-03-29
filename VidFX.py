@@ -28,16 +28,10 @@ CommonEffects = [
 ]
 EffectFuncs = [
     [
-        functools.partial(EffectsLibrary.ImageEffect_None)
+        functools.partial(EffectsLibrary.ImageEffect_GreyScale)
     ], 
     [
-        functools.partial(EffectsLibrary.ImageEffect_FrameDelay, delay=12, funcKey='FrameDelay_0')
-    ], 
-    [
-        functools.partial(EffectsLibrary.ImageEffect_FrameDelay, delay=24, funcKey='FrameDelay_1')
-    ],
-    [
-        functools.partial(EffectsLibrary.ImageEffect_FrameDelay, delay=36, funcKey='FrameDelay_2')
+        functools.partial(EffectsLibrary.ImageEffect_ValueCount_PointPlot, showAxis=False)
     ]
 ]
 
