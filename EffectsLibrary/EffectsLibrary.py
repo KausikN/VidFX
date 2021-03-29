@@ -20,6 +20,7 @@ from EffectsLibrary.FilterEffects import *
 from EffectsLibrary.SegmentationEffects import *
 from EffectsLibrary.MorphologicalEffects import *
 from EffectsLibrary.TerrainGenEffects import *
+from EffectsLibrary.PlotEffects import *
 
 # Main Vars
 savedIs = None
