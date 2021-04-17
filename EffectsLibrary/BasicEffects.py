@@ -12,6 +12,7 @@ def ImageEffect_None(I):
     return I
 
 def ImageEffect_Binarise(I, threshold=127):
+    # threshold = int(threshold)
     I = np.zeros(I.shape, dtype=np.uint8) + (I >= threshold)*np.ones(I.shape, dtype=np.uint8)*255
     return I
 

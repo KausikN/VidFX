@@ -15,25 +15,29 @@ from EffectsLibrary import EffectsLibrary
 
 # Driver Code
 # Params
-imgPath = 'TestImgs/Horse.PNG' #TYPE: FILE
+imgPath = 'TestImgs/Rev_Short.jpeg' #TYPE: FILE
 
 imgSize = None
 keepAspectRatio = False
 
 saveDir = 'GeneratedVisualisations/Effects/'
-saveName = 'Effect_GaussianFilter.jpg'
+saveName = 'Rev.jpg'
 
 CommonEffects = [
     functools.partial(EffectsLibrary.ImageEffect_None)
 ]
 EffectFuncs = [
     [
-        functools.partial(EffectsLibrary.ImageEffect_GreyScale),
-        functools.partial(EffectsLibrary.ImageEffect_Binarise, threshold=127)
+        functools.partial(EffectsLibrary.ImageEffect_GreyScale)
     ],
     [
-        functools.partial(EffectsLibrary.ImageEffect_Skeleton)
-    ]
+        functools.partial(EffectsLibrary.ImageEffect_GreyScale),
+        functools.partial(EffectsLibrary.ImageEffect_Binarise, threshold=135)
+    ],
+    [
+        functools.partial(EffectsLibrary.ImageEffect_GreyScale),
+        functools.partial(EffectsLibrary.ImageEffect_ValueCount_BarPlot)
+    ],
 ]
 
 display = True
