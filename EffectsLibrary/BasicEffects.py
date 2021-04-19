@@ -56,6 +56,8 @@ def ImageEffect_ScaleValues(I, scaleFactor=[0, 0, 0]):
     return I
 
 def ImageEffect_ClipValues(I, threshold=[127, 128], replace=[127, 128]):
+    threshold = np.array(threshold, dtype=int)
+    replace = np.array(replace, dtype=int)
     I = np.clip(I, threshold[0], threshold[1])
     lowCheck = (I == threshold[0])
     highCheck = (I == threshold[1])
@@ -63,7 +65,7 @@ def ImageEffect_ClipValues(I, threshold=[127, 128], replace=[127, 128]):
     return I
 
 def ImageEffect_BinValues(I, bins=[0, 127, 255]):
-    bins = np.array(bins)
+    bins = np.array(bins, dtype=int)
     binMaps = np.digitize(I, bins)
     binMaps = np.clip(binMaps, 0, bins.shape[0]-1)
     return bins[binMaps]
@@ -73,6 +75,43 @@ def ImageEffect_Resize(I, size=(480, 640), interpolation=cv2.INTER_LINEAR):
 
 def ImageEffect_Mirror(I):
     I_effect = I[:, ::-1]
+    return I_effect
+
+def ImageEffect_Translate(I, offset=[0, 0]):
+    offset = np.array(offset, dtype=int)
+    M = np.float32([
+        [1, 0, offset[0]],
+        [0, 1, offset[1]]
+    ])
+    I_effect = cv2.warpAffine(I, M, (I.shape[1], I.shape[0]))
+    return I_effect
+
+def ImageEffect_Rotate(I, angle=0.0, center=[0.5, 0.5]):
+    center = np.array(center, dtype=float)
+    angle = float(angle)
+    centerPoint = tuple(np.array(I.shape[1::-1]) * center)
+    M = cv2.getRotationMatrix2D(centerPoint, angle, 1.0)
+    I_effect = cv2.warpAffine(I, M, (I.shape[1], I.shape[0]))#, flags=cv2.INTER_LINEAR)
+    return I_effect
+
+def ImageEffect_Scale(I, scale=[1.0, 1.0]):
+    scale = np.array(scale, dtype=float)
+    M = np.float32([
+        [scale[0], 0, 0],
+        [0, scale[1], 0]
+    ])
+    I_effect = cv2.warpAffine(I, M, (I.shape[1], I.shape[0]))#, flags=cv2.INTER_LINEAR)
+    return I_effect
+
+def ImageEffect_GeometricTransform(I, translate=[0, 0], rotate=0.0, scale=[1.0, 1.0]):
+    scale = np.array(scale, dtype=float)
+    translate = np.array(translate, dtype=int)
+    rotate = float(rotate)
+    M = np.float32([
+        [scale[0] * (np.cos(rotate)), -np.sin(rotate), translate[0]],
+        [np.sin(rotate), scale[1] * (np.cos(rotate)), translate[1]]
+    ])
+    I_effect = cv2.warpAffine(I, M, (I.shape[1], I.shape[0]))#, flags=cv2.INTER_LINEAR)
     return I_effect
 
 # Driver Code
