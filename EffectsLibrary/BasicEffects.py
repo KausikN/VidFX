@@ -77,11 +77,11 @@ def ImageEffect_Mirror(I):
     I_effect = I[:, ::-1]
     return I_effect
 
-def ImageEffect_Translate(I, offset=[0, 0]):
-    offset = np.array(offset, dtype=int)
+def ImageEffect_Translate(I, offset=[0.0, 0.0]):
+    offset = np.array(offset, dtype=float)
     M = np.float32([
-        [1, 0, offset[0]],
-        [0, 1, offset[1]]
+        [1, 0, offset[0]*I.shape[1]],
+        [0, 1, offset[1]*I.shape[0]]
     ])
     I_effect = cv2.warpAffine(I, M, (I.shape[1], I.shape[0]))
     return I_effect
@@ -105,11 +105,11 @@ def ImageEffect_Scale(I, scale=[1.0, 1.0]):
 
 def ImageEffect_GeometricTransform(I, translate=[0, 0], rotate=0.0, scale=[1.0, 1.0]):
     scale = np.array(scale, dtype=float)
-    translate = np.array(translate, dtype=int)
+    translate = np.array(translate, dtype=float)
     rotate = float(rotate)
     M = np.float32([
-        [scale[0] * (np.cos(rotate)), -np.sin(rotate), translate[0]],
-        [np.sin(rotate), scale[1] * (np.cos(rotate)), translate[1]]
+        [scale[0] * (np.cos(rotate)), -np.sin(rotate), translate[0]*I.shape[1]],
+        [np.sin(rotate), scale[1] * (np.cos(rotate)), translate[1]*I.shape[0]]
     ])
     I_effect = cv2.warpAffine(I, M, (I.shape[1], I.shape[0]))#, flags=cv2.INTER_LINEAR)
     return I_effect

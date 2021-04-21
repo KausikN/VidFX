@@ -15,33 +15,28 @@ from EffectsLibrary import EffectsLibrary
 
 # Driver Code
 # Params
-imgPath = 'TestImgs/Rev_Short.jpeg' #TYPE: FILE
+imgPath = 'TestImgs/Test_Small.jpg' #TYPE: FILE
 
 imgSize = None
 keepAspectRatio = False
 
 saveDir = 'GeneratedVisualisations/Effects/'
-saveName = 'Rev.jpg'
+saveName = 'Effect_ValueCount.jpg'
 
 CommonEffects = [
     functools.partial(EffectsLibrary.ImageEffect_None)
 ]
 EffectFuncs = [
     [
-        functools.partial(EffectsLibrary.ImageEffect_GreyScale)
+        functools.partial(EffectsLibrary.ImageEffect_None)
     ],
     [
-        functools.partial(EffectsLibrary.ImageEffect_GreyScale),
-        functools.partial(EffectsLibrary.ImageEffect_Binarise, threshold=135)
-    ],
-    [
-        functools.partial(EffectsLibrary.ImageEffect_GreyScale),
         functools.partial(EffectsLibrary.ImageEffect_ValueCount_BarPlot)
-    ],
+    ]
 ]
 
-display = True
-save = False
+display = False
+save = True
 # Params
 
 # RunCode

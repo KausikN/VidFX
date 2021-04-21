@@ -16,7 +16,7 @@ from EffectsLibrary import EffectsLibrary
 
 # Driver Code
 # Params
-imgPath = 'TestImgs/Test.jpg' #TYPE: FILE
+imgPath = 'TestImgs/Horse.PNG' #TYPE: FILE
 
 imgSize = None
 keepAspectRatio = False
@@ -32,13 +32,27 @@ CommonEffects = [
 EffectFuncs = [
     [
         [
-            EffectsLibrary.ImageEffect_ScaleValues, 
+            EffectsLibrary.ImageEffect_Rotate,
             {
-                "scaleFactor": [
-                functools.partial(EffectTransistionUtils.EffectTransistion_Linear, start=0, end=2),
-                functools.partial(EffectTransistionUtils.EffectTransistion_Linear, start=0, end=2),
-                functools.partial(EffectTransistionUtils.EffectTransistion_Linear, start=0, end=2)
-            ]
+                "angle": functools.partial(EffectTransistionUtils.EffectTransistion_Linear, start=0.0, end=720.0)
+            }
+        ],
+        [
+            EffectsLibrary.ImageEffect_Scale,
+            {
+                "scale": [
+                    functools.partial(EffectTransistionUtils.EffectTransistion_Linear, start=1.0, end=0.0),
+                    functools.partial(EffectTransistionUtils.EffectTransistion_Linear, start=1.0, end=0.0)
+                ]
+            }
+        ],
+        [
+            EffectsLibrary.ImageEffect_Translate,
+            {
+                "offset": [
+                    functools.partial(EffectTransistionUtils.EffectTransistion_Linear, start=0, end=0.5),
+                    functools.partial(EffectTransistionUtils.EffectTransistion_Linear, start=0, end=0.5)
+                ]
             }
         ]
     ]
@@ -46,6 +60,9 @@ EffectFuncs = [
 MainEffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages, nCols=2)
 
 frameCount = 50
+
+speedUp = 1
+fps = 20.0
 
 display = False
 save = True
@@ -64,4 +81,4 @@ EffectFunctions = {
 I = VideoUtils.ReadImage(imgPath, imgSize=imgSize, keepAspectRatio=keepAspectRatio)
 
 # Apply Effects
-EffectTransistionUtils.ImageEffectTransistion(I, EffectFunctions, pathOut=savePath, max_frames=frameCount, speedUp=1, fps=20.0, size=None, display=display, save=save, recursiveArgs=recursiveArgs)
+EffectTransistionUtils.ImageEffectTransistion(I, EffectFunctions, pathOut=savePath, max_frames=frameCount, speedUp=speedUp, fps=fps, size=None, display=display, save=save, recursiveArgs=recursiveArgs)

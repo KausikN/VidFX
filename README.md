@@ -33,15 +33,23 @@
 
      ![Frame Video Image](GeneratedVisualisations/FrameEffect_1.gif)
 
-   - Many Fun Effects including greyscale, binarise, dominant and least dominant channel, etc
+   - Run ImageFXUI.py file
+
+     Add same effects for images
+
+     ![Effect Image](GeneratedVisualisations/Effects/Effect_CannyEdges.jpg)
    
-   - Effects can also be used in combination with each other
+   - Effects can also be used in combination with each other (BinValues + Blur)
 
      ![Combined Effects Video Image](GeneratedVisualisations/EffectCombination_1.gif)
 
    - Multiple Effects can be viewed at same time
 
      ![Multiple Effects Video Image](GeneratedVisualisations/MultipleEffects_1.gif)
+  
+   - Effects Transistion can be applied to an image to form a video of the image under an effect with varying parameters (Decreasing Scale and Increasing Rotation)
+
+     ![EffectsTransistion Video](GeneratedVisualisations/Effects/EffectTransistion_GeometricTransform.gif)
 
 # Effects
 
@@ -124,6 +132,10 @@
    - CannyEdges
 
      ![CannyEdges Effect](GeneratedVisualisations/Effects/Effect_CannyEdges.jpg)
+
+   - ValueCount Plot
+
+     ![ValueCount Effect](GeneratedVisualisations/Effects/Effect_ValueCount.jpg)
 
    - And many more! 
    
