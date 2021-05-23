@@ -21,22 +21,31 @@ from EffectsLibrary.SegmentationEffects import *
 from EffectsLibrary.MorphologicalEffects import *
 from EffectsLibrary.TerrainGenEffects import *
 from EffectsLibrary.PlotEffects import *
+from EffectsLibrary.TransparencyEffects import *
 
 # Main Vars
 savedIs = None
+PIXELDATA_DIMENSIONS = 4 # RGB - 3, RGBA - 4
 
 # Main Functions
+def ApplyAlphaToImage(I):
+    I_ra = I[:, :, 0] * (np.array(I[:, :, 3], dtype=float)/255)
+    I_ga = I[:, :, 1] * (np.array(I[:, :, 3], dtype=float)/255)
+    I_ba = I[:, :, 2] * (np.array(I[:, :, 3], dtype=float)/255)
+    I_aa = np.dstack((I_ra, I_ga, I_ba, np.ones(I.shape[:2], dtype=np.uint8)*255))
+    return np.array(I_aa, dtype=np.uint8)
+
 def NormaliseSize(keys, keepOriginalSizes=False):
     global savedIs
 
-    size = [100, 100, 3]
+    size = [100, 100, PIXELDATA_DIMENSIONS]
     if keepOriginalSizes:
         for key in keys:
             if key in savedIs.keys():
                 size = [max(size[0], savedIs[key].shape[0]), max(size[1], savedIs[key].shape[1])]
     else:
         if len(keys) > 0 and keys[0] in savedIs.keys():
-            size = list(savedIs[keys[0]].shape)[:2] + [3]
+            size = list(savedIs[keys[0]].shape)[:2] + [PIXELDATA_DIMENSIONS]
 
     return size
 
@@ -169,12 +178,12 @@ def Image_MultipleImages(I, CommonEffects, EffectFuncs, nCols=2):
     for i in range(len(EffectedIs)):
         PixelDiff = [CommonSize[0] - EffectedIs[i].shape[0], CommonSize[1] - EffectedIs[i].shape[1]]
         Offset = [int(PixelDiff[0]/2), int(PixelDiff[1]/2)]
-        I_appended = np.zeros((CommonSize[0], CommonSize[1], 3), dtype=np.uint8)
+        I_appended = np.zeros((CommonSize[0], CommonSize[1], PIXELDATA_DIMENSIONS), dtype=np.uint8)
         I_appended[Offset[0]:Offset[0]+EffectedIs[i].shape[0], Offset[1]:Offset[1]+EffectedIs[i].shape[1], :] = EffectedIs[i]
         EffectedIs[i] = I_appended
 
     # Append all images into 1 image
-    I_full = np.zeros((CommonSize[0]*nRows, CommonSize[1]*nCols, 3), dtype=np.uint8)
+    I_full = np.zeros((CommonSize[0]*nRows, CommonSize[1]*nCols, PIXELDATA_DIMENSIONS), dtype=np.uint8)
     for I_this in EffectedIs:
         I_full[curPos[0]*CommonSize[0]:(curPos[0]+1)*CommonSize[0], curPos[1]*CommonSize[1]:(curPos[1]+1)*CommonSize[1], :] = I_this[:, :, :]
         curPos = [curPos[0], curPos[1]+1]
@@ -213,7 +222,10 @@ def Image_MultipleImages_RemovedRecompute(I, CommonEffects, EffectFuncs, nCols=2
         for EffectFunc in EffectFuncs_Image:
             I_this = EffectFunc(I_this)
             if I_this.ndim == 2:
-                I_this = cv2.cvtColor(I_this, cv2.COLOR_GRAY2RGB)
+                I_this = cv2.cvtColor(I_this, cv2.COLOR_GRAY2RGBA)
+            elif I_this.shape[2] == 3:
+                I_this = np.dstack((I_this, np.ones(I_this.shape[:2], dtype=np.uint8)*255))
+                # I_this = cv2.cvtColor(I_this, cv2.COLOR_RGB2RGBA)
             
             # Save Image if needed
             curIndexKey = str(curIndex[0]) + "_" + str(curIndex[1])
@@ -233,19 +245,19 @@ def Image_MultipleImages_RemovedRecompute(I, CommonEffects, EffectFuncs, nCols=2
     for i in range(len(EffectedIs)):
         PixelDiff = [CommonSize[0] - EffectedIs[i].shape[0], CommonSize[1] - EffectedIs[i].shape[1]]
         Offset = [int(PixelDiff[0]/2), int(PixelDiff[1]/2)]
-        I_appended = np.zeros((CommonSize[0], CommonSize[1], 3), dtype=np.uint8)
+        I_appended = np.zeros((CommonSize[0], CommonSize[1], PIXELDATA_DIMENSIONS), dtype=np.uint8)
         I_appended[Offset[0]:Offset[0]+EffectedIs[i].shape[0], Offset[1]:Offset[1]+EffectedIs[i].shape[1], :] = EffectedIs[i]
         EffectedIs[i] = I_appended
 
     # Append all images into 1 image
-    I_full = np.zeros((CommonSize[0]*nRows, CommonSize[1]*nCols, 3), dtype=np.uint8)
+    I_full = np.zeros((CommonSize[0]*nRows, CommonSize[1]*nCols, PIXELDATA_DIMENSIONS), dtype=np.uint8)
     for I_this in EffectedIs:
         I_full[curPos[0]*CommonSize[0]:(curPos[0]+1)*CommonSize[0], curPos[1]*CommonSize[1]:(curPos[1]+1)*CommonSize[1], :] = I_this[:, :, :]
         curPos = [curPos[0], curPos[1]+1]
         if curPos[1] >= nCols:
             curPos = [curPos[0]+1, 0]
-
-    I_full = cv2.cvtColor(I_full, cv2.COLOR_RGB2BGR)
+    # I_full = cv2.cvtColor(I_full, cv2.COLOR_RGB2BGR)
+    I_full = cv2.cvtColor(I_full, cv2.COLOR_RGBA2BGRA)
 
     return I_full
 
@@ -271,7 +283,9 @@ def ImageEffect_Add(I, keys, keepOriginalSizes=False, normaliseFit=False):
     I_effect = np.zeros(tuple(size), dtype=int)
     for key in keys:
         if key in savedIs.keys():
-            I_effect = I_effect + cv2.resize(savedIs[key], tuple(size[:2][::-1]))
+            # I_effect = I_effect + cv2.resize(savedIs[key], tuple(size[:2][::-1]))
+            I_alphaApplied = ApplyAlphaToImage(savedIs[key])
+            I_effect = I_effect + cv2.resize(I_alphaApplied, tuple(size[:2][::-1])) # With Alpha
 
     I_effect = NormaliseValues(I_effect, normaliseFit=normaliseFit)
 
@@ -284,11 +298,13 @@ def ImageEffect_Sub(I, keys, keepOriginalSizes=False, normaliseFit=False):
 
     I_effect = np.ones(tuple(size), dtype=int) * 255
     if len(keys) > 0:
-        I_effect = cv2.resize(savedIs[keys[0]], tuple(size[:2][::-1]))
+        I_alphaApplied = ApplyAlphaToImage(savedIs[keys[0]])
+        I_effect = cv2.resize(I_alphaApplied, tuple(size[:2][::-1]))
     for i in range(1, len(keys)):
         key = keys[i]
         if key in savedIs.keys():
-            I_effect = I_effect - cv2.resize(savedIs[key], tuple(size[:2][::-1]))
+            I_alphaApplied = ApplyAlphaToImage(savedIs[key])
+            I_effect = I_effect - cv2.resize(I_alphaApplied, tuple(size[:2][::-1]))
 
     I_effect = NormaliseValues(I_effect, normaliseFit=normaliseFit)
 
@@ -302,7 +318,8 @@ def ImageEffect_Avg(I, keys, keepOriginalSizes=False, normaliseFit=False):
     I_effect = np.zeros(tuple(size), dtype=int)
     for key in keys:
         if key in savedIs.keys():
-            I_effect = I_effect + cv2.resize(savedIs[key], tuple(size[:2][::-1]))
+            I_alphaApplied = ApplyAlphaToImage(savedIs[key])
+            I_effect = I_effect + cv2.resize(I_alphaApplied, tuple(size[:2][::-1]))
     if len(keys) > 0:
         I_effect = I_effect / len(keys)
 
@@ -318,7 +335,8 @@ def ImageEffect_Mul(I, keys, keepOriginalSizes=False, normaliseFit=False):
     I_effect = np.ones(tuple(size), dtype=int)
     for key in keys:
         if key in savedIs.keys():
-            I_effect = I_effect * cv2.resize(savedIs[key], tuple(size[:2][::-1]))
+            I_alphaApplied = ApplyAlphaToImage(savedIs[key])
+            I_effect = I_effect * cv2.resize(I_alphaApplied, tuple(size[:2][::-1]))
 
     I_effect = NormaliseValues(I_effect, normaliseFit=normaliseFit)
 
