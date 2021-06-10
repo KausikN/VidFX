@@ -22,6 +22,7 @@ from EffectsLibrary.MorphologicalEffects import *
 from EffectsLibrary.TerrainGenEffects import *
 from EffectsLibrary.PlotEffects import *
 from EffectsLibrary.TransparencyEffects import *
+from EffectsLibrary.ShufflingEffects import *
 
 # Main Vars
 savedIs = None
