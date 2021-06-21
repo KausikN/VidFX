@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 
 # Main Functions
-def ImageEffect_RandomShufflePixels(I):
+def ImageEffect_ShufflePixelsRandom(I):
     I_flat = np.reshape(I, (I.shape[0]*I.shape[1], I.shape[2]))
     I_shuffled_flat = np.copy(I_flat)
     np.random.shuffle(I_shuffled_flat)

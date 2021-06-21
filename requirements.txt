@@ -1,0 +1,9 @@
+streamlit
+numpy
+matplotlib
+opencv-python-headless
+tqdm
+imageio
+PIL
+skimage
+streamlit-webcam-example

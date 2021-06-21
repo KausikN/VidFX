@@ -1,0 +1,10 @@
+{
+    "PROJECT_NAME": "VidFX",
+    "PROJECT_LINK": "https://github.com/KausikN/VidFX",
+
+    "PROJECT_DESC": "A python tool (UI and Code) for editing videos and adding fun effects to webcam and video",
+
+    "PROJECT_README": "README.md",
+
+    "PROJECT_MODES": ["VideoFX", "ImageFX", "Effect Transistions"]
+}
