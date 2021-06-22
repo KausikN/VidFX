@@ -5,6 +5,7 @@ Stream lit GUI for hosting VidFX
 # Imports
 import os
 import cv2
+import pickle
 import PIL
 import importlib
 import functools
@@ -57,12 +58,15 @@ def HomePage():
 # Repo Based Vars
 DEFAULT_PATH_EXAMPLEIMAGE = 'TestImgs/Horse.PNG'
 DEFAULT_PATH_EXAMPLEVIDEO = 'TestVids/Test_Animation.wmv'
+AVAILABLEEFFECTS_PATH = 'StreamLitGUI/AvailableEffects.txt'
 
 DEFAULT_SAVEPATH_IMAGE = 'TestImgs/OutputImage.png'
 DEFAULT_SAVEPATH_VIDEO = 'TestImgs/OutputVideo.mp4'
 DEFAULT_SAVEPATH_GIF = 'TestImgs/OutputGIF.gif'
 
 DEFAULT_CODE_PACKAGE = 'StreamLitGUI'
+
+OUTPUT_NCOLS = 5
 
 IMAGESIZE_MIN = [1, 1]
 IMAGESIZE_MAX = [512, 512]
@@ -74,8 +78,13 @@ DISPLAY_INTERPOLATION = cv2.INTER_NEAREST
 DISPLAY_DELAY = 0.1
 
 INPUTREADERS_VIDEO = {
-    "Upload Video File": VideoUtils.ReadVideo,
-    "Webcam": VideoUtils.WebcamVideo
+    "Webcam": VideoUtils.WebcamVideo,
+    "Upload Video File": VideoUtils.ReadVideo
+}
+
+INPUTREADERS_IMAGE = {
+    "Webcam Snapshot": VideoUtils.WebcamVideo,
+    "Upload Image File": None
 }
 
 # Util Vars
@@ -103,30 +112,36 @@ def GetEffectsCode(CommonEffectsText, EffectFuncsText):
 import cv2
 import functools
 import numpy as np
+import pickle
 
 from EffectsLibrary import EffectsLibrary
 
 '''
-    CommonEffectsCode = ImportsCode + "CommonEffects = " + VidFX.UICommonEffectsCodeParser(CommonEffectsText)
-    open(os.path.join(DEFAULT_CODE_PACKAGE, "CommonEffects.py"), 'w').write(CommonEffectsCode)
-    CommonEffects = importlib.import_module(DEFAULT_CODE_PACKAGE + ".CommonEffects").CommonEffects
+    SavePickleCode = '''
+pickle.dump({EffectObj}, open('{DEFAULT_CODE_PACKAGE}' + '/{EffectObj}.p', 'wb'))
+'''
 
-    EffectFuncsCode = ImportsCode + "EffectFuncs = " + VidFX.UIMultiEffectsCodeParser(EffectFuncsText)
-    open(os.path.join(DEFAULT_CODE_PACKAGE, "EffectFuncs.py"), 'w').write(EffectFuncsCode)
-    EffectFuncs = importlib.import_module(DEFAULT_CODE_PACKAGE + ".EffectFuncs").EffectFuncs
+    CommonEffectsCode = ImportsCode + "CommonEffects = " + VidFX.UICommonEffectsCodeParser(CommonEffectsText) + SavePickleCode.format(DEFAULT_CODE_PACKAGE=DEFAULT_CODE_PACKAGE, EffectObj='CommonEffects')
+    # open(os.path.join(DEFAULT_CODE_PACKAGE, "CommonEffects.py"), 'w').write(CommonEffectsCode)
+    # CommonEffectsModule = importlib.import_module(DEFAULT_CODE_PACKAGE + ".CommonEffects")
+    # import StreamLitGUI.CommonEffects as CommonEffectsModule
+    # CommonEffectsModule = importlib.reload(CommonEffectsModule)
+    # CommonEffects = CommonEffectsModule.CommonEffects
+    exec(CommonEffectsCode, globals())
+    CommonEffects = pickle.load(open(os.path.join(DEFAULT_CODE_PACKAGE, "CommonEffects.p"), 'rb'))
+
+    EffectFuncsCode = ImportsCode + "EffectFuncs = " + VidFX.UIMultiEffectsCodeParser(EffectFuncsText) + SavePickleCode.format(DEFAULT_CODE_PACKAGE=DEFAULT_CODE_PACKAGE, EffectObj='EffectFuncs')
+    # open(os.path.join(DEFAULT_CODE_PACKAGE, "EffectFuncs.py"), 'w').write(EffectFuncsCode)
+    # EffectFuncsModule = importlib.import_module(DEFAULT_CODE_PACKAGE + ".EffectFuncs")
+    # import StreamLitGUI.EffectFuncs as EffectFuncsModule
+    # EffectFuncsModule = importlib.reload(EffectFuncsModule)
+    # EffectFuncs = EffectFuncsModule.EffectFuncs
+    exec(EffectFuncsCode, globals())
+    EffectFuncs = pickle.load(open(os.path.join(DEFAULT_CODE_PACKAGE, "EffectFuncs.p"), 'rb'))
     
     return CommonEffects, EffectFuncs
 
 # UI Functions
-def UI_Webcam():
-    captured_image = webcam()
-    if captured_image is None:
-        st.write("Waiting for capture...")
-    else:
-        st.write("Got an image from the webcam:")
-        st.image(captured_image)
-
-
 def UI_VideoInputSource():
     USERINPUT_VideoInputChoice = st.selectbox("Select Video Input Source", list(INPUTREADERS_VIDEO.keys()))
 
@@ -146,37 +161,80 @@ def UI_VideoInputSource():
     
     return USERINPUT_Video
 
+def UI_DisplayEffectVideo(vid=None, max_frames=-1, EffectFunc=None, compactDisplay=False):
+    frameCount = 0
 
-def UI_TransistionFuncSelect(title='', col=st):
-    TransistionFuncName = col.selectbox(title, list(TRANSISTIONFUNCS.keys()))
-    TransistionFunc = TRANSISTIONFUNCS[TransistionFuncName]
-    return TransistionFunc
+    # Check if camera opened successfully
+    if (vid.isOpened()== False): 
+        print("Error opening video stream or file")
 
-def UI_CustomResize():
-    col1, col2 = st.beta_columns(2)
-    USERINPUT_ImageSizeX = col2.slider("Width Pixels", IMAGESIZE_MIN[0], IMAGESIZE_MAX[0], IMAGESIZE_DEFAULT[0], IMAGESIZE_MIN[0], key="USERINPUT_ImageSizeX")
-    USERINPUT_ImageSizeY = col2.slider("Height Pixels", IMAGESIZE_MIN[1], IMAGESIZE_MAX[1], IMAGESIZE_DEFAULT[1], IMAGESIZE_MIN[1], key="USERINPUT_ImageSizeY")
-    CustomSize = [int(USERINPUT_ImageSizeX), int(USERINPUT_ImageSizeY)]
+    col1, col2 = st, st
+    if compactDisplay:
+        col1, col2 = st.beta_columns(2)
 
-    ImageSizeIndicator_Image = GenerateImageSizeIndicatorImage(CustomSize[::-1]) # Reversed due to dissimilarity in generating width and height
-    col1.image(ImageSizeIndicator_Image, caption="Image Size (Max " + str(IMAGESIZE_MAX[0]) + " x " + str(IMAGESIZE_MAX[1]) + ")", use_column_width=False, clamp=False)
+    inputVideoDisplay = col1.empty()
+    effectVideoDisplay = col2.empty()
+
+    # Read until video is completed
+    while(vid.isOpened() and ((not (frameCount == max_frames)) or (max_frames == -1))):
+        # Capture frame-by-frame
+        ret, frame = vid.read()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        inputVideoDisplay.image(frame, caption='Input Video', use_column_width=compactDisplay)
+        if ret == True:
+            # Apply Effect if needed
+            if EffectFunc is not None:
+                frame = EffectFunc(frame)
+            # Display the resulting frame
+            effectVideoDisplay.image(frame, caption='Effect Video', use_column_width=compactDisplay)
+            frameCount += 1
+        # Break the loop
+        else: 
+            break
+    # When everything done, release the video capture object
+    vid.release()
+
+def UI_LoadImage():
+    USERINPUT_ImageInputChoice = st.selectbox("Select Image Input Source", list(INPUTREADERS_IMAGE.keys()))
+
+    USERINPUT_Image = None
+    # Upload Image File
+    if USERINPUT_ImageInputChoice == "Upload Image File":
+        USERINPUT_ImageReader = INPUTREADERS_IMAGE[USERINPUT_ImageInputChoice] # Unused Reader as image is loaded directly
+        USERINPUT_ImageData = st.file_uploader("Upload Image", ['png', 'jpg', 'jpeg', 'bmp'])
+        if USERINPUT_ImageData is not None:
+            USERINPUT_ImageData = USERINPUT_ImageData.read()
+        else:
+            USERINPUT_ImageData = open(DEFAULT_PATH_EXAMPLEIMAGE, 'rb').read()
+        USERINPUT_ImageData = cv2.imdecode(np.frombuffer(USERINPUT_ImageData, np.uint8), cv2.IMREAD_COLOR)
+        USERINPUT_Image = cv2.cvtColor(USERINPUT_ImageData, cv2.COLOR_BGR2RGB)
+    # Webcam Snapshot
+    else:
+        USERINPUT_ImageReader = INPUTREADERS_IMAGE[USERINPUT_ImageInputChoice]
+        webcamVid = USERINPUT_ImageReader()
+        RegenerateWebcameSnapshot = st.button("Retake")
+        ret, USERINPUT_Image = webcamVid.read()
+        USERINPUT_Image = cv2.cvtColor(USERINPUT_Image, cv2.COLOR_BGR2RGB)
     
-    return CustomSize
+    return USERINPUT_Image
 
-def UI_Resizer(USERINPUT_Image_1, USERINPUT_Image_2):
-    ResizeFuncName = st.selectbox("Select Resize Method", list(RESIZEFUNCS.keys()))
-    ResizeFunc = RESIZEFUNCS[ResizeFuncName]
-    # Check for Custom Size
-    if 'Custom Size' in ResizeFuncName:
-        CustomSize = UI_CustomResize()
-        ResizeFunc = functools.partial(ResizeFunc, Size=tuple(CustomSize))
+def UI_DisplayEffectImage(USERINPUT_Image, EffectImage):
+    st.image(USERINPUT_Image, "Input Image", use_column_width=True)
+    st.image(EffectImage, "Effected Image", use_column_width=True)
 
-    USERINPUT_Image_1, USERINPUT_Image_2 = ResizeFunc(USERINPUT_Image_1, USERINPUT_Image_2)
+def UI_AvailableEffects():
+    AvailableEffectsData = open(AVAILABLEEFFECTS_PATH, 'r').read().split('\n')
+    AvailableEffectsNames = []
+    for data in AvailableEffectsData:
+        AvailableEffectsNames.append((data.split('('))[0])
+    st.markdown("## Available Effects")
     col1, col2 = st.beta_columns(2)
-    col1.image(USERINPUT_Image_1, caption="Resized Start Image", use_column_width=True)
-    col2.image(USERINPUT_Image_2, caption="Resized End Image", use_column_width=True)
+    USERINPUT_EffectName = col1.selectbox("", AvailableEffectsNames)
+    USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
+    USERINPUT_EffectData = AvailableEffectsData[USERINPUT_EffectIndex]
+    col2.markdown("```pythonn\n" + USERINPUT_EffectData)
 
-    return USERINPUT_Image_1, USERINPUT_Image_2
+    return USERINPUT_EffectData
 
 # Repo Based Functions
 def videofx():
@@ -185,21 +243,58 @@ def videofx():
 
     # Load Inputs
     USERINPUT_Video = UI_VideoInputSource()
-    CommonEffectsText = st.text_area("Common Effects Code")
-    EffectFuncsText = st.text_area("Effects Code")
+    UI_AvailableEffects()
+    st.markdown("## Enter Effect Codes")
+    CommonEffectsText = st.text_area("Common Effects Code", "None")
+    EffectFuncsText = st.text_area("Effects Code", "None")
     CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
 
-    EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=True)
-    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=nCols, saveI_keys=saveI_keys)
+    EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
+    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
 
-    
+    # Process Inputs and Display Output
+    st.markdown("## Videos")
+    UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc)
+
+def imagefx():
+    # Title
+    st.header("Image FX")
+
+    # Load Inputs
+    USERINPUT_Image = UI_LoadImage()
+    UI_AvailableEffects()
+    st.markdown("## Enter Effect Codes")
+    CommonEffectsText = st.text_area("Common Effects Code", "None")
+    EffectFuncsText = st.text_area("Effects Code", "None")
+    CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+
+    EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
+    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
 
     # Process Inputs
-    if st.button("Generate"):
-        pass
+    EffectImage = EffectFunc(USERINPUT_Image)
 
-        # Display Outputs
-        # UI_DisplayImageSequence_AsGIF(GeneratedImgs)
+    # Display Output
+    st.markdown("## Images")
+    UI_DisplayEffectImage(USERINPUT_Image, EffectImage)
+
+def effects():
+    # Title
+    st.header("Effects")
+
+    # Load Inputs
+    USERINPUT_Video = UI_VideoInputSource()
+    USERINPUT_ChosenEffectData = UI_AvailableEffects()
+    st.markdown("## Edit Effect Parameters")
+    EffectFuncText = st.text_input("Effect Code", USERINPUT_ChosenEffectData)
+    CommonEffects, EffectFuncs = GetEffectsCode('None', EffectFuncText)
+
+    EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
+    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+
+    # Process Inputs and Display Output
+    st.markdown("## Videos")
+    UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc, compactDisplay=True)
     
 #############################################################################################################################
 # Driver Code

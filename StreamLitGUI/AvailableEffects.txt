@@ -1,0 +1,58 @@
+None
+Add(keys, keepOriginalSizes=False, normaliseFit=False)
+Sub(keys, keepOriginalSizes=False, normaliseFit=False)
+Avg(keys, keepOriginalSizes=False, normaliseFit=False)
+Binarise(threshold=127)
+GreyScale
+RGB2BGR
+RedChannel
+BlueChannel
+GreenChannel
+MostDominantColor
+LeastDominantColor
+ScaleValues(scaleFactor=[1.75, 1.75, 1.75])
+ClipValues(threshold=[100, 200], replace=[100, 200])
+BinValues(bins=[0, 64, 128, 196, 255])
+Resize(size=(640, 480), interpolation=cv2.INTER_LINEAR)
+AddFrame(FrameFileData={"imgPath": 'Frames/Frame_Nintendo_111_303_430_107_285_607.PNG', "imgSize": None, "keepAspectRatio": False})
+GaussianNoise(mean=50, SD=25)
+SpeckleNoise
+SaltPepperNoise(prob=0.5)
+SemanticSegmentation(overlay=True)
+InstanceSegmentation(show_bboxes=True)
+FastSemanticSegmentation
+GaussianFilter(sigma=2)
+SobelFilter
+SobelVerticalFilter
+SobelHorizontalFilter
+RobertsFilter
+ScharrFilter
+ScharrVerticalFilter
+ScharrHorizontalFilter
+PrewittFilter
+MedianFilter
+LaplaceFilter(ksize=3)
+FaridEdges
+FaridVerticalEdges
+FaridHorizontalEdges
+CannyEdges(sigma=0.0, low_threshold=0.1, high_threshold=0.9)
+Skeleton(method=None, bin_threshold=127)
+Thin(max_iters=None, bin_threshold=127)
+Watershed(watershed_line=True)
+Dilate
+RemoveSmallObjects(min_size=64)
+Erode
+ConvexHull(obj=False)
+FrameDelay(delay=12)
+TerrainGen(random_seed=False, seed=0, thresholds=[0.25, 0.4, 0.85, 0.95], scale=100.0, octaves=6, persistence=0.5, lacunarity=2.0, repeatx=1024, repeaty=1024)
+Archipelago(thresholds=[0.25, 0.4, 0.85, 0.95])
+ValueCount_BarPlot(showAxis=True)
+ValueCount_LinePlot(showAxis=True)
+ValueCount_PointPlot(showAxis=True)
+ValueCount_Plot(plots=['bar', 'point', 'line'], showAxis=True)
+Translate(offset=[0.0, 0.0])
+Rotate(angle=0.0, center=[0.5, 0.5])
+Scale(scale=[1.0, 1.0])
+GeometricTransform(translate=[0.0, 0.0], rotate=0.0, scale=[1.0, 1.0])
+ColorKeyTransparent(keyColor=[0,0,0])
+ShufflePixelsRandom
