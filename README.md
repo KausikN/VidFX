@@ -1,6 +1,16 @@
 # VidFX
  A python tool (UI and Code) for editing videos and adding fun effects to webcam and video
 
+# GUI
+ - Install streamlit using
+   ```
+   pip install streamlit
+   ```
+ - Launch Streamlit GUI in the repo folder by
+   ```
+   streamlit run app.py
+   ```
+
 # UI Effects Visualiser
    
    - Run VidFXUI.py file
