@@ -6,5 +6,5 @@
 
     "PROJECT_README": "README.md",
 
-    "PROJECT_MODES": ["VideoFX", "ImageFX", "Effects"]
+    "PROJECT_MODES": ["VideoFX", "ImageFX", "VideoFX Text Based", "ImageFX Text Based", "Effects"]
 }

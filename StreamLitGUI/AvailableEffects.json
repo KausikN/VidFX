@@ -1,0 +1,686 @@
+{
+    "effects": [
+        {
+            "name": "None",
+            "code": "None",
+            "params": []
+        },
+        {
+            "name": "Add",
+            "code": "Add(keys, keepOriginalSizes=False, normaliseFit=False)",
+            "params": [
+                {
+                    "name": "keys",
+                    "default": ["0_0"],
+                    "type": "list:str"
+                },
+                {
+                    "name": "keepOriginalSizes",
+                    "default": false,
+                    "type": "bool"
+                },
+                {
+                    "name": "normaliseFit",
+                    "default": false,
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "Sub",
+            "code": "Sub(keys, keepOriginalSizes=False, normaliseFit=False)",
+            "params": [
+                {
+                    "name": "keys",
+                    "default": ["0_0"],
+                    "type": "list:key"
+                },
+                {
+                    "name": "keepOriginalSizes",
+                    "default": false,
+                    "type": "bool"
+                },
+                {
+                    "name": "normaliseFit",
+                    "default": false,
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "Avg",
+            "code": "Avg(keys, keepOriginalSizes=False, normaliseFit=False)",
+            "params": [
+                {
+                    "name": "keys",
+                    "default": ["0_0"],
+                    "type": "list:key"
+                },
+                {
+                    "name": "keepOriginalSizes",
+                    "default": false,
+                    "type": "bool"
+                },
+                {
+                    "name": "normaliseFit",
+                    "default": false,
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "Binarise",
+            "code": "Binarise(threshold=127)",
+            "params": [
+                {
+                    "name": "threshold",
+                    "default": 127,
+                    "type": "int",
+                    "min": 0,
+                    "max": 255,
+                    "step": 1
+                }
+            ]
+        },
+        {
+            "name": "GreyScale",
+            "code": "GreyScale",
+            "params": []
+        },
+        {
+            "name": "RGB2BGR",
+            "code": "RGB2BGR",
+            "params": []
+        },
+        {
+            "name": "RedChannel",
+            "code": "RedChannel",
+            "params": []
+        },
+        {
+            "name": "BlueChannel",
+            "code": "BlueChannel",
+            "params": []
+        },
+        {
+            "name": "GreenChannel",
+            "code": "GreenChannel",
+            "params": []
+        },
+        {
+            "name": "MostDominantColor",
+            "code": "MostDominantColor",
+            "params": []
+        },
+        {
+            "name": "LeastDominantColor",
+            "code": "LeastDominantColor",
+            "params": []
+        },
+        {
+            "name": "ScaleValues",
+            "code": "ScaleValues(scaleFactor=[1.75, 1.75, 1.75])",
+            "params": [
+                {
+                    "name": "scaleFactor",
+                    "default": [1.75, 1.75, 1.75],
+                    "type": "list:float"
+                }
+            ]
+        },
+        {
+            "name": "ClipValues",
+            "code": "ClipValues(threshold=[100, 200], replace=[100, 200])",
+            "params": [
+                {
+                    "name": "threshold",
+                    "default": [100, 200],
+                    "type": "list:int"
+                },
+                {
+                    "name": "replace",
+                    "default": [100, 200],
+                    "type": "list:int"
+                }
+            ]
+        },
+        {
+            "name": "BinValues",
+            "code": "BinValues(bins=[0, 64, 128, 196, 255])",
+            "params": [
+                {
+                    "name": "bins",
+                    "default": [0, 64, 128, 196, 255],
+                    "type": "list:int"
+                }
+            ]
+        },
+        {
+            "name": "Resize",
+            "code": "Resize(size=[640, 480], interpolation=cv2.INTER_LINEAR)",
+            "params": [
+                {
+                    "name": "size",
+                    "default": [640, 480],
+                    "type": "list:int"
+                },
+                {
+                    "name": "interpolation",
+                    "default": "cv2.INTER_LINEAR",
+                    "type": "func"
+                }
+            ]
+        },
+        {
+            "name": "AddFrame",
+            "code": "AddFrame(imgPath='Frames/Frame_Nintendo_111_303_430_107_285_607.PNG')",
+            "params": [
+                {
+                    "name": "imgPath",
+                    "default": "Frames/Frame_Nintendo_111_303_430_107_285_607.PNG",
+                    "type": "frame"
+                }
+            ]
+        },
+        {
+            "name": "GaussianNoise",
+            "code": "GaussianNoise(mean=50, SD=25)",
+            "params": [
+                {
+                    "name": "mean",
+                    "default": 50,
+                    "type": "int",
+                    "min": 0,
+                    "max": 255,
+                    "step": 1
+                },
+                {
+                    "name": "SD",
+                    "default": 25,
+                    "type": "int",
+                    "min": 0,
+                    "max": 255,
+                    "step": 1
+                }
+            ]
+        },
+        {
+            "name": "SpeckleNoise",
+            "code": "SpeckleNoise",
+            "params": []
+        },
+        {
+            "name": "SaltPepperNoise",
+            "code": "SaltPepperNoise(prob=0.5)",
+            "params": [
+                {
+                    "name": "prob",
+                    "default": 0.5,
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.1
+                }
+            ]
+        },
+        {
+            "name": "SemanticSegmentation",
+            "code": "SemanticSegmentation(overlay=True)",
+            "params": [
+                {
+                    "name": "overlay",
+                    "default": true,
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "InstanceSegmentation",
+            "code": "InstanceSegmentation(show_bboxes=True)",
+            "params": [
+                {
+                    "name": "show_bboxes",
+                    "default": true,
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "FastSemanticSegmentation",
+            "code": "FastSemanticSegmentation",
+            "params": []
+        },
+        {
+            "name": "GaussianFilter",
+            "code": "GaussianFilter(sigma=2)",
+            "params": [
+                {
+                    "name": "sigma",
+                    "default": 2,
+                    "type": "int",
+                    "min": 0,
+                    "max": 5,
+                    "step": 1
+                }
+            ]
+        },
+        {
+            "name": "SobelFilter",
+            "code": "SobelFilter",
+            "params": []
+        },
+        {
+            "name": "SobelVerticalFilter",
+            "code": "SobelVerticalFilter",
+            "params": []
+        },
+        {
+            "name": "SobelHorizontalFilter",
+            "code": "SobelHorizontalFilter",
+            "params": []
+        },
+        {
+            "name": "RobertsFilter",
+            "code": "RobertsFilter",
+            "params": []
+        },
+        {
+            "name": "ScharrFilter",
+            "code": "ScharrFilter",
+            "params": []
+        },
+        {
+            "name": "ScharrVerticalFilter",
+            "code": "ScharrVerticalFilter",
+            "params": []
+        },
+        {
+            "name": "ScharrHorizontalFilter",
+            "code": "ScharrHorizontalFilter",
+            "params": []
+        },
+        {
+            "name": "PrewittFilter",
+            "code": "PrewittFilter",
+            "params": []
+        },
+        {
+            "name": "MedianFilter",
+            "code": "MedianFilter",
+            "params": []
+        },
+        {
+            "name": "LaplaceFilter",
+            "code": "LaplaceFilter(ksize=3)",
+            "params": [
+                {
+                    "name": "ksize",
+                    "default": 3,
+                    "type": "int",
+                    "min": 0,
+                    "max": 5,
+                    "step": 1
+                }
+            ]
+        },
+        {
+            "name": "FaridEdges",
+            "code": "FaridEdges",
+            "params": []
+        },
+        {
+            "name": "FaridVerticalEdges",
+            "code": "FaridVerticalEdges",
+            "params": []
+        },
+        {
+            "name": "FaridHorizontalEdges",
+            "code": "FaridHorizontalEdges",
+            "params": []
+        },
+        {
+            "name": "CannyEdges",
+            "code": "CannyEdges(sigma=0.0, low_threshold=0.1, high_threshold=0.9)",
+            "params": [
+                {
+                    "name": "sigma",
+                    "default": 0.0,
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 3.0,
+                    "step": 0.1
+                },
+                {
+                    "name": "low_threshold",
+                    "default": 0.1,
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.1
+                },
+                {
+                    "name": "high_threshold",
+                    "default": 0.9,
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.1
+                }
+            ]
+        },
+        {
+            "name": "Skeleton",
+            "code": "Skeleton(method=None, bin_threshold=127)",
+            "params": [
+                {
+                    "name": "method",
+                    "default": null,
+                    "type": "str"
+                },
+                {
+                    "name": "bin_threshold",
+                    "default": 127,
+                    "type": "int",
+                    "min": 0,
+                    "max": 255,
+                    "step": 1
+                }
+            ]
+        },
+        {
+            "name": "Thin",
+            "code": "Thin(max_iters=None, bin_threshold=127)",
+            "params": [
+                {
+                    "name": "max_iters",
+                    "default": 1,
+                    "type": "int",
+                    "min": 1,
+                    "max": 5,
+                    "step": 1
+                },
+                {
+                    "name": "bin_threshold",
+                    "default": 127,
+                    "type": "int",
+                    "min": 0,
+                    "max": 255,
+                    "step": 1
+                }
+            ]
+        },
+        {
+            "name": "Watershed",
+            "code": "Watershed(watershed_line=True)",
+            "params": [
+                {
+                    "name": "watershed_line",
+                    "default": true,
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "Dilate",
+            "code": "Dilate",
+            "params": []
+        },
+        {
+            "name": "RemoveSmallObjects",
+            "code": "RemoveSmallObjects(min_size=64)",
+            "params": [
+                {
+                    "name": "min_size",
+                    "default": 64,
+                    "type": "int",
+                    "min": 0,
+                    "max": 1024,
+                    "step": 32
+                }
+            ]
+        },
+        {
+            "name": "Erode",
+            "code": "Erode",
+            "params": []
+        },
+        {
+            "name": "ConvexHull",
+            "code": "ConvexHull(obj=False)",
+            "params": [
+                {
+                    "name": "obj",
+                    "default": false,
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "FrameDelay",
+            "code": "FrameDelay(delay=12)",
+            "params": [
+                {
+                    "name": "delay",
+                    "default": 12,
+                    "type": "int",
+                    "min": 0,
+                    "max": 120,
+                    "step": 6
+                }
+            ]
+        },
+        {
+            "name": "TerrainGen",
+            "code": "TerrainGen(random_seed=False, seed=0, thresholds=[0.25, 0.4, 0.85, 0.95], scale=100.0, octaves=6, persistence=0.5, lacunarity=2.0, repeatx=1024, repeaty=1024)",
+            "params": [
+                {
+                    "name": "random_seed",
+                    "default": false,
+                    "type": "bool"
+                },
+                {
+                    "name": "seed",
+                    "default": 0,
+                    "type": "int",
+                    "min": 0,
+                    "max": 1024,
+                    "step": 1
+                },
+                {
+                    "name": "thresholds",
+                    "default": [0.25, 0.4, 0.85, 0.95],
+                    "type": "list:float"
+                },
+                {
+                    "name": "scale",
+                    "default": 100.0,
+                    "type": "float",
+                    "min": 1.0,
+                    "max": 500.0,
+                    "step": 100.0
+                },
+                {
+                    "name": "octaves",
+                    "default": 6,
+                    "type": "int",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1
+                },
+                {
+                    "name": "persistence",
+                    "default": 0.5,
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.1
+                },
+                {
+                    "name": "lacunarity",
+                    "default": 2.0,
+                    "type": "float",
+                    "min": 1.0,
+                    "max": 20.0,
+                    "step": 1.0
+                },
+                {
+                    "name": "repeatx",
+                    "default": 1024,
+                    "type": "int",
+                    "min": 0,
+                    "max": 2048,
+                    "step": 128
+                },
+                {
+                    "name": "repeaty",
+                    "default": 1024,
+                    "type": "int",
+                    "min": 0,
+                    "max": 2048,
+                    "step": 128
+                }
+            ]
+        },
+        {
+            "name": "Archipelago",
+            "code": "Archipelago(thresholds=[0.25, 0.4, 0.85, 0.95])",
+            "params": [
+                {
+                    "name": "thresholds",
+                    "default": [0.25, 0.4, 0.85, 0.95],
+                    "type": "list:float"
+                }
+            ]
+        },
+        {
+            "name": "ValueCount_BarPlot",
+            "code": "ValueCount_BarPlot(showAxis=True)",
+            "params": [
+                {
+                    "name": "showAxis",
+                    "default": true,
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "ValueCount_LinePlot",
+            "code": "ValueCount_LinePlot(showAxis=True)",
+            "params": [
+                {
+                    "name": "showAxis",
+                    "default": true,
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "ValueCount_PointPlot",
+            "code": "ValueCount_PointPlot(showAxis=True)",
+            "params": [
+                {
+                    "name": "showAxis",
+                    "default": true,
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "ValueCount_Plot",
+            "code": "ValueCount_Plot(plots=['bar', 'point', 'line'], showAxis=True)",
+            "params": [
+                {
+                    "name": "plots",
+                    "default": ["bar", "point", "line"],
+                    "type": "list:str"
+                },
+                {
+                    "name": "showAxis",
+                    "default": true,
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "Translate",
+            "code": "Translate(offset=[0.0, 0.0])",
+            "params": [
+                {
+                    "name": "offset",
+                    "default": [0.0, 0.0],
+                    "type": "list:float"
+                }
+            ]
+        },
+        {
+            "name": "Rotate",
+            "code": "Rotate(angle=0.0, center=[0.5, 0.5])",
+            "params": [
+                {
+                    "name": "angle",
+                    "default": 0.0,
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 360.0,
+                    "step": 1.0
+                },
+                {
+                    "name": "center",
+                    "default": [0.5, 0.5],
+                    "type": "list:float"
+                }
+            ]
+        },
+        {
+            "name": "Scale",
+            "code": "Scale(scale=[1.0, 1.0])",
+            "params": [
+                {
+                    "name": "scale",
+                    "default": [1.0, 1.0],
+                    "type": "list:float"
+                }
+            ]
+        },
+        {
+            "name": "GeometricTransform",
+            "code": "GeometricTransform(translate=[0.0, 0.0], rotate=0.0, scale=[1.0, 1.0])",
+            "params": [
+                {
+                    "name": "translate",
+                    "default": [0.0, 0.0],
+                    "type": "list:float"
+                },
+                {
+                    "name": "rotate",
+                    "default": 0.0,
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 360.0,
+                    "step": 1.0
+                },
+                {
+                    "name": "scale",
+                    "default": [1.0, 1.0],
+                    "type": "list:float"
+                }
+            ]
+        },
+        {
+            "name": "ColorKeyTransparent",
+            "code": "ColorKeyTransparent(keyColor=[0,0,0])",
+            "params": [
+                {
+                    "name": "keyColor",
+                    "default": [0, 0, 0],
+                    "type": "list:int"
+                }
+            ]
+        },
+        {
+            "name": "ShufflePixelsRandom",
+            "code": "ShufflePixelsRandom",
+            "params": []
+        }
+    ]
+}

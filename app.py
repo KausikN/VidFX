@@ -24,6 +24,7 @@ import VidFX
 
 from Utils import VideoUtils
 from EffectsLibrary import EffectsLibrary
+from Utils import ParserUtils
 
 # Main Vars
 config = json.load(open('./StreamLitGUI/UIConfig.json', 'r'))
@@ -58,13 +59,15 @@ def HomePage():
 # Repo Based Vars
 DEFAULT_PATH_EXAMPLEIMAGE = 'TestImgs/Horse.PNG'
 DEFAULT_PATH_EXAMPLEVIDEO = 'TestVids/Test_Animation.wmv'
-AVAILABLEEFFECTS_PATH = 'StreamLitGUI/AvailableEffects.txt'
+AVAILABLEEFFECTS_PATH = 'StreamLitGUI/AvailableEffects.json'
 
 DEFAULT_SAVEPATH_IMAGE = 'TestImgs/OutputImage.png'
 DEFAULT_SAVEPATH_VIDEO = 'TestImgs/OutputVideo.mp4'
 DEFAULT_SAVEPATH_GIF = 'TestImgs/OutputGIF.gif'
 
-DEFAULT_CODE_PACKAGE = 'StreamLitGUI'
+DEFAULT_CODE_PACKAGE = 'StreamLitGUI/CacheData/'
+DEFAULT_CACHEPATH = 'StreamLitGUI/CacheData/Cache.json'
+DEFAULT_FRAMESPATH = 'Frames/'
 
 OUTPUT_NCOLS = 5
 
@@ -87,8 +90,18 @@ INPUTREADERS_IMAGE = {
     "Upload Image File": None
 }
 
-# Util Vars
+TYPE_MAP = {
+    "bool": bool,
+    "int": int,
+    "float": float,
+    "str": str,
+    "list": ParserUtils.ListParser
+}
 
+# Util Vars
+CACHE_DATA = {}
+AVAILABLE_EFFECTS = []
+FRAMES = []
 
 # Util Functions
 def Hex_to_RGB(val):
@@ -106,6 +119,30 @@ def GenerateImageSizeIndicatorImage(ImageSize):
     ImageSizeIndicator_Image[:int((ImageSize[0]/IMAGESIZE_MAX[0])*IMAGESIZEINDICATORIMAGE_SIZE[0]), :int((ImageSize[1]/IMAGESIZE_MAX[1])*IMAGESIZEINDICATORIMAGE_SIZE[1])] = 255
     return ImageSizeIndicator_Image
 
+def LoadAvailableEffects():
+    global AVAILABLE_EFFECTS
+    AVAILABLE_EFFECTS = json.load(open(AVAILABLEEFFECTS_PATH, 'r'))["effects"]
+
+def GetNames(data):
+    names = []
+    for d in data:
+        names.append(d["name"])
+    return names
+
+def LoadCache():
+    global CACHE_DATA
+    CACHE_DATA = json.load(open(DEFAULT_CACHEPATH, 'r'))
+
+def SaveCache():
+    global CACHE_DATA
+    json.dump(CACHE_DATA, open(DEFAULT_CACHEPATH, 'w'))
+
+def LoadFrames():
+    global FRAMES
+    FRAMES = []
+    for f in os.listdir(DEFAULT_FRAMESPATH):
+        FRAMES.append(f)
+
 # Main Functions
 def GetEffectsCode(CommonEffectsText, EffectFuncsText):
     ImportsCode = '''
@@ -122,20 +159,10 @@ pickle.dump({EffectObj}, open('{DEFAULT_CODE_PACKAGE}' + '/{EffectObj}.p', 'wb')
 '''
 
     CommonEffectsCode = ImportsCode + "CommonEffects = " + VidFX.UICommonEffectsCodeParser(CommonEffectsText) + SavePickleCode.format(DEFAULT_CODE_PACKAGE=DEFAULT_CODE_PACKAGE, EffectObj='CommonEffects')
-    # open(os.path.join(DEFAULT_CODE_PACKAGE, "CommonEffects.py"), 'w').write(CommonEffectsCode)
-    # CommonEffectsModule = importlib.import_module(DEFAULT_CODE_PACKAGE + ".CommonEffects")
-    # import StreamLitGUI.CommonEffects as CommonEffectsModule
-    # CommonEffectsModule = importlib.reload(CommonEffectsModule)
-    # CommonEffects = CommonEffectsModule.CommonEffects
     exec(CommonEffectsCode, globals())
     CommonEffects = pickle.load(open(os.path.join(DEFAULT_CODE_PACKAGE, "CommonEffects.p"), 'rb'))
 
     EffectFuncsCode = ImportsCode + "EffectFuncs = " + VidFX.UIMultiEffectsCodeParser(EffectFuncsText) + SavePickleCode.format(DEFAULT_CODE_PACKAGE=DEFAULT_CODE_PACKAGE, EffectObj='EffectFuncs')
-    # open(os.path.join(DEFAULT_CODE_PACKAGE, "EffectFuncs.py"), 'w').write(EffectFuncsCode)
-    # EffectFuncsModule = importlib.import_module(DEFAULT_CODE_PACKAGE + ".EffectFuncs")
-    # import StreamLitGUI.EffectFuncs as EffectFuncsModule
-    # EffectFuncsModule = importlib.reload(EffectFuncsModule)
-    # EffectFuncs = EffectFuncsModule.EffectFuncs
     exec(EffectFuncsCode, globals())
     EffectFuncs = pickle.load(open(os.path.join(DEFAULT_CODE_PACKAGE, "EffectFuncs.p"), 'rb'))
     
@@ -222,19 +249,88 @@ def UI_DisplayEffectImage(USERINPUT_Image, EffectImage):
     st.image(USERINPUT_Image, "Input Image", use_column_width=True)
     st.image(EffectImage, "Effected Image", use_column_width=True)
 
-def UI_AvailableEffects():
-    AvailableEffectsData = open(AVAILABLEEFFECTS_PATH, 'r').read().split('\n')
-    AvailableEffectsNames = []
-    for data in AvailableEffectsData:
-        AvailableEffectsNames.append((data.split('('))[0])
+def UI_ShowAvailableEffects():
+    AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
     st.markdown("## Available Effects")
     col1, col2 = st.beta_columns(2)
-    USERINPUT_EffectName = col1.selectbox("", AvailableEffectsNames)
+    USERINPUT_EffectName = st.selectbox("Select Effect", AvailableEffectsNames)
     USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
-    USERINPUT_EffectData = AvailableEffectsData[USERINPUT_EffectIndex]
-    col2.markdown("```pythonn\n" + USERINPUT_EffectData)
+    USERINPUT_EffectCode = AVAILABLE_EFFECTS[USERINPUT_EffectIndex]["code"]
+    st.markdown("<font size=\"2\">Code</font>", unsafe_allow_html=True)
+    st.markdown("\n```python\n" + USERINPUT_EffectCode)
 
-    return USERINPUT_EffectData
+    return USERINPUT_EffectCode
+
+def UI_DisplayRepeater(AvailableEffectsNames):
+    USERINPUT_DisplayCount = st.slider("Select Number of Displays", 1, 10, 1, key="Dn")
+
+    EffectFuncsTextList = []
+    for c in range(USERINPUT_DisplayCount):
+        st.markdown("<hr>", unsafe_allow_html=True)
+        st.markdown("### Display " + str(c+1))
+        EffectsListText = UI_EffectsRepeater(AvailableEffectsNames, str(c+1))
+        st.markdown("<hr>", unsafe_allow_html=True)
+        EffectFuncsTextList.append(EffectsListText)
+    EffectFuncsText = "\n,\n".join(EffectFuncsTextList)
+
+    return EffectFuncsText
+
+def UI_EffectsRepeater(AvailableEffectsNames, displayKey=""):
+    USERINPUT_EffectCount = st.slider("Select Number of Effects", 1, 10, 1, key="En_" + str(displayKey))
+
+    EffectsList = []
+    for e in range(USERINPUT_EffectCount):
+        key = str(displayKey) + "_" + str(e)
+        USERINPUT_EffectCode = UI_EffectSelector(AvailableEffectsNames, key)
+        EffectsList.append(USERINPUT_EffectCode)
+    EffectsListText = "\n".join(EffectsList)
+
+    return EffectsListText
+    
+def UI_EffectSelector(AvailableEffectsNames, key=""):
+    col1, col2 = st.beta_columns(2)
+    USERINPUT_EffectName = col1.selectbox("", AvailableEffectsNames, key="EN_" + key)
+    USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
+    USERINPUT_EffectData = AVAILABLE_EFFECTS[USERINPUT_EffectIndex]
+    ParamsInputs = UI_Params(USERINPUT_EffectData["params"], col=col2, key=key)
+    USERINPUT_EffectCode = USERINPUT_EffectData["name"] + "(" + ParamsInputs + ")"
+    return USERINPUT_EffectCode
+
+def UI_Params(paramsData, col=st, key=""):
+    ParamsInputs = []
+    for p in paramsData:
+        inp = UI_Param(p, col, key)
+        ParamsInputs.append(p["name"] + "=" + str(inp))
+    ParamsInputsText = ", ".join(ParamsInputs)
+    return ParamsInputsText
+
+def UI_Param(p, col=st, key=""):
+    # Parse type
+    inp = None
+    inp_type = p["type"]
+    if p["type"] == "bool":
+        inp = col.checkbox(p["name"], p["default"], key=p["name"] + "_" + key)
+    elif p["type"] == "int":
+        inp = col.slider(p["name"], p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_" + key)
+    elif p["type"] == "float":
+        inp = col.slider(p["name"], p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_" + key)
+    elif p["type"] == "str":
+        inp = col.text_input(p["name"], p["default"], key=p["name"] + "_" + key)
+        inp = inp.replace('"', '\\"')
+        inp = '"' + inp + '"'
+    elif p["type"].startswith("list"):
+        inp = col.text_area(p["name"], '\n'.join(list(map(str, p["default"]))), key=p["name"] + "_" + key)
+        typeSplit = p["type"].split(":")
+        inp = TYPE_MAP[typeSplit[0]](inp, TYPE_MAP[typeSplit[1]])
+    elif p["type"] == "frame":
+        frameName = st.selectbox("Select Frame", ["Select Frame"] + FRAMES)
+        inp = None
+        if not (frameName == "Select Frame"):
+            inp = os.path.join(DEFAULT_FRAMESPATH, frameName)
+            inp = inp.replace('"', '\\"')
+            inp = '"' + inp + '"'
+
+    return inp
 
 # Repo Based Functions
 def videofx():
@@ -243,10 +339,19 @@ def videofx():
 
     # Load Inputs
     USERINPUT_Video = UI_VideoInputSource()
-    UI_AvailableEffects()
-    st.markdown("## Enter Effect Codes")
-    CommonEffectsText = st.text_area("Common Effects Code", "None")
-    EffectFuncsText = st.text_area("Effects Code", "None")
+
+    LoadAvailableEffects()
+    LoadFrames()
+
+    UI_ShowAvailableEffects()
+    AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
+    
+    st.markdown("## Choose Common Effects")
+    CommonEffectsText = UI_EffectSelector(AvailableEffectsNames, key="CE")
+
+    st.markdown("## Choose Display Effects")
+    EffectFuncsText = UI_DisplayRepeater(AvailableEffectsNames)
+
     CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
 
     EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
@@ -262,7 +367,59 @@ def imagefx():
 
     # Load Inputs
     USERINPUT_Image = UI_LoadImage()
-    UI_AvailableEffects()
+
+    LoadAvailableEffects()
+    LoadFrames()
+
+    UI_ShowAvailableEffects()
+    AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
+    
+    st.markdown("## Choose Common Effects")
+    CommonEffectsText = UI_EffectSelector(AvailableEffectsNames, key="CE")
+
+    st.markdown("## Choose Display Effects")
+    EffectFuncsText = UI_DisplayRepeater(AvailableEffectsNames)
+
+    CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+
+    EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
+    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+
+    # Process Inputs
+    EffectImage = EffectFunc(USERINPUT_Image)
+
+    # Display Output
+    st.markdown("## Images")
+    UI_DisplayEffectImage(USERINPUT_Image, EffectImage)
+
+def videofx_text_based():
+    # Title
+    st.header("Video FX (Text Based)")
+
+    # Load Inputs
+    USERINPUT_Video = UI_VideoInputSource()
+    LoadAvailableEffects()
+    UI_ShowAvailableEffects()
+    st.markdown("## Enter Effect Codes")
+    CommonEffectsText = st.text_area("Common Effects Code", "None")
+    EffectFuncsText = st.text_area("Effects Code", "None")
+    CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+
+    EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
+    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+
+    # Process Inputs and Display Output
+    st.markdown("## Videos")
+    UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc)
+
+def imagefx_text_based():
+    # Title
+    st.header("Image FX (Text Based)")
+
+    # Load Inputs
+    USERINPUT_Image = UI_LoadImage()
+    LoadAvailableEffects()
+    UI_ShowAvailableEffects()
     st.markdown("## Enter Effect Codes")
     CommonEffectsText = st.text_area("Common Effects Code", "None")
     EffectFuncsText = st.text_area("Effects Code", "None")
@@ -284,7 +441,8 @@ def effects():
 
     # Load Inputs
     USERINPUT_Video = UI_VideoInputSource()
-    USERINPUT_ChosenEffectData = UI_AvailableEffects()
+    LoadAvailableEffects()
+    USERINPUT_ChosenEffectData = UI_ShowAvailableEffects()
     st.markdown("## Edit Effect Parameters")
     EffectFuncText = st.text_input("Effect Code", USERINPUT_ChosenEffectData)
     CommonEffects, EffectFuncs = GetEffectsCode('None', EffectFuncText)

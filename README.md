@@ -37,12 +37,6 @@
 
 # Features
 
-   - Run FrameVid.py file
-   
-     Add Frames to webcam or any video
-
-     ![Frame Video Image](GeneratedVisualisations/FrameEffect_1.gif)
-
    - Run ImageFXUI.py file
 
      Add same effects for images
