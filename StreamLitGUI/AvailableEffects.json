@@ -246,11 +246,6 @@
             ]
         },
         {
-            "name": "FastSemanticSegmentation",
-            "code": "FastSemanticSegmentation",
-            "params": []
-        },
-        {
             "name": "GaussianFilter",
             "code": "GaussianFilter(sigma=2)",
             "params": [

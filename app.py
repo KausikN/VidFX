@@ -13,6 +13,7 @@ import numpy as np
 import streamlit as st
 import matplotlib.pyplot as plt
 import json
+from PIL import Image
 from tqdm import tqdm
 
 # from StreamLitGUI.webcam import webcam
@@ -25,6 +26,7 @@ import VidFX
 from Utils import VideoUtils
 from EffectsLibrary import EffectsLibrary
 from Utils import ParserUtils
+from Utils import EffectTransistionUtils
 
 # Main Vars
 config = json.load(open('./StreamLitGUI/UIConfig.json', 'r'))
@@ -98,6 +100,11 @@ TYPE_MAP = {
     "list": ParserUtils.ListParser
 }
 
+TRANSISTION_FUNCS = {
+    "Constant": EffectTransistionUtils.EffectTransistion_Constant,
+    "Linear": EffectTransistionUtils.EffectTransistion_Linear
+}
+
 # Util Vars
 CACHE_DATA = {}
 AVAILABLE_EFFECTS = []
@@ -151,6 +158,7 @@ import functools
 import numpy as np
 import pickle
 
+from Utils import EffectTransistionUtils
 from EffectsLibrary import EffectsLibrary
 
 '''
@@ -245,9 +253,12 @@ def UI_LoadImage():
     
     return USERINPUT_Image
 
-def UI_DisplayEffectImage(USERINPUT_Image, EffectImage):
-    st.image(USERINPUT_Image, "Input Image", use_column_width=True)
-    st.image(EffectImage, "Effected Image", use_column_width=True)
+def UI_DisplayEffectImage(USERINPUT_Image, EffectImage, compactDisplay=False):
+    col1, col2 = st, st
+    if compactDisplay:
+        col1, col2 = st.beta_columns(2)
+    col1.image(USERINPUT_Image, "Input Image", use_column_width=True)
+    col2.image(EffectImage, "Effected Image", use_column_width=True)
 
 def UI_ShowAvailableEffects():
     AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
@@ -261,53 +272,103 @@ def UI_ShowAvailableEffects():
 
     return USERINPUT_EffectCode
 
-def UI_DisplayRepeater(AvailableEffectsNames):
-    USERINPUT_DisplayCount = st.slider("Select Number of Displays", 1, 10, 1, key="Dn")
+# UI TRANSISTION EFFECT FUNCTIONS ###################################################################################################################
+def UI_DisplayEffectTransistionVideo(I=None, max_frames=-1, EffectFuncs=None, compactDisplay=False):
+    MainEffectFunc = EffectFuncs['Main']
+    CommonEffects_Tr = EffectFuncs['Common']
+    EffectFuncs_Tr = EffectFuncs['Effect']
 
-    EffectFuncsTextList = []
-    for c in range(USERINPUT_DisplayCount):
-        st.markdown("<hr>", unsafe_allow_html=True)
-        st.markdown("### Display " + str(c+1))
-        EffectsListText = UI_EffectsRepeater(AvailableEffectsNames, str(c+1))
-        st.markdown("<hr>", unsafe_allow_html=True)
-        EffectFuncsTextList.append(EffectsListText)
-    EffectFuncsText = "\n,\n".join(EffectFuncsTextList)
+    frames = np.linspace(0, 1, max_frames)
 
-    return EffectFuncsText
+    col1, col2 = st, st
+    if compactDisplay:
+        col1, col2 = st.beta_columns(2)
 
-def UI_EffectsRepeater(AvailableEffectsNames, displayKey=""):
-    USERINPUT_EffectCount = st.slider("Select Number of Effects", 1, 10, 1, key="En_" + str(displayKey))
+    col1.image(I, "Input Image", use_column_width=True)
+    effectVideoDisplay = col2.empty()
 
-    EffectsList = []
-    for e in range(USERINPUT_EffectCount):
-        key = str(displayKey) + "_" + str(e)
-        USERINPUT_EffectCode = UI_EffectSelector(AvailableEffectsNames, key)
-        EffectsList.append(USERINPUT_EffectCode)
-    EffectsListText = "\n".join(EffectsList)
+    # Generate
+    frames_effect = []
+    for frame in frames:
+        MainFunc = EffectTransistionUtils.GetMainFunc(MainEffectFunc, CommonEffects_Tr, EffectFuncs_Tr, frame, recursiveArgs=False)
 
-    return EffectsListText
+        outFrame = MainFunc(I)
+        frames_effect.append(outFrame)
+        effectVideoDisplay.image(outFrame, caption='Effect Video', use_column_width=True)
+
+    # Save
+    frames_effect = list(map(Image.fromarray, frames_effect))
+    extraFrames = []
+    if len(frames_effect) > 1:
+        extraFrames = frames_effect[1:]
+    frames_effect[0].save(DEFAULT_SAVEPATH_GIF, save_all=True, append_images=extraFrames, format='GIF', loop=0)
+    effectVideoDisplay.image(DEFAULT_SAVEPATH_GIF, caption='Effect Video', use_column_width=True)
+
+def UI_Param_EffectTransistions(p, col1=st, col2=st, col3=st, key=""):
+    # Parse type
+    inp_start = None
+    inp_end = None
+    TransistionFunc = None
+    inp_type = p["type"]
+    if p["type"] == "bool":
+        inp_start = col1.checkbox(p["name"] + " Start", p["default"], key=p["name"] + "_start_" + key)
+        inp_end = col2.checkbox(p["name"] + " End", p["default"], key=p["name"] + "_end_" + key)
+    elif p["type"] == "int":
+        inp_start = col1.slider(p["name"] + " Start", p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_start_" + key)
+        inp_end = col2.slider(p["name"] + " End", p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_end_" + key)
+    elif p["type"] == "float":
+        inp_start = col1.slider(p["name"] + " Start", p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_start_" + key)
+        inp_end = col2.slider(p["name"] + " End", p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_end_" + key)
+    elif p["type"] == "str":
+        inp_start = col1.text_input(p["name"], p["default"], key=p["name"] + "_" + key)
+        inp_end = inp_start
+    elif p["type"].startswith("list"):
+        typeSplit = p["type"].split(":")
+        if typeSplit[1] in ["str", "key", "frame"]:
+            inp_start = col1.text_area(p["name"], '\n'.join(list(map(str, p["default"]))), key=p["name"] + "_start_" + key)
+            inp_end = inp_start
+        else:
+            inp_start = col1.text_area(p["name"] + " Start", '\n'.join(list(map(str, p["default"]))), key=p["name"] + "_start_" + key)
+            inp_end = col2.text_area(p["name"] + " End", '\n'.join(list(map(str, p["default"]))), key=p["name"] + "_end_" + key)
+        
+        inp_start = TYPE_MAP[typeSplit[0]](inp_start, TYPE_MAP[typeSplit[1]])
+        inp_end = TYPE_MAP[typeSplit[0]](inp_end, TYPE_MAP[typeSplit[1]])
+    elif p["type"] == "frame":
+        frameName = st.selectbox("Select Frame", ["Select Frame"] + FRAMES)
+        inp_start = None
+        if not (frameName == "Select Frame"):
+            inp_start = os.path.join(DEFAULT_FRAMESPATH, frameName)
+            inp_start = inp_start.replace('"', '\\"')
+            inp_start = '"' + inp_start + '"'
+
+    if inp_end is not None:
+        TransistionFunc = TRANSISTION_FUNCS[col3.selectbox(p["name"] + " Transistion", list(TRANSISTION_FUNCS.keys()))]
+    else:
+        inp_end = inp_start
+        TransistionFunc = TRANSISTION_FUNCS['Constant']
+
+    return inp_start, inp_end, TransistionFunc
     
-def UI_EffectSelector(AvailableEffectsNames, key=""):
-    col1, col2 = st.beta_columns(2)
+def UI_EffectSelector_EffectTransistions(AvailableEffectsNames, key=""):
+    col1, col2, col3, col4 = st.beta_columns([2, 1, 1, 1])
     USERINPUT_EffectName = col1.selectbox("", AvailableEffectsNames, key="EN_" + key)
     USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
     USERINPUT_EffectData = AVAILABLE_EFFECTS[USERINPUT_EffectIndex]
-    ParamsInputs = UI_Params(USERINPUT_EffectData["params"], col=col2, key=key)
-    USERINPUT_EffectCode = USERINPUT_EffectData["name"] + "(" + ParamsInputs + ")"
-    return USERINPUT_EffectCode
+    ParamsInputs = UI_Params_EffectTransistions(USERINPUT_EffectData["params"], col1=col2, col2=col3, col3=col4, key=key)
+    USERINPUT_EffectCode = USERINPUT_EffectData["name"] # Params Tranisiton is applied later
+    return USERINPUT_EffectCode, ParamsInputs
 
-def UI_Params(paramsData, col=st, key=""):
-    ParamsInputs = []
+def UI_Params_EffectTransistions(paramsData, col1=st, col2=st, col3=st, key=""):
+    ParamsInputs = {}
     for p in paramsData:
-        inp = UI_Param(p, col, key)
-        ParamsInputs.append(p["name"] + "=" + str(inp))
-    ParamsInputsText = ", ".join(ParamsInputs)
-    return ParamsInputsText
+        inp_start, inp_end, TransistionFunc = UI_Param_EffectTransistions(p, col1, col2, col3, key)
+        ParamsInputs[p["name"]] = {"start": inp_start, "end": inp_end, "func": TransistionFunc}
+    return ParamsInputs
 
-def UI_Param(p, col=st, key=""):
+# UI EFFECT FUNCTIONS ###########################################################################################################################
+def UI_Param_Effects(p, col=st, key=""):
     # Parse type
     inp = None
-    inp_type = p["type"]
     if p["type"] == "bool":
         inp = col.checkbox(p["name"], p["default"], key=p["name"] + "_" + key)
     elif p["type"] == "int":
@@ -316,8 +377,6 @@ def UI_Param(p, col=st, key=""):
         inp = col.slider(p["name"], p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_" + key)
     elif p["type"] == "str":
         inp = col.text_input(p["name"], p["default"], key=p["name"] + "_" + key)
-        inp = inp.replace('"', '\\"')
-        inp = '"' + inp + '"'
     elif p["type"].startswith("list"):
         inp = col.text_area(p["name"], '\n'.join(list(map(str, p["default"]))), key=p["name"] + "_" + key)
         typeSplit = p["type"].split(":")
@@ -327,10 +386,54 @@ def UI_Param(p, col=st, key=""):
         inp = None
         if not (frameName == "Select Frame"):
             inp = os.path.join(DEFAULT_FRAMESPATH, frameName)
-            inp = inp.replace('"', '\\"')
-            inp = '"' + inp + '"'
 
     return inp
+    
+def UI_EffectSelector_Effects(AvailableEffectsNames, key=""):
+    col1, col2 = st.beta_columns(2)
+    USERINPUT_EffectName = col1.selectbox("", AvailableEffectsNames, key="EN_" + key)
+    USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
+    USERINPUT_EffectData = AVAILABLE_EFFECTS[USERINPUT_EffectIndex]
+    ParamsInputs = UI_Params_Effects(USERINPUT_EffectData["params"], col=col2, key=key)
+    USERINPUT_EffectCode = USERINPUT_EffectData["name"] # Params are applied later
+    return USERINPUT_EffectCode, ParamsInputs
+
+def UI_Params_Effects(paramsData, col=st, key=""):
+    ParamsInputs = {}
+    for p in paramsData:
+        inp = UI_Param_Effects(p, col, key)
+        ParamsInputs[p["name"]] = inp
+    return ParamsInputs
+####################################################################################################################
+def UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects):
+    USERINPUT_DisplayCount = st.slider("Select Number of Displays", 1, 10, 1, key="Dn")
+
+    EffectFuncsTextList = []
+    EffectFuncsParamsInputs = []
+    for c in range(USERINPUT_DisplayCount):
+        st.markdown("<hr>", unsafe_allow_html=True)
+        st.markdown("### Display " + str(c+1))
+        EffectsListText, EffectsParamsInputs = UI_EffectsRepeater(AvailableEffectsNames, str(c+1), EffectMode=EffectMode)
+        st.markdown("<hr>", unsafe_allow_html=True)
+        EffectFuncsTextList.append(EffectsListText)
+        EffectFuncsParamsInputs.append(EffectsParamsInputs)
+    EffectFuncsText = "\n,\n".join(EffectFuncsTextList)
+    
+    return EffectFuncsText, EffectFuncsParamsInputs
+
+def UI_EffectsRepeater(AvailableEffectsNames, displayKey="", EffectMode=UI_EffectSelector_Effects):
+    USERINPUT_EffectCount = st.slider("Select Number of Effects", 1, 10, 1, key="En_" + str(displayKey))
+
+    EffectsList = []
+    EffectsParamsInputs = []
+    for e in range(USERINPUT_EffectCount):
+        key = str(displayKey) + "_" + str(e)
+        EffectCode, ParamsInputs = EffectMode(AvailableEffectsNames, key)
+        EffectsList.append(EffectCode)
+        EffectsParamsInputs.append(ParamsInputs)
+    EffectsListText = "\n".join(EffectsList)
+
+    return EffectsListText, EffectsParamsInputs
 
 # Repo Based Functions
 def videofx():
@@ -347,19 +450,41 @@ def videofx():
     AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
     
     st.markdown("## Choose Common Effects")
-    CommonEffectsText = UI_EffectSelector(AvailableEffectsNames, key="CE")
+    CommonEffectsText, ParamInputs_Common = UI_EffectsRepeater(AvailableEffectsNames, displayKey="CE", EffectMode=UI_EffectSelector_Effects)
 
     st.markdown("## Choose Display Effects")
-    EffectFuncsText = UI_DisplayRepeater(AvailableEffectsNames)
+    EffectFuncsText, ParamInputs_Effects = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects)
 
     CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+
+    # Apply Params
+    EffectFuncs_PA = []
+    CommonFuncs_PA = []
+    for i in range(len(EffectFuncs)):
+        efs = EffectFuncs[i]
+        efs_tr = []
+        for j in range(len(efs)):
+            ef = efs[j]
+            paramsData = ParamInputs_Effects[i][j]
+            funcData = functools.partial(ef.func, **paramsData)
+            efs_tr.append(funcData)
+        EffectFuncs_PA.append(efs_tr)
+    for i in range(len(CommonEffects)):
+        efs = CommonEffects[i]
+        paramsData = ParamInputs_Common[i]
+        funcData = functools.partial(efs.func, **paramsData)
+        CommonFuncs_PA.append(funcData)
+    CommonEffects = CommonFuncs_PA
+    EffectFuncs = EffectFuncs_PA
 
     EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
     EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
 
+    USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
+
     # Process Inputs and Display Output
     st.markdown("## Videos")
-    UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc)
+    UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc, USERINPUT_CompactDisplay)
 
 def imagefx():
     # Title
@@ -375,22 +500,102 @@ def imagefx():
     AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
     
     st.markdown("## Choose Common Effects")
-    CommonEffectsText = UI_EffectSelector(AvailableEffectsNames, key="CE")
+    CommonEffectsText, ParamInputs_Common = UI_EffectsRepeater(AvailableEffectsNames, displayKey="CE", EffectMode=UI_EffectSelector_Effects)
 
     st.markdown("## Choose Display Effects")
-    EffectFuncsText = UI_DisplayRepeater(AvailableEffectsNames)
+    EffectFuncsText, ParamInputs_Effects = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects)
 
     CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
 
+    # Apply Params
+    EffectFuncs_PA = []
+    CommonFuncs_PA = []
+    for i in range(len(EffectFuncs)):
+        efs = EffectFuncs[i]
+        efs_tr = []
+        for j in range(len(efs)):
+            ef = efs[j]
+            paramsData = ParamInputs_Effects[i][j]
+            funcData = functools.partial(ef.func, **paramsData)
+            efs_tr.append(funcData)
+        EffectFuncs_PA.append(efs_tr)
+    for i in range(len(CommonEffects)):
+        efs = CommonEffects[i]
+        paramsData = ParamInputs_Common[i]
+        funcData = functools.partial(efs.func, **paramsData)
+        CommonFuncs_PA.append(funcData)
+    CommonEffects = CommonFuncs_PA
+    EffectFuncs = EffectFuncs_PA
+
     EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
     EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+
+    USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
 
     # Process Inputs
     EffectImage = EffectFunc(USERINPUT_Image)
 
     # Display Output
     st.markdown("## Images")
-    UI_DisplayEffectImage(USERINPUT_Image, EffectImage)
+    UI_DisplayEffectImage(USERINPUT_Image, EffectImage, USERINPUT_CompactDisplay)
+
+def image_effect_transistion():
+    # Title
+    st.header("Image Effect Transistion")
+
+    # Load Inputs
+    USERINPUT_Image = UI_LoadImage()
+
+    LoadAvailableEffects()
+    LoadFrames()
+
+    UI_ShowAvailableEffects()
+    AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
+    
+    st.markdown("## Choose Common Effects")
+    CommonEffectsText, ParamsInputs_Common = UI_EffectsRepeater(AvailableEffectsNames, displayKey="CE", EffectMode=UI_EffectSelector_EffectTransistions)
+
+    st.markdown("## Choose Effects Transistions")
+    EffectFuncsText, ParamsInputs_Effects = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_EffectTransistions)
+
+    CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+    EffectFuncs_Tr = []
+    CommonFuncs_Tr = []
+    for i in range(len(EffectFuncs)):
+        efs = EffectFuncs[i]
+        efs_tr = []
+        for j in range(len(efs)):
+            ef = efs[j]
+            paramsData = {}
+            for k in ParamsInputs_Effects[i][j].keys():
+                pD = ParamsInputs_Effects[i][j][k]
+                paramsData[k] = functools.partial(pD["func"], start=pD["start"], end=pD["end"])
+            trData = [ef, paramsData]
+            efs_tr.append(trData)
+        EffectFuncs_Tr.append(efs_tr)
+    for i in range(len(CommonEffects)):
+        efs = CommonEffects[i]
+        paramsData = {}
+        for k in ParamsInputs_Common[i].keys():
+            pD = ParamsInputs_Common[i][k]
+            paramsData[k] = functools.partial(pD["func"], start=pD["start"], end=pD["end"])
+        trData = [efs, paramsData]
+        CommonFuncs_Tr.append(trData)
+
+    saveI_keys = EffectsLibrary.GetSaveIKeys(EffectFuncs)
+    MainFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+
+    EffectFunctions = {
+        "Main": MainFunc,
+        "Common": CommonFuncs_Tr,
+        "Effect": EffectFuncs_Tr
+    }
+
+    USERINPUT_FrameCount = st.slider("Frames Count", 1, 100, 20, 1)
+    USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
+    
+    # Process Inputs and Display Output
+    UI_DisplayEffectTransistionVideo(USERINPUT_Image, USERINPUT_FrameCount, EffectFunctions, USERINPUT_CompactDisplay)
 
 def videofx_text_based():
     # Title
@@ -408,9 +613,11 @@ def videofx_text_based():
     EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
     EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
 
+    USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
+
     # Process Inputs and Display Output
     st.markdown("## Videos")
-    UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc)
+    UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc, USERINPUT_CompactDisplay)
 
 def imagefx_text_based():
     # Title
@@ -428,12 +635,14 @@ def imagefx_text_based():
     EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
     EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
 
+    USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
+
     # Process Inputs
     EffectImage = EffectFunc(USERINPUT_Image)
 
     # Display Output
     st.markdown("## Images")
-    UI_DisplayEffectImage(USERINPUT_Image, EffectImage)
+    UI_DisplayEffectImage(USERINPUT_Image, EffectImage, USERINPUT_CompactDisplay)
 
 def effects():
     # Title

@@ -107,6 +107,9 @@ def ImageEffectTransistion(I, EffectFunctions, pathOut=None, max_frames=-1, spee
 def EffectTransistion_Linear(prop, start, end):
     return start + (end-start)*prop
 
+def EffectTransistion_Constant(prop, start, end):
+    return start
+
 # Driver Code
 # Params
 # path = 'TestVids/test.mp4'

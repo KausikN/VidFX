@@ -68,6 +68,30 @@ def StartSameFuncsCount(FD1, FD2):
             break
     return startsameCount
 
+def GetSaveIKeys(EffectFuncs):
+    saveI_keys = []
+    
+    # Get Funcs Data
+    EffectFuncsData = []
+    for EFs in EffectFuncs:
+        EFKeys = []
+        for e in EFs:
+            data = {}
+            data['name'] = str(e.func.__name__)
+            data['params'] = e.keywords
+            EFKeys.append(data)
+        EffectFuncsData.append(EFKeys)
+
+    # Get Keys
+    for i in range(len(EffectFuncsData)):
+        for j in range(len(EffectFuncsData[i])):
+            if 'key' in EffectFuncsData[i][j]['params'].keys():
+                saveI_keys.append(EffectFuncsData[i][j]['params']['key'])
+            elif 'keys' in EffectFuncsData[i][j]['params'].keys():
+                saveI_keys.extend(EffectFuncsData[i][j]['params']['keys'])
+
+    return saveI_keys
+
 def Image_ReplaceRedundantEffectChains(EffectFuncs, display=False):
     EffectFuncsData = []
     # Get Funcs Data

@@ -20,7 +20,6 @@ SpeckleNoise
 SaltPepperNoise(prob=0.5)
 SemanticSegmentation(overlay=True)
 InstanceSegmentation(show_bboxes=True)
-FastSemanticSegmentation
 GaussianFilter(sigma=2)
 SobelFilter
 SobelVerticalFilter
