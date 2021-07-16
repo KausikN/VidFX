@@ -10,7 +10,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 
 # Main Vars
-figsize = (3.2, 2.4)
+figsize = (6.4, 4.8)
 dpi = 100.0
 fig = Figure(figsize=figsize, dpi=dpi)
 canvas = FigureCanvasAgg(fig)

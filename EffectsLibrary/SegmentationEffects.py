@@ -13,6 +13,9 @@ from skimage import segmentation
 # from EffectsLibrary.ENet_LiteSegmenter.utils import *
 # from EffectsLibrary.ENet_LiteSegmenter.models.ENet import ENet
 
+# Main Vars
+ModelsDir = "ModelFiles/"
+
 Segmenter_Semantic = None
 Segmenter_Instance = None
 Segmenter_FastSemantic = None
@@ -23,18 +26,18 @@ def LoadSemanticSegmenter():
     from pixellib.semantic import semantic_segmentation
     global Segmenter_Semantic
     Segmenter_Semantic = semantic_segmentation()
-    Segmenter_Semantic.load_pascalvoc_model("Models/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5")
+    Segmenter_Semantic.load_pascalvoc_model(ModelsDir + "deeplabv3_xception_tf_dim_ordering_tf_kernels.h5")
 
 def LoadInstanceSegmenter():
     from pixellib.instance import instance_segmentation
     global Segmenter_Instance
     Segmenter_Instance = instance_segmentation()
-    Segmenter_Instance.load_model("Models/mask_rcnn_coco.h5")
+    Segmenter_Instance.load_model(ModelsDir + "mask_rcnn_coco.h5")
 
 # def LoadFastSemanticSegmenter():
 #     global Segmenter_FastSemantic
 
-#     model_path = 'Models/ckpt-camvid-enet.pth'
+#     model_path = ModelsDir + 'ckpt-camvid-enet.pth'
 #     num_classes = 12
 #     cuda = torch.device('cuda:0' if torch.cuda.is_available() and True else 'cpu')
 
