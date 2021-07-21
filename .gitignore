@@ -1,2 +1,4 @@
 ModelFiles/
 DumpFiles/
+
+*__pycache__/*.*

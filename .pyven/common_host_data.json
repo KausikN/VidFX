@@ -1,0 +1,12 @@
+{
+    "files_to_download": [
+        "StreamLitGUI/",
+        "app.py",
+        "VidFX.py",
+        "Utils/",
+        "EffectsLibrary/",
+        "TestImgs/Horse.PNG",
+        "TestVids/Test_Animation.wmv",
+        "Frames/"
+    ]
+}

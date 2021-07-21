@@ -2,39 +2,44 @@
  A python tool (UI and Code) for editing videos and adding fun effects to webcam and video
 
 # GUI
+[![https://infinityjoker-apps.herokuapp.com/](https://pyheroku-badge.herokuapp.com/?app=infinityjoker-apps&style=plastic)](https://infinityjoker-apps.herokuapp.com/)
 
- - GUI Hosted using streamlit
- - Run [StartUI.sh](StartUI.sh) to view the app on your browser!
+ - GUI built using streamlit
+ - To use app locally,
+    - Clone the repo and run [StartUI.sh](StartUI.sh) to view the app on your browser!
+ - App is also hosted remotely on heroku using my common host app,
+    - [https://infinityjoker-apps.herokuapp.com/](https://infinityjoker-apps.herokuapp.com/)
+
+    - In the Common Host App, simply choose a project to load and click load and deploy.
+
+    - Then go ahead and use the app! :)
+
+    - If you want to change to another app, simply click on View Other Projects in top left and choose any other project and load and deploy.
 
 # UI Effects Visualiser
+  [![Generic badge](https://img.shields.io/badge/Effects-List-<COLOR>.svg)](EffectsLibrary/Effects.txt)
    
-   - Run VidFXUI.py file
-   
-     View/Save effects easily for webcam or any video
+  View/Save effects easily for webcam or any video
 
-     CommonEffects:
+  CommonEffects:
      
-         Effects that are applied to Input Video before applying further effects
+    Effects that are applied to Input Video before applying further effects
 
-     EffectFuncs:
+  EffectFuncs:
 
-         - Effects applied for video to display
+    - Effects applied for video to display
 
-         - Multiple effect sequences are separated by a ',' line
+    - Multiple effect sequences are separated by a ',' line
 
-         - Set of Sequences of effects are applied and all of them are appended as a single frame for an input frame from the video
+    - Set of Sequences of effects are applied and all of them are appended as a single frame for an input frame from the video
 
-     For full list of effects with their parameters see [Effect List](EffectsLibrary/Effects.txt)
+  For full list of effects with their parameters see [Effect List](EffectsLibrary/Effects.txt)
 
-     ![UI Image](DocImages/UI.PNG)
-
-     ![UI Output Image](DocImages/UIOutput.PNG)
+  ![UI Output Image](DocImages/UIOutput.PNG)
 
 # Features
 
-   - Run ImageFXUI.py file
-
-     Add same effects for images
+   - Add same effects for images
 
      ![Effect Image](GeneratedVisualisations/Effects/Effect_CannyEdges.jpg)
    
@@ -136,6 +141,6 @@
 
      ![ValueCount Effect](GeneratedVisualisations/Effects/Effect_ValueCount.jpg)
 
-   - And many more! 
+   - And many more! :O
    
      For full list of effects with their parameters see [Effect List](EffectsLibrary/Effects.txt).
