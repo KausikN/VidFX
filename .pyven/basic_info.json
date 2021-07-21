@@ -9,6 +9,6 @@
         "imageio",
         "Pillow",
         "scikit-image",
-        "streamlit-webcam-example"
+        "noise"
     ]
 }
