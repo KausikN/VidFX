@@ -7,8 +7,8 @@
         "opencv-python-headless",
         "tqdm",
         "imageio",
-        "PIL",
-        "skimage",
+        "Pillow",
+        "scikit-image",
         "streamlit-webcam-example"
     ]
 }
