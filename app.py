@@ -291,7 +291,6 @@ def UI_DisplayEffectTransistionVideo(I=None, max_frames=-1, EffectFuncs=None, co
     frames_effect = []
     for frame in frames:
         MainFunc = EffectTransistionUtils.GetMainFunc(MainEffectFunc, CommonEffects_Tr, EffectFuncs_Tr, frame, recursiveArgs=False)
-
         outFrame = MainFunc(I)
         frames_effect.append(outFrame)
         effectVideoDisplay.image(outFrame, caption='Effect Video', use_column_width=True)
@@ -334,15 +333,17 @@ def UI_Param_EffectTransistions(p, col1=st, col2=st, col3=st, key=""):
         inp_start = TYPE_MAP[typeSplit[0]](inp_start, TYPE_MAP[typeSplit[1]])
         inp_end = TYPE_MAP[typeSplit[0]](inp_end, TYPE_MAP[typeSplit[1]])
     elif p["type"] == "frame":
-        frameName = st.selectbox("Select Frame", ["Select Frame"] + FRAMES)
+        frameName = col1.selectbox("Select Frame", ["Select Frame"] + FRAMES, key=p["name"] + "_frametr_" + key)
         inp_start = None
         if not (frameName == "Select Frame"):
             inp_start = os.path.join(DEFAULT_FRAMESPATH, frameName)
             inp_start = inp_start.replace('"', '\\"')
             inp_start = '"' + inp_start + '"'
+    else:
+        return None, None, None
 
     if inp_end is not None:
-        TransistionFunc = TRANSISTION_FUNCS[col3.selectbox(p["name"] + " Transistion", list(TRANSISTION_FUNCS.keys()))]
+        TransistionFunc = TRANSISTION_FUNCS[col3.selectbox(p["name"] + " Transistion", list(TRANSISTION_FUNCS.keys()), key=p["name"] + "_trf_" + key)]
     else:
         inp_end = inp_start
         TransistionFunc = TRANSISTION_FUNCS['Constant']
@@ -382,10 +383,12 @@ def UI_Param_Effects(p, col=st, key=""):
         typeSplit = p["type"].split(":")
         inp = TYPE_MAP[typeSplit[0]](inp, TYPE_MAP[typeSplit[1]])
     elif p["type"] == "frame":
-        frameName = st.selectbox("Select Frame", ["Select Frame"] + FRAMES)
+        frameName = col.selectbox("Select Frame", ["Select Frame"] + FRAMES, key=p["name"] + "_framen_" + key)
         inp = None
         if not (frameName == "Select Frame"):
             inp = os.path.join(DEFAULT_FRAMESPATH, frameName)
+    else:
+        return None
 
     return inp
     
@@ -402,7 +405,8 @@ def UI_Params_Effects(paramsData, col=st, key=""):
     ParamsInputs = {}
     for p in paramsData:
         inp = UI_Param_Effects(p, col, key)
-        ParamsInputs[p["name"]] = inp
+        if inp is not None:
+            ParamsInputs[p["name"]] = inp
     return ParamsInputs
 ####################################################################################################################
 def UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects):
@@ -569,7 +573,8 @@ def image_effect_transistion():
             paramsData = {}
             for k in ParamsInputs_Effects[i][j].keys():
                 pD = ParamsInputs_Effects[i][j][k]
-                paramsData[k] = functools.partial(pD["func"], start=pD["start"], end=pD["end"])
+                if pD["func"] is not None:
+                    paramsData[k] = functools.partial(pD["func"], start=pD["start"], end=pD["end"])
             trData = [ef, paramsData]
             efs_tr.append(trData)
         EffectFuncs_Tr.append(efs_tr)
@@ -578,13 +583,14 @@ def image_effect_transistion():
         paramsData = {}
         for k in ParamsInputs_Common[i].keys():
             pD = ParamsInputs_Common[i][k]
-            paramsData[k] = functools.partial(pD["func"], start=pD["start"], end=pD["end"])
+            if pD["func"] is not None:
+                paramsData[k] = functools.partial(pD["func"], start=pD["start"], end=pD["end"])
         trData = [efs, paramsData]
         CommonFuncs_Tr.append(trData)
 
     saveI_keys = EffectsLibrary.GetSaveIKeys(EffectFuncs)
     MainFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
-
+    
     EffectFunctions = {
         "Main": MainFunc,
         "Common": CommonFuncs_Tr,
