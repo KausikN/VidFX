@@ -141,6 +141,10 @@
 
      ![ValueCount Effect](GeneratedVisualisations/Effects/Effect_ValueCount.jpg)
 
+   - FrameDelay
+
+     ![FrameDelay Effect](GeneratedVisualisations/Effects/Effect_FrameDelay.gif)
+
    - And many more! :O
    
      For full list of effects with their parameters see [Effect List](EffectsLibrary/Effects.txt).

@@ -177,6 +177,10 @@ pickle.dump({EffectObj}, open('{DEFAULT_CODE_PACKAGE}' + '/{EffectObj}.p', 'wb')
     return CommonEffects, EffectFuncs
 
 # UI Functions
+def UI_SelectNCols():
+    global OUTPUT_NCOLS
+    OUTPUT_NCOLS = st.sidebar.slider('Number of Columns', 1, 10, 5)
+
 def UI_VideoInputSource():
     USERINPUT_VideoInputChoice = st.selectbox("Select Video Input Source", list(INPUTREADERS_VIDEO.keys()))
 
@@ -459,6 +463,8 @@ def videofx():
     st.markdown("## Choose Display Effects")
     EffectFuncsText, ParamInputs_Effects = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects)
 
+    UI_SelectNCols()
+
     CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
 
     # Apply Params
@@ -508,6 +514,8 @@ def imagefx():
 
     st.markdown("## Choose Display Effects")
     EffectFuncsText, ParamInputs_Effects = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects)
+
+    UI_SelectNCols()
 
     CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
 
@@ -561,6 +569,8 @@ def image_effect_transistion():
 
     st.markdown("## Choose Effects Transistions")
     EffectFuncsText, ParamsInputs_Effects = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_EffectTransistions)
+
+    UI_SelectNCols()
 
     CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
     EffectFuncs_Tr = []
@@ -616,6 +626,8 @@ def videofx_text_based():
     EffectFuncsText = st.text_area("Effects Code", "None")
     CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
 
+    UI_SelectNCols()
+
     EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
     EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
 
@@ -637,6 +649,8 @@ def imagefx_text_based():
     CommonEffectsText = st.text_area("Common Effects Code", "None")
     EffectFuncsText = st.text_area("Effects Code", "None")
     CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+
+    UI_SelectNCols()
 
     EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
     EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
