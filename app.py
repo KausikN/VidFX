@@ -209,7 +209,7 @@ def UI_DisplayEffectVideo(vid=None, max_frames=-1, EffectFunc=None, compactDispl
 
     col1, col2 = st, st
     if compactDisplay:
-        col1, col2 = st.beta_columns(2)
+        col1, col2 = st.columns(2)
 
     inputVideoDisplay = col1.empty()
     effectVideoDisplay = col2.empty()
@@ -260,14 +260,14 @@ def UI_LoadImage():
 def UI_DisplayEffectImage(USERINPUT_Image, EffectImage, compactDisplay=False):
     col1, col2 = st, st
     if compactDisplay:
-        col1, col2 = st.beta_columns(2)
+        col1, col2 = st.columns(2)
     col1.image(USERINPUT_Image, "Input Image", use_column_width=True)
     col2.image(EffectImage, "Effected Image", use_column_width=True)
 
 def UI_ShowAvailableEffects():
     AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
     st.markdown("## Available Effects")
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     USERINPUT_EffectName = st.selectbox("Select Effect", AvailableEffectsNames)
     USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
     USERINPUT_EffectCode = AVAILABLE_EFFECTS[USERINPUT_EffectIndex]["code"]
@@ -286,7 +286,7 @@ def UI_DisplayEffectTransistionVideo(I=None, max_frames=-1, EffectFuncs=None, co
 
     col1, col2 = st, st
     if compactDisplay:
-        col1, col2 = st.beta_columns(2)
+        col1, col2 = st.columns(2)
 
     col1.image(I, "Input Image", use_column_width=True)
     effectVideoDisplay = col2.empty()
@@ -355,7 +355,7 @@ def UI_Param_EffectTransistions(p, col1=st, col2=st, col3=st, key=""):
     return inp_start, inp_end, TransistionFunc
     
 def UI_EffectSelector_EffectTransistions(AvailableEffectsNames, key=""):
-    col1, col2, col3, col4 = st.beta_columns([2, 1, 1, 1])
+    col1, col2, col3, col4 = st.columns([2, 1, 1, 1])
     USERINPUT_EffectName = col1.selectbox("", AvailableEffectsNames, key="EN_" + key)
     USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
     USERINPUT_EffectData = AVAILABLE_EFFECTS[USERINPUT_EffectIndex]
@@ -397,7 +397,7 @@ def UI_Param_Effects(p, col=st, key=""):
     return inp
     
 def UI_EffectSelector_Effects(AvailableEffectsNames, key=""):
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     USERINPUT_EffectName = col1.selectbox("", AvailableEffectsNames, key="EN_" + key)
     USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
     USERINPUT_EffectData = AVAILABLE_EFFECTS[USERINPUT_EffectIndex]
