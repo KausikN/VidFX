@@ -1,0 +1,45 @@
+Adding a new effect,
+
+1) Put the Effect Function in a ".py" file under "EffectsLibrary/"
+
+2) Import the module in "EffectsLibrary/EffectsLibrary.py" in the format
+    from EffectsLibrary.{EffectFileName} import *
+
+3) Add the Effect Name with params in format {EffectFunctionName}({Params}) to,
+    - EffectsLibrary/Effects.txt
+    - StreamLitGUI/AvailableEffects.txt
+
+4) Add the Effect to,
+    - StreamLitGUI/AvailableEffects.json
+
+    in format, example,
+
+    {
+        "name": "{EffectName}",
+        "code": "{EffectName}({Params})",
+        "params": [
+            {
+                "name": "{Int_ParamName}",
+                "default": 127,
+                "type": "int",
+                "min": 0,
+                "max": 255,
+                "step": 1
+            },
+            {
+                "name": "{StrList_ParamName}",
+                "default": ["0_0"],
+                "type": "list:str"
+            },
+            {
+                "name": "{Bool_ParamName}",
+                "default": false,
+                "type": "bool"
+            },
+            {
+                "name": "{FloatList_ParamName}",
+                "default": [1.75, 1.75, 1.75],
+                "type": "list:float"
+            }
+        ]
+    }
