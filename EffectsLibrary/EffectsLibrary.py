@@ -23,6 +23,7 @@ from EffectsLibrary.TerrainGenEffects import *
 from EffectsLibrary.PlotEffects import *
 from EffectsLibrary.TransparencyEffects import *
 from EffectsLibrary.ShufflingEffects import *
+from EffectsLibrary.QRBarEffects import *
 
 # Main Vars
 savedIs = None
