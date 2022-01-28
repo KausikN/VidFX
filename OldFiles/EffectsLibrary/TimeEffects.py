@@ -24,11 +24,11 @@ def ImageEffect_FrameDelay(I, delay=12, funcKey='FrameDelay_0'):
     if not funcKey in delayInitCounts.keys():
         delayInitCounts[funcKey] = [1, delay]
         savedFrames[funcKey] = [np.copy(I)]
-        output = np.zeros(I.shape, dtype=float)
+        output = np.zeros(I.shape, dtype=np.uint8)
     elif delayInitCounts[funcKey][0] < delay:
         delayInitCounts[funcKey][0] += 1
         savedFrames[funcKey].append(np.copy(I))
-        output = np.zeros(I.shape, dtype=float)
+        output = np.zeros(I.shape, dtype=np.uint8)
     elif delayInitCounts[funcKey][0] == delay:
         delayInitCounts[funcKey][0] += 1
         output = savedFrames[funcKey][0]
@@ -40,25 +40,5 @@ def ImageEffect_FrameDelay(I, delay=12, funcKey='FrameDelay_0'):
         savedFrames[funcKey].append(np.copy(I))
 
     return output
-
-# Main Vars
-EFFECTFUNCS_TIME = [
-    {
-        "name": "FrameDelay",
-        "code": "FrameDelay(delay=12)",
-        "func": ImageEffect_FrameDelay,
-        "params": [
-            {
-                "name": "delay",
-                "default": 12,
-                "type": "int",
-                "min": 0,
-                "max": 120,
-                "step": 6
-            }
-        ]
-    },
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_TIME)
 
 # Driver Code

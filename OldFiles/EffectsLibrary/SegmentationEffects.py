@@ -8,6 +8,11 @@ import cv2
 import numpy as np
 from skimage import segmentation
 
+# import torch
+# import torch.nn as nn
+# from EffectsLibrary.ENet_LiteSegmenter.utils import *
+# from EffectsLibrary.ENet_LiteSegmenter.models.ENet import ENet
+
 # Main Vars
 ModelsDir = "ModelFiles/"
 
@@ -29,6 +34,25 @@ def LoadInstanceSegmenter():
     Segmenter_Instance = instance_segmentation()
     Segmenter_Instance.load_model(ModelsDir + "mask_rcnn_coco.h5")
 
+# def LoadFastSemanticSegmenter():
+#     global Segmenter_FastSemantic
+
+#     model_path = ModelsDir + 'ckpt-camvid-enet.pth'
+#     num_classes = 12
+#     cuda = torch.device('cuda:0' if torch.cuda.is_available() and True else 'cpu')
+
+#     # Check if the pretrained model is available
+#     if not model_path.endswith('.pth'):
+#         print('Unknown file passed. Must end with .pth')
+
+#     checkpoint = torch.load(model_path, map_location=cuda)
+    
+#     # Assuming the dataset is camvid
+#     enet = ENet(num_classes)
+#     enet.load_state_dict(checkpoint['state_dict'])
+
+#     Segmenter_FastSemantic = enet
+
 # Direct Video Effects
 def VideoEffect_SemanticSegmentation(videoPath, outputPath, overlay=False, fps=20):
     if Segmenter_Semantic is None:
@@ -44,66 +68,42 @@ def VideoEffect_InstanceSegmentation(videoPath, outputPath, show_bboxes=False, f
 def ImageEffect_SemanticSegmentation(I, overlay=False):
     if Segmenter_Semantic is None:
         LoadSemanticSegmenter()
-    segmap, output = Segmenter_Semantic.segmentFrameAsPascalvoc(I[:, :, :3], overlay=overlay)
-    I_effect = np.array(output)
-    I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
-    return I_effect
+    segmap, output = Segmenter_Semantic.segmentFrameAsPascalvoc(I, overlay=overlay)
+    output = np.array(output)
+    return output
 
 def ImageEffect_InstanceSegmentation(I, show_bboxes=False):
     if Segmenter_Instance is None:
         LoadInstanceSegmenter()
-    segmap, output = Segmenter_Instance.segmentFrame(I[:, :, :3], show_bboxes=show_bboxes)
-    I_effect = np.array(output)
-    I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
-    return I_effect
+    segmap, output = Segmenter_Instance.segmentFrame(I, show_bboxes=show_bboxes)
+    output = np.array(output)
+    return output
+
+# def ImageEffect_FastSemanticSegmentation(I):
+#     if Segmenter_FastSemantic is None:
+#         LoadFastSemanticSegmenter()
+
+#     h = 512
+#     w = 512
+
+#     tmg_ = cv2.resize(I, (h, w), cv2.INTER_NEAREST)
+#     tmg = torch.tensor(tmg_).unsqueeze(0).float()
+#     tmg = tmg.transpose(2, 3).transpose(1, 2)
+
+#     with torch.no_grad():
+#         out1 = Segmenter_FastSemantic(tmg.float()).squeeze(0)
+
+#     b_ = out1.data.max(0)[1].cpu().numpy()
+#     decoded_segmap = decode_segmap(b_)
+
+#     output = np.array(b_)
+
+#     return output
 
 def ImageEffect_Watershed(I, watershed_line=True):#, bin_threshold=127):
     # I = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)# >= bin_threshold
-    I_filtered = segmentation.watershed(I[:, :, :3], watershed_line=watershed_line)
-    
-    I_effect = np.clip(I_filtered, 0.0, 1.0, dtype=float)
-    I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
-    return I_effect
-
-# Main Vars
-EFFECTFUNCS_SEGMENTATION = [
-    {
-        "name": "SemanticSegmentation",
-        "code": "SemanticSegmentation(overlay=True)",
-        "func": ImageEffect_SemanticSegmentation,
-        "params": [
-            {
-                "name": "overlay",
-                "default": True,
-                "type": "bool"
-            }
-        ]
-    },
-    {
-        "name": "InstanceSegmentation",
-        "code": "InstanceSegmentation(show_bboxes=True)",
-        "func": ImageEffect_InstanceSegmentation,
-        "params": [
-            {
-                "name": "show_bboxes",
-                "default": True,
-                "type": "bool"
-            }
-        ]
-    },
-    {
-        "name": "Watershed",
-        "code": "Watershed(watershed_line=True)",
-        "func": ImageEffect_Watershed,
-        "params": [
-            {
-                "name": "watershed_line",
-                "default": True,
-                "type": "bool"
-            }
-        ]
-    }
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_SEGMENTATION)
+    I_filtered = segmentation.watershed(I, watershed_line=watershed_line)
+    I_filtered = np.array(I_filtered*255, dtype=np.uint8)
+    return I_filtered
 
 # Driver Code

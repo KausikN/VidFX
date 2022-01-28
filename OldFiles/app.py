@@ -59,17 +59,17 @@ def HomePage():
 
 #############################################################################################################################
 # Repo Based Vars
-DEFAULT_PATH_EXAMPLEIMAGE = 'TestFiles/TestImgs/Horse.PNG'
-DEFAULT_PATH_EXAMPLEVIDEO = 'TestFiles/TestVids/Test_Animation.wmv'
+DEFAULT_PATH_EXAMPLEIMAGE = 'TestImgs/Horse.PNG'
+DEFAULT_PATH_EXAMPLEVIDEO = 'TestVids/Test_Animation.wmv'
 AVAILABLEEFFECTS_PATH = 'StreamLitGUI/AvailableEffects.json'
 
-DEFAULT_SAVEPATH_IMAGE = 'TestFiles/TestImgs/OutputImage.png'
-DEFAULT_SAVEPATH_VIDEO = 'TestFiles/TestImgs/OutputVideo.mp4'
-DEFAULT_SAVEPATH_GIF = 'TestFiles/TestImgs/OutputGIF.gif'
+DEFAULT_SAVEPATH_IMAGE = 'TestImgs/OutputImage.png'
+DEFAULT_SAVEPATH_VIDEO = 'TestImgs/OutputVideo.mp4'
+DEFAULT_SAVEPATH_GIF = 'TestImgs/OutputGIF.gif'
 
 DEFAULT_CODE_PACKAGE = 'StreamLitGUI/CacheData/'
 DEFAULT_CACHEPATH = 'StreamLitGUI/CacheData/Cache.json'
-DEFAULT_FRAMESPATH = 'StreamLitGUI/DefaultData/Frames/'
+DEFAULT_FRAMESPATH = 'Frames/'
 
 OUTPUT_NCOLS = 5
 
@@ -128,10 +128,7 @@ def GenerateImageSizeIndicatorImage(ImageSize):
 
 def LoadAvailableEffects():
     global AVAILABLE_EFFECTS
-    # Load from JSON
-    # AVAILABLE_EFFECTS = json.load(open(AVAILABLEEFFECTS_PATH, 'r'))["effects"]
-    # Load from EffectLibrary
-    AVAILABLE_EFFECTS = EffectsLibrary.AVAILABLE_EFFECTS
+    AVAILABLE_EFFECTS = json.load(open(AVAILABLEEFFECTS_PATH, 'r'))["effects"]
 
 def GetNames(data):
     names = []
@@ -363,9 +360,8 @@ def UI_EffectSelector_EffectTransistions(AvailableEffectsNames, key=""):
     USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
     USERINPUT_EffectData = AVAILABLE_EFFECTS[USERINPUT_EffectIndex]
     ParamsInputs = UI_Params_EffectTransistions(USERINPUT_EffectData["params"], col1=col2, col2=col3, col3=col4, key=key)
-    USERINPUT_EffectFunc = functools.partial(USERINPUT_EffectData["func"]) # Params Tranisiton is applied later
-    USERINPUT_EffectCode = USERINPUT_EffectData["name"]
-    return USERINPUT_EffectCode, ParamsInputs, USERINPUT_EffectFunc
+    USERINPUT_EffectCode = USERINPUT_EffectData["name"] # Params Tranisiton is applied later
+    return USERINPUT_EffectCode, ParamsInputs
 
 def UI_Params_EffectTransistions(paramsData, col1=st, col2=st, col3=st, key=""):
     ParamsInputs = {}
@@ -406,9 +402,8 @@ def UI_EffectSelector_Effects(AvailableEffectsNames, key=""):
     USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
     USERINPUT_EffectData = AVAILABLE_EFFECTS[USERINPUT_EffectIndex]
     ParamsInputs = UI_Params_Effects(USERINPUT_EffectData["params"], col=col2, key=key)
-    USERINPUT_EffectFunc = functools.partial(USERINPUT_EffectData["func"]) # Params are applied later
-    USERINPUT_EffectCode = USERINPUT_EffectData["name"]
-    return USERINPUT_EffectCode, ParamsInputs, USERINPUT_EffectFunc
+    USERINPUT_EffectCode = USERINPUT_EffectData["name"] # Params are applied later
+    return USERINPUT_EffectCode, ParamsInputs
 
 def UI_Params_Effects(paramsData, col=st, key=""):
     ParamsInputs = {}
@@ -423,34 +418,30 @@ def UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effec
 
     EffectFuncsTextList = []
     EffectFuncsParamsInputs = []
-    EffectFuncsGroup = []
     for c in range(USERINPUT_DisplayCount):
         st.markdown("<hr>", unsafe_allow_html=True)
         st.markdown("### Display " + str(c+1))
-        EffectsListText, EffectsParamsInputs, EffectFuncs = UI_EffectsRepeater(AvailableEffectsNames, str(c+1), EffectMode=EffectMode)
+        EffectsListText, EffectsParamsInputs = UI_EffectsRepeater(AvailableEffectsNames, str(c+1), EffectMode=EffectMode)
         st.markdown("<hr>", unsafe_allow_html=True)
         EffectFuncsTextList.append(EffectsListText)
         EffectFuncsParamsInputs.append(EffectsParamsInputs)
-        EffectFuncsGroup.append(EffectFuncs)
     EffectFuncsText = "\n,\n".join(EffectFuncsTextList)
     
-    return EffectFuncsText, EffectFuncsParamsInputs, EffectFuncsGroup
+    return EffectFuncsText, EffectFuncsParamsInputs
 
 def UI_EffectsRepeater(AvailableEffectsNames, displayKey="", EffectMode=UI_EffectSelector_Effects):
     USERINPUT_EffectCount = st.slider("Select Number of Effects", 1, 10, 1, key="En_" + str(displayKey))
 
     EffectsList = []
     EffectsParamsInputs = []
-    EffectFuncs = []
     for e in range(USERINPUT_EffectCount):
         key = str(displayKey) + "_" + str(e)
-        EffectCode, ParamsInputs, EffectFunc = EffectMode(AvailableEffectsNames, key)
+        EffectCode, ParamsInputs = EffectMode(AvailableEffectsNames, key)
         EffectsList.append(EffectCode)
         EffectsParamsInputs.append(ParamsInputs)
-        EffectFuncs.append(EffectFunc)
     EffectsListText = "\n".join(EffectsList)
 
-    return EffectsListText, EffectsParamsInputs, EffectFuncs
+    return EffectsListText, EffectsParamsInputs
 
 # Repo Based Functions
 def videofx():
@@ -467,14 +458,14 @@ def videofx():
     AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
     
     st.markdown("## Choose Common Effects")
-    CommonEffectsText, ParamInputs_Common, CommonEffects = UI_EffectsRepeater(AvailableEffectsNames, displayKey="CE", EffectMode=UI_EffectSelector_Effects)
+    CommonEffectsText, ParamInputs_Common = UI_EffectsRepeater(AvailableEffectsNames, displayKey="CE", EffectMode=UI_EffectSelector_Effects)
 
     st.markdown("## Choose Display Effects")
-    EffectFuncsText, ParamInputs_Effects, EffectFuncs = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects)
+    EffectFuncsText, ParamInputs_Effects = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects)
 
     UI_SelectNCols()
 
-    # CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+    CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
 
     # Apply Params
     EffectFuncs_PA = []
@@ -519,14 +510,14 @@ def imagefx():
     AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
     
     st.markdown("## Choose Common Effects")
-    CommonEffectsText, ParamInputs_Common, CommonEffects = UI_EffectsRepeater(AvailableEffectsNames, displayKey="CE", EffectMode=UI_EffectSelector_Effects)
+    CommonEffectsText, ParamInputs_Common = UI_EffectsRepeater(AvailableEffectsNames, displayKey="CE", EffectMode=UI_EffectSelector_Effects)
 
     st.markdown("## Choose Display Effects")
-    EffectFuncsText, ParamInputs_Effects, EffectFuncs = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects)
+    EffectFuncsText, ParamInputs_Effects = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects)
 
     UI_SelectNCols()
 
-    # CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+    CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
 
     # Apply Params
     EffectFuncs_PA = []
@@ -574,15 +565,14 @@ def image_effect_transistion():
     AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
     
     st.markdown("## Choose Common Effects")
-    CommonEffectsText, ParamsInputs_Common, CommonEffects = UI_EffectsRepeater(AvailableEffectsNames, displayKey="CE", EffectMode=UI_EffectSelector_EffectTransistions)
+    CommonEffectsText, ParamsInputs_Common = UI_EffectsRepeater(AvailableEffectsNames, displayKey="CE", EffectMode=UI_EffectSelector_EffectTransistions)
 
     st.markdown("## Choose Effects Transistions")
-    EffectFuncsText, ParamsInputs_Effects, EffectFuncs = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_EffectTransistions)
+    EffectFuncsText, ParamsInputs_Effects = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_EffectTransistions)
 
     UI_SelectNCols()
 
-    # CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
-
+    CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
     EffectFuncs_Tr = []
     CommonFuncs_Tr = []
     for i in range(len(EffectFuncs)):

@@ -70,15 +70,15 @@
         },
         {
             "name": "Binarise",
-            "code": "Binarise(threshold=127)",
+            "code": "Binarise(threshold=0.5)",
             "params": [
                 {
                     "name": "threshold",
-                    "default": 127,
-                    "type": "int",
-                    "min": 0,
-                    "max": 255,
-                    "step": 1
+                    "default": 0.5,
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.1
                 }
             ]
         },
@@ -130,28 +130,28 @@
         },
         {
             "name": "ClipValues",
-            "code": "ClipValues(threshold=[100, 200], replace=[100, 200])",
+            "code": "ClipValues(threshold=[0.25, 0.75], replace=[0.25, 0.75])",
             "params": [
                 {
                     "name": "threshold",
-                    "default": [100, 200],
-                    "type": "list:int"
+                    "default": [0.25, 0.75],
+                    "type": "list:float"
                 },
                 {
                     "name": "replace",
-                    "default": [100, 200],
-                    "type": "list:int"
+                    "default": [0.25, 0.75],
+                    "type": "list:float"
                 }
             ]
         },
         {
             "name": "BinValues",
-            "code": "BinValues(bins=[0, 64, 128, 196, 255])",
+            "code": "BinValues(bins=[0.0, 0.5, 1.0])",
             "params": [
                 {
                     "name": "bins",
-                    "default": [0, 64, 128, 196, 255],
-                    "type": "list:int"
+                    "default": [0.0, 0.5, 1.0],
+                    "type": "list:float"
                 }
             ]
         },
@@ -184,23 +184,23 @@
         },
         {
             "name": "GaussianNoise",
-            "code": "GaussianNoise(mean=50, SD=25)",
+            "code": "GaussianNoise(mean=0.2, SD=0.1)",
             "params": [
                 {
                     "name": "mean",
-                    "default": 50,
-                    "type": "int",
-                    "min": 0,
-                    "max": 255,
-                    "step": 1
+                    "default": 0.2,
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.05
                 },
                 {
                     "name": "SD",
-                    "default": 25,
-                    "type": "int",
-                    "min": 0,
-                    "max": 255,
-                    "step": 1
+                    "default": 0.1,
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.05
                 }
             ]
         },
@@ -365,7 +365,7 @@
         },
         {
             "name": "Skeleton",
-            "code": "Skeleton(method=None, bin_threshold=127)",
+            "code": "Skeleton(method=None, bin_threshold=0.5)",
             "params": [
                 {
                     "name": "method",
@@ -374,17 +374,17 @@
                 },
                 {
                     "name": "bin_threshold",
-                    "default": 127,
-                    "type": "int",
-                    "min": 0,
-                    "max": 255,
-                    "step": 1
+                    "default": 0.5,
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.1
                 }
             ]
         },
         {
             "name": "Thin",
-            "code": "Thin(max_iters=None, bin_threshold=127)",
+            "code": "Thin(max_iters=None, bin_threshold=0.5)",
             "params": [
                 {
                     "name": "max_iters",
@@ -396,11 +396,11 @@
                 },
                 {
                     "name": "bin_threshold",
-                    "default": 127,
-                    "type": "int",
-                    "min": 0,
-                    "max": 255,
-                    "step": 1
+                    "default": 0.5,
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.1
                 }
             ]
         },
@@ -663,12 +663,12 @@
         },
         {
             "name": "ColorKeyTransparent",
-            "code": "ColorKeyTransparent(keyColor=[0,0,0])",
+            "code": "ColorKeyTransparent(keyColor=[0.0, 0.0, 0.0])",
             "params": [
                 {
                     "name": "keyColor",
-                    "default": [0, 0, 0],
-                    "type": "list:int"
+                    "default": [0.0, 0.0, 0.0],
+                    "type": "list:float"
                 }
             ]
         },

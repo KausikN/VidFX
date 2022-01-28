@@ -35,8 +35,6 @@
 
   For full list of effects with their parameters see [Effect List](EffectsLibrary/Effects.txt)
 
-  ![UI Output Image](DocImages/UIOutput.PNG)
-
 # Features
 
    - Add same effects for images

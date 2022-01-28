@@ -14,15 +14,4 @@ def ImageEffect_ShufflePixelsRandom(I):
     I_shuffled = np.reshape(I_shuffled_flat, (I.shape[0], I.shape[1], I.shape[2]))
     return I_shuffled
 
-# Main Vars
-EFFECTFUNCS_SHUFFLING = [
-    {
-        "name": "ShufflePixelsRandom",
-        "code": "ShufflePixelsRandom",
-        "func": ImageEffect_ShufflePixelsRandom,
-        "params": []
-    }
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_SHUFFLING)
-
 # Driver Code

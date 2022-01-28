@@ -36,7 +36,7 @@ def ImageEffect_ValueCount_BarPlot(I, showAxis=True):
         ax.margins(0)
         fig.tight_layout(pad=0)
 
-    I_g = np.mean(I[:, :, :3] * 255, axis=2, dtype=int).reshape(-1)
+    I_g = np.mean(I, axis=2, dtype=int).reshape(-1)
     I_g = np.append(I_g, range(0, 255))
 
     values, counts = np.unique(I_g.reshape(-1), return_counts=True, axis=0)
@@ -45,7 +45,7 @@ def ImageEffect_ValueCount_BarPlot(I, showAxis=True):
 
     canvas.draw()
     buf = canvas.buffer_rgba()
-    I_effect = np.asarray(buf)
+    I_effect = cv2.cvtColor(np.asarray(buf), cv2.COLOR_RGBA2RGB)
 
     return I_effect
 
@@ -59,7 +59,7 @@ def ImageEffect_ValueCount_LinePlot(I, showAxis=True):
         ax.margins(0)
         fig.tight_layout(pad=0)
 
-    I_g = np.mean(I[:, :, :3] * 255, axis=2, dtype=int).reshape(-1)
+    I_g = np.mean(I, axis=2, dtype=int).reshape(-1)
     I_g = np.append(I_g, range(0, 255))
 
     values, counts = np.unique(I_g.reshape(-1), return_counts=True, axis=0)
@@ -68,7 +68,7 @@ def ImageEffect_ValueCount_LinePlot(I, showAxis=True):
 
     canvas.draw()
     buf = canvas.buffer_rgba()
-    I_effect = np.asarray(buf)
+    I_effect = cv2.cvtColor(np.asarray(buf), cv2.COLOR_RGBA2RGB)
 
     return I_effect
 
@@ -82,7 +82,7 @@ def ImageEffect_ValueCount_PointPlot(I, showAxis=True):
         ax.margins(0)
         fig.tight_layout(pad=0)
 
-    I_g = np.mean(I[:, :, :3] * 255, axis=2, dtype=int).reshape(-1)
+    I_g = np.mean(I, axis=2, dtype=int).reshape(-1)
     I_g = np.append(I_g, range(0, 255))
 
     values, counts = np.unique(I_g.reshape(-1), return_counts=True, axis=0)
@@ -91,7 +91,7 @@ def ImageEffect_ValueCount_PointPlot(I, showAxis=True):
 
     canvas.draw()
     buf = canvas.buffer_rgba()
-    I_effect = np.asarray(buf)
+    I_effect = cv2.cvtColor(np.asarray(buf), cv2.COLOR_RGBA2RGB)
 
     return I_effect
 
@@ -105,7 +105,7 @@ def ImageEffect_ValueCount_Plot(I, plots=['bar', 'point', 'line'], showAxis=True
         ax.margins(0)
         fig.tight_layout(pad=0)
 
-    I_g = np.mean(I[:, :, :3] * 255, axis=2, dtype=int).reshape(-1)
+    I_g = np.mean(I, axis=2, dtype=int).reshape(-1)
     I_g = np.append(I_g, range(0, 255))
 
     values, counts = np.unique(I_g.reshape(-1), return_counts=True, axis=0)
@@ -120,67 +120,9 @@ def ImageEffect_ValueCount_Plot(I, plots=['bar', 'point', 'line'], showAxis=True
 
     canvas.draw()
     buf = canvas.buffer_rgba()
-    I_effect = np.asarray(buf)
+    I_effect = cv2.cvtColor(np.asarray(buf), cv2.COLOR_RGBA2RGB)
 
     return I_effect
-
-# Main Vars
-EFFECTFUNCS_PLOT = [
-    {
-        "name": "ValueCount_BarPlot",
-        "code": "ValueCount_BarPlot(showAxis=True)",
-        "func": ImageEffect_ValueCount_BarPlot,
-        "params": [
-            {
-                "name": "showAxis",
-                "default": True,
-                "type": "bool"
-            }
-        ]
-    },
-    {
-        "name": "ValueCount_LinePlot",
-        "code": "ValueCount_LinePlot(showAxis=True)",
-        "func": ImageEffect_ValueCount_LinePlot,
-        "params": [
-            {
-                "name": "showAxis",
-                "default": True,
-                "type": "bool"
-            }
-        ]
-    },
-    {
-        "name": "ValueCount_PointPlot",
-        "code": "ValueCount_PointPlot(showAxis=True)",
-        "func": ImageEffect_ValueCount_PointPlot,
-        "params": [
-            {
-                "name": "showAxis",
-                "default": True,
-                "type": "bool"
-            }
-        ]
-    },
-    {
-        "name": "ValueCount_Plot",
-        "code": "ValueCount_Plot(plots=['bar', 'point', 'line'], showAxis=True)",
-        "func": ImageEffect_ValueCount_Plot,
-        "params": [
-            {
-                "name": "plots",
-                "default": ["bar", "point", "line"],
-                "type": "list:str"
-            },
-            {
-                "name": "showAxis",
-                "default": True,
-                "type": "bool"
-            }
-        ]
-    }
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_PLOT)
 
 # Driver Code
 # Resize(size=(320, 240))
