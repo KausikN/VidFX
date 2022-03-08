@@ -10,6 +10,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
+from .VideoInputs import *
+
+# Main Vars
+INPUTREADERS_VIDEO = {
+    "Webcam": WebcamVideo,
+    "Upload Video File": ReadVideo,
+    "Video URL": ReadVideo_URL
+}
+
+INPUTREADERS_IMAGE = {
+    "Webcam Snapshot": WebcamVideo,
+    "Upload Image File": ReadVideo,
+    "Image URL": ReadVideo_URL
+}
+
 # Main Functions
 def ReadImage(imgPath, imgSize=None, keepAspectRatio=False):
     I = cv2.imread(imgPath)
@@ -39,13 +54,6 @@ def DisplayImage(I, title=''):
 
 def SaveImage(I, path):
     cv2.imwrite(path, I)
-
-def ReadVideo(path):
-    cap = cv2.VideoCapture(path)
-    return cap
-
-def WebcamVideo():
-    return cv2.VideoCapture(0)
 
 def GetFramesFromVideo(vid=None, path=None, max_frames=-1):
     if vid is None:

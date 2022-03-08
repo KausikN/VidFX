@@ -82,15 +82,8 @@ DISPLAY_IMAGESIZE = [512, 512]
 DISPLAY_INTERPOLATION = cv2.INTER_NEAREST
 DISPLAY_DELAY = 0.1
 
-INPUTREADERS_VIDEO = {
-    "Webcam": VideoUtils.WebcamVideo,
-    "Upload Video File": VideoUtils.ReadVideo
-}
-
-INPUTREADERS_IMAGE = {
-    "Webcam Snapshot": VideoUtils.WebcamVideo,
-    "Upload Image File": None
-}
+INPUTREADERS_VIDEO = VideoUtils.INPUTREADERS_VIDEO
+INPUTREADERS_IMAGE = VideoUtils.INPUTREADERS_IMAGE
 
 TYPE_MAP = {
     "bool": bool,
@@ -186,18 +179,21 @@ def UI_SelectNCols():
 
 def UI_VideoInputSource():
     USERINPUT_VideoInputChoice = st.selectbox("Select Video Input Source", list(INPUTREADERS_VIDEO.keys()))
+    USERINPUT_VideoReader = INPUTREADERS_VIDEO[USERINPUT_VideoInputChoice]
 
-    USERINPUT_VideoReader = None
     # Upload Video File
     if USERINPUT_VideoInputChoice == "Upload Video File":
-        USERINPUT_VideoReader = INPUTREADERS_VIDEO[USERINPUT_VideoInputChoice]
         USERINPUT_VideoPath = st.file_uploader("Upload Video", ['avi', 'mp4', 'wmv'])
         if USERINPUT_VideoPath is None:
             USERINPUT_VideoPath = DEFAULT_PATH_EXAMPLEVIDEO
         USERINPUT_VideoReader = functools.partial(USERINPUT_VideoReader, USERINPUT_VideoPath)
+    # Video URL
+    elif USERINPUT_VideoInputChoice == "Video URL":
+        USERINPUT_VideoURL = st.text_input("Video URL", "http://192.168.0.102:8080/shot.jpg")
+        USERINPUT_VideoReader = functools.partial(USERINPUT_VideoReader, USERINPUT_VideoURL)
     # Webcam
     else:
-        USERINPUT_VideoReader = INPUTREADERS_VIDEO[USERINPUT_VideoInputChoice]
+        pass
 
     USERINPUT_Video = USERINPUT_VideoReader()
     
@@ -207,7 +203,7 @@ def UI_DisplayEffectVideo(vid=None, max_frames=-1, EffectFunc=None, compactDispl
     frameCount = 0
 
     # Check if camera opened successfully
-    if (vid.isOpened()== False): 
+    if (vid.isOpened()== False):
         print("Error opening video stream or file")
 
     col1, col2 = st, st
@@ -221,9 +217,9 @@ def UI_DisplayEffectVideo(vid=None, max_frames=-1, EffectFunc=None, compactDispl
     while(vid.isOpened() and ((not (frameCount == max_frames)) or (max_frames == -1))):
         # Capture frame-by-frame
         ret, frame = vid.read()
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        inputVideoDisplay.image(frame, caption='Input Video', use_column_width=compactDisplay)
         if ret == True:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            inputVideoDisplay.image(frame, caption='Input Video', use_column_width=compactDisplay)
             # Apply Effect if needed
             if EffectFunc is not None:
                 frame = EffectFunc(frame)
@@ -250,6 +246,14 @@ def UI_LoadImage():
             USERINPUT_ImageData = open(DEFAULT_PATH_EXAMPLEIMAGE, 'rb').read()
         USERINPUT_ImageData = cv2.imdecode(np.frombuffer(USERINPUT_ImageData, np.uint8), cv2.IMREAD_COLOR)
         USERINPUT_Image = cv2.cvtColor(USERINPUT_ImageData, cv2.COLOR_BGR2RGB)
+    # Upload Image URL
+    elif USERINPUT_ImageInputChoice == "Image URL":
+        USERINPUT_ImageReader = INPUTREADERS_IMAGE[USERINPUT_ImageInputChoice]
+        USERINPUT_ImageURL = st.text_input("Enter Video URL", "http://192.168.0.102:8080/shot.jpg")
+        urlVid = USERINPUT_ImageReader(USERINPUT_ImageURL)
+        RegenerateWebcameSnapshot = st.button("Retake")
+        ret, USERINPUT_Image = urlVid.read()
+        USERINPUT_Image = cv2.cvtColor(USERINPUT_Image, cv2.COLOR_BGR2RGB)
     # Webcam Snapshot
     else:
         USERINPUT_ImageReader = INPUTREADERS_IMAGE[USERINPUT_ImageInputChoice]
