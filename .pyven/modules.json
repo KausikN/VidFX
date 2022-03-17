@@ -18,62 +18,28 @@
                 "functools.py",
                 "numpy.py",
                 "streamlit.py",
-                "matplotlib.pyplot.py",
+                "matplotlib/pyplot.py",
                 "json.py",
-                "PIL.py",
-                "tqdm.py",
                 "VidFX.py",
-                "Utils/VideoUtils.py",
-                "EffectsLibrary/EffectsLibrary.py",
-                "Utils/ParserUtils.py",
-                "Utils/EffectTransistionUtils.py",
-                "cv2.py",
-                "functools.py",
-                "numpy.py",
-                "pickle.py",
-                "Utils/EffectTransistionUtils.py",
-                "EffectsLibrary/EffectsLibrary.py"
+                "Image.py",
+                "tqdm.py",
+                "VideoUtils.py",
+                "EffectsLibrary.py",
+                "ParserUtils.py",
+                "EffectTransistionUtils.py"
             ]
         },
-        "ImageEffectTransistionFX.py": {
-            "name": "ImageEffectTransistionFX",
+        "TestIPCamera.py": {
+            "name": "TestIPCamera",
             "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/ImageEffectTransistionFX.py",
+            "link": "https://github.com/KausikN/VidFX/blob/master/TestIPCamera.py",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
             "subDir": "",
             "dependencies": [
-                "os.py",
                 "cv2.py",
-                "functools.py",
+                "requests.py",
                 "numpy.py",
-                "Utils/EffectTransistionUtils.py",
-                "Utils/VideoUtils.py",
-                "EffectsLibrary/EffectsLibrary.py"
-            ]
-        },
-        "ImageFX.py": {
-            "name": "ImageFX",
-            "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/ImageFX.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "",
-            "dependencies": [
-                "os.py",
-                "cv2.py",
-                "functools.py",
-                "numpy.py",
-                "Utils/VideoUtils.py",
-                "EffectsLibrary/EffectsLibrary.py"
-            ]
-        },
-        "ImageFXUI.py": {
-            "name": "ImageFXUI",
-            "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/ImageFXUI.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "",
-            "dependencies": [
-                "UIUtils/Py2UI.py"
+                "imutils.py"
             ]
         },
         "VidFX.py": {
@@ -86,19 +52,8 @@
                 "cv2.py",
                 "functools.py",
                 "numpy.py",
-                "Utils/VideoUtils.py",
-                "EffectsLibrary/EffectsLibrary.py"
-            ]
-        },
-        "VidFXUI.py": {
-            "name": "VidFXUI",
-            "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/VidFXUI.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "",
-            "dependencies": [
-                "UIUtils/Py2UI.py",
-                "VidFX.py"
+                "VideoUtils.py",
+                "EffectsLibrary.py"
             ]
         },
         "EffectsLibrary/BasicEffects.py": {
@@ -110,7 +65,20 @@
             "dependencies": [
                 "cv2.py",
                 "numpy.py",
-                "matplotlib.pyplot.py"
+                "matplotlib/pyplot.py"
+            ]
+        },
+        "EffectsLibrary/CombinationEffects.py": {
+            "name": "CombinationEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/CombinationEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "math.py",
+                "functools.py",
+                "numpy.py"
             ]
         },
         "EffectsLibrary/EffectsLibrary.py": {
@@ -120,24 +88,12 @@
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
             "subDir": "EffectsLibrary",
             "dependencies": [
+                "os.py",
                 "cv2.py",
                 "math.py",
                 "functools.py",
                 "numpy.py",
-                "skimage.py",
-                "skimage.feature.py",
-                "Utils/VideoUtils.py",
-                "EffectsLibrary/TimeEffects.py",
-                "EffectsLibrary/BasicEffects.py",
-                "EffectsLibrary/FrameEffects.py",
-                "EffectsLibrary/NoiseEffects.py",
-                "EffectsLibrary/FilterEffects.py",
-                "EffectsLibrary/SegmentationEffects.py",
-                "EffectsLibrary/MorphologicalEffects.py",
-                "EffectsLibrary/TerrainGenEffects.py",
-                "EffectsLibrary/PlotEffects.py",
-                "EffectsLibrary/TransparencyEffects.py",
-                "EffectsLibrary/ShufflingEffects.py"
+                "VideoUtils.py"
             ]
         },
         "EffectsLibrary/FilterEffects.py": {
@@ -150,7 +106,7 @@
                 "cv2.py",
                 "numpy.py",
                 "skimage.py",
-                "skimage.feature.py"
+                "skimage/feature.py"
             ]
         },
         "EffectsLibrary/FrameEffects.py": {
@@ -162,7 +118,7 @@
             "dependencies": [
                 "cv2.py",
                 "numpy.py",
-                "Utils/VideoUtils.py"
+                "VideoUtils.py"
             ]
         },
         "EffectsLibrary/MorphologicalEffects.py": {
@@ -174,7 +130,8 @@
             "dependencies": [
                 "cv2.py",
                 "numpy.py",
-                "skimage.py"
+                "morphology.py",
+                "segmentation.py"
             ]
         },
         "EffectsLibrary/NoiseEffects.py": {
@@ -197,9 +154,21 @@
             "dependencies": [
                 "cv2.py",
                 "numpy.py",
-                "matplotlib.pyplot.py",
-                "matplotlib/figure.py",
-                "matplotlib/backends/backend_agg.py"
+                "matplotlib/pyplot.py",
+                "Figure.py",
+                "FigureCanvasAgg.py"
+            ]
+        },
+        "EffectsLibrary/QRBarEffects.py": {
+            "name": "QRBarEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/QRBarEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "numpy.py",
+                "decode.py"
             ]
         },
         "EffectsLibrary/SegmentationEffects.py": {
@@ -212,9 +181,7 @@
                 "os.py",
                 "cv2.py",
                 "numpy.py",
-                "skimage.py",
-                "pixellib/semantic.py",
-                "pixellib/instance.py"
+                "segmentation.py"
             ]
         },
         "EffectsLibrary/ShufflingEffects.py": {
@@ -271,132 +238,506 @@
             "subDir": "EffectsLibrary",
             "dependencies": []
         },
-        "EffectsLibrary/ENet_LiteSegmenter/init.py": {
+        "OldFiles/app.py": {
+            "name": "app",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/app.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles",
+            "dependencies": [
+                "os.py",
+                "cv2.py",
+                "pickle.py",
+                "PIL.py",
+                "importlib.py",
+                "functools.py",
+                "numpy.py",
+                "streamlit.py",
+                "matplotlib/pyplot.py",
+                "json.py",
+                "OldFiles/VidFX.py",
+                "Image.py",
+                "tqdm.py",
+                "VideoUtils.py",
+                "EffectsLibrary.py",
+                "ParserUtils.py",
+                "EffectTransistionUtils.py"
+            ]
+        },
+        "OldFiles/ImageEffectTransistionFX.py": {
+            "name": "ImageEffectTransistionFX",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/ImageEffectTransistionFX.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles",
+            "dependencies": [
+                "os.py",
+                "cv2.py",
+                "functools.py",
+                "numpy.py",
+                "EffectTransistionUtils.py",
+                "VideoUtils.py",
+                "EffectsLibrary.py"
+            ]
+        },
+        "OldFiles/ImageFX.py": {
+            "name": "ImageFX",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/ImageFX.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles",
+            "dependencies": [
+                "os.py",
+                "cv2.py",
+                "functools.py",
+                "numpy.py",
+                "VideoUtils.py",
+                "EffectsLibrary.py"
+            ]
+        },
+        "OldFiles/ImageFXUI.py": {
+            "name": "ImageFXUI",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/ImageFXUI.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles",
+            "dependencies": [
+                "Py2UI.py"
+            ]
+        },
+        "OldFiles/VidFX.py": {
+            "name": "VidFX",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/VidFX.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles",
+            "dependencies": [
+                "cv2.py",
+                "functools.py",
+                "numpy.py",
+                "VideoUtils.py",
+                "EffectsLibrary.py"
+            ]
+        },
+        "OldFiles/VidFXUI.py": {
+            "name": "VidFXUI",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/VidFXUI.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles",
+            "dependencies": [
+                "OldFiles/VidFX.py",
+                "Py2UI.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/BasicEffects.py": {
+            "name": "BasicEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/BasicEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "numpy.py",
+                "matplotlib/pyplot.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/EffectsLibrary.py": {
+            "name": "EffectsLibrary",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/EffectsLibrary.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "math.py",
+                "functools.py",
+                "numpy.py",
+                "skimage.py",
+                "skimage/feature.py",
+                "VideoUtils.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/FilterEffects.py": {
+            "name": "FilterEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/FilterEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "numpy.py",
+                "skimage.py",
+                "skimage/feature.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/FrameEffects.py": {
+            "name": "FrameEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/FrameEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "numpy.py",
+                "VideoUtils.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/MorphologicalEffects.py": {
+            "name": "MorphologicalEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/MorphologicalEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "numpy.py",
+                "morphology.py",
+                "segmentation.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/NoiseEffects.py": {
+            "name": "NoiseEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/NoiseEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "numpy.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/PlotEffects.py": {
+            "name": "PlotEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/PlotEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "numpy.py",
+                "matplotlib/pyplot.py",
+                "Figure.py",
+                "FigureCanvasAgg.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/QRBarEffects.py": {
+            "name": "QRBarEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/QRBarEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "numpy.py",
+                "decode.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/SegmentationEffects.py": {
+            "name": "SegmentationEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/SegmentationEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "os.py",
+                "cv2.py",
+                "numpy.py",
+                "segmentation.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/ShufflingEffects.py": {
+            "name": "ShufflingEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/ShufflingEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "numpy.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/TerrainGenEffects.py": {
+            "name": "TerrainGenEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/TerrainGenEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "noise.py",
+                "numpy.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/TimeEffects.py": {
+            "name": "TimeEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/TimeEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "os.py",
+                "cv2.py",
+                "numpy.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/TransparencyEffects.py": {
+            "name": "TransparencyEffects",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/TransparencyEffects.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": [
+                "cv2.py",
+                "numpy.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/__init__.py": {
+            "name": "__init__",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/__init__.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary",
+            "dependencies": []
+        },
+        "OldFiles/EffectsLibrary/ENet_LiteSegmenter/init.py": {
             "name": "init",
             "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/ENet_LiteSegmenter/init.py",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/ENet_LiteSegmenter/init.py",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary/ENet_LiteSegmenter",
+            "subDir": "OldFiles/EffectsLibrary/ENet_LiteSegmenter",
             "dependencies": [
                 "numpy.py",
                 "argparse.py",
-                "EffectsLibrary/ENet_LiteSegmenter/train.py",
-                "EffectsLibrary/ENet_LiteSegmenter/test.py"
+                "*.py",
+                "*.py"
             ]
         },
-        "EffectsLibrary/ENet_LiteSegmenter/test.py": {
+        "OldFiles/EffectsLibrary/ENet_LiteSegmenter/test.py": {
             "name": "test",
             "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/ENet_LiteSegmenter/test.py",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/ENet_LiteSegmenter/test.py",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary/ENet_LiteSegmenter",
+            "subDir": "OldFiles/EffectsLibrary/ENet_LiteSegmenter",
             "dependencies": [
                 "torch.py",
-                "torch.nn.py",
-                "EffectsLibrary/ENet_LiteSegmenter/utils.py",
-                "EffectsLibrary/ENet_LiteSegmenter/models/ENet.py",
+                "torch/nn.py",
                 "sys.py",
                 "os.py",
-                "tqdm.py",
-                "matplotlib.pyplot.py"
-            ]
-        },
-        "EffectsLibrary/ENet_LiteSegmenter/train.py": {
-            "name": "train",
-            "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/ENet_LiteSegmenter/train.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary/ENet_LiteSegmenter",
-            "dependencies": [
-                "torch.py",
-                "torch.nn.py",
-                "EffectsLibrary/ENet_LiteSegmenter/utils.py",
-                "EffectsLibrary/ENet_LiteSegmenter/models/ENet.py",
-                "sys.py",
+                "matplotlib/pyplot.py",
+                "*.py",
+                "ENet.py",
                 "tqdm.py"
             ]
         },
-        "EffectsLibrary/ENet_LiteSegmenter/utils.py": {
+        "OldFiles/EffectsLibrary/ENet_LiteSegmenter/train.py": {
+            "name": "train",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/ENet_LiteSegmenter/train.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/EffectsLibrary/ENet_LiteSegmenter",
+            "dependencies": [
+                "torch.py",
+                "torch/nn.py",
+                "sys.py",
+                "*.py",
+                "ENet.py",
+                "tqdm.py"
+            ]
+        },
+        "OldFiles/EffectsLibrary/ENet_LiteSegmenter/utils.py": {
             "name": "utils",
             "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/ENet_LiteSegmenter/utils.py",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/ENet_LiteSegmenter/utils.py",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary/ENet_LiteSegmenter",
+            "subDir": "OldFiles/EffectsLibrary/ENet_LiteSegmenter",
             "dependencies": [
                 "numpy.py",
                 "cv2.py",
-                "matplotlib.pyplot.py",
+                "matplotlib/pyplot.py",
                 "os.py",
-                "PIL.py",
-                "torch.py"
+                "torch.py",
+                "Image.py"
             ]
         },
-        "EffectsLibrary/ENet_LiteSegmenter/models/ASNeck.py": {
+        "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/ASNeck.py": {
             "name": "ASNeck",
             "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/ENet_LiteSegmenter/models/ASNeck.py",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/ASNeck.py",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary/ENet_LiteSegmenter/models",
+            "subDir": "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models",
             "dependencies": [
                 "torch.py",
-                "torch.nn.py"
+                "torch/nn.py"
             ]
         },
-        "EffectsLibrary/ENet_LiteSegmenter/models/ENet.py": {
+        "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/ENet.py": {
             "name": "ENet",
             "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/ENet_LiteSegmenter/models/ENet.py",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/ENet.py",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary/ENet_LiteSegmenter/models",
+            "subDir": "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models",
             "dependencies": [
                 "torch.py",
-                "torch.nn.py",
-                "EffectsLibrary/ENet_LiteSegmenter/models/InitialBlock.py",
-                "EffectsLibrary/ENet_LiteSegmenter/models/RDDNeck.py",
-                "EffectsLibrary/ENet_LiteSegmenter/models/UBNeck.py",
-                "EffectsLibrary/ENet_LiteSegmenter/models/ASNeck.py"
+                "torch/nn.py",
+                "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/InitialBlock.py",
+                "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/RDDNeck.py",
+                "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/UBNeck.py",
+                "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/ASNeck.py"
             ]
         },
-        "EffectsLibrary/ENet_LiteSegmenter/models/InitialBlock.py": {
+        "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/InitialBlock.py": {
             "name": "InitialBlock",
             "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/ENet_LiteSegmenter/models/InitialBlock.py",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/InitialBlock.py",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary/ENet_LiteSegmenter/models",
+            "subDir": "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models",
             "dependencies": [
                 "torch.py",
-                "torch.nn.py"
+                "torch/nn.py"
             ]
         },
-        "EffectsLibrary/ENet_LiteSegmenter/models/RDDNeck.py": {
+        "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/RDDNeck.py": {
             "name": "RDDNeck",
             "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/ENet_LiteSegmenter/models/RDDNeck.py",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/RDDNeck.py",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary/ENet_LiteSegmenter/models",
+            "subDir": "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models",
             "dependencies": [
                 "torch.py",
-                "torch.nn.py"
+                "torch/nn.py"
             ]
         },
-        "EffectsLibrary/ENet_LiteSegmenter/models/UBNeck.py": {
+        "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/UBNeck.py": {
             "name": "UBNeck",
             "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/ENet_LiteSegmenter/models/UBNeck.py",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/UBNeck.py",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary/ENet_LiteSegmenter/models",
+            "subDir": "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models",
             "dependencies": [
                 "torch.py",
-                "torch.nn.py"
+                "torch/nn.py"
             ]
         },
-        "EffectsLibrary/ENet_LiteSegmenter/models/__init__.py": {
+        "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/__init__.py": {
             "name": "__init__",
             "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/ENet_LiteSegmenter/models/__init__.py",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/EffectsLibrary/ENet_LiteSegmenter/models/__init__.py",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary/ENet_LiteSegmenter/models",
+            "subDir": "OldFiles/EffectsLibrary/ENet_LiteSegmenter/models",
             "dependencies": []
+        },
+        "OldFiles/UIUtils/Py2UI.py": {
+            "name": "Py2UI",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/UIUtils/Py2UI.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/UIUtils",
+            "dependencies": [
+                "os.py",
+                "json.py",
+                "pickle.py",
+                "functools.py",
+                "OldFiles/UIUtils/PythonCodeTokenizer.py",
+                "OldFiles/UIUtils/UIGen_TKinter.py"
+            ]
+        },
+        "OldFiles/UIUtils/PythonCodeTokenizer.py": {
+            "name": "PythonCodeTokenizer",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/UIUtils/PythonCodeTokenizer.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/UIUtils",
+            "dependencies": [
+                "re.py",
+                "json.py"
+            ]
+        },
+        "OldFiles/UIUtils/UIGen_TKinter.py": {
+            "name": "UIGen_TKinter",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/UIUtils/UIGen_TKinter.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/UIUtils",
+            "dependencies": [
+                "os.py",
+                "json.py",
+                "tkinter.py",
+                "*.py",
+                "ImageTk.py",
+                "Image.py",
+                "filedialog.py",
+                "partial.py",
+                "OldFiles/UIUtils/Utils.py",
+                "OldFiles/UIUtils/PythonCodeTokenizer.py"
+            ]
+        },
+        "OldFiles/UIUtils/Utils.py": {
+            "name": "Utils",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/UIUtils/Utils.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/UIUtils",
+            "dependencies": [
+                "sys.py",
+                "tkinter.py",
+                "StringIO.py",
+                "ttk.py"
+            ]
+        },
+        "OldFiles/Utils/EffectTransistionUtils.py": {
+            "name": "EffectTransistionUtils",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/Utils/EffectTransistionUtils.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/Utils",
+            "dependencies": [
+                "os.py",
+                "cv2.py",
+                "functools.py",
+                "numpy.py",
+                "matplotlib/pyplot.py",
+                "Image.py",
+                "tqdm.py",
+                "OldFiles/Utils/VideoUtils.py"
+            ]
+        },
+        "OldFiles/Utils/ParserUtils.py": {
+            "name": "ParserUtils",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/Utils/ParserUtils.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/Utils",
+            "dependencies": [
+                "numpy.py"
+            ]
+        },
+        "OldFiles/Utils/VideoUtils.py": {
+            "name": "VideoUtils",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/OldFiles/Utils/VideoUtils.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "OldFiles/Utils",
+            "dependencies": [
+                "os.py",
+                "cv2.py",
+                "numpy.py",
+                "matplotlib/pyplot.py",
+                "Image.py",
+                "tqdm.py"
+            ]
         },
         "StreamLitGUI/__init__.py": {
             "name": "__init__",
@@ -405,63 +746,6 @@
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
             "subDir": "StreamLitGUI",
             "dependencies": []
-        },
-        "UIUtils/Py2UI.py": {
-            "name": "Py2UI",
-            "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/UIUtils/Py2UI.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "UIUtils",
-            "dependencies": [
-                "os.py",
-                "json.py",
-                "pickle.py",
-                "functools.py",
-                "UIUtils/PythonCodeTokenizer.py",
-                "UIUtils/UIGen_TKinter.py"
-            ]
-        },
-        "UIUtils/PythonCodeTokenizer.py": {
-            "name": "PythonCodeTokenizer",
-            "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/UIUtils/PythonCodeTokenizer.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "UIUtils",
-            "dependencies": [
-                "re.py",
-                "json.py"
-            ]
-        },
-        "UIUtils/UIGen_TKinter.py": {
-            "name": "UIGen_TKinter",
-            "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/UIUtils/UIGen_TKinter.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "UIUtils",
-            "dependencies": [
-                "os.py",
-                "json.py",
-                "tkinter.py",
-                "tkinter.py",
-                "PIL.py",
-                "tkinter.py",
-                "functools.py",
-                "UIUtils/Utils.py",
-                "UIUtils/PythonCodeTokenizer.py"
-            ]
-        },
-        "UIUtils/Utils.py": {
-            "name": "Utils",
-            "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/UIUtils/Utils.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "UIUtils",
-            "dependencies": [
-                "sys.py",
-                "io.py",
-                "tkinter.py",
-                "tkinter.py"
-            ]
         },
         "Utils/EffectTransistionUtils.py": {
             "name": "EffectTransistionUtils",
@@ -473,9 +757,9 @@
                 "os.py",
                 "cv2.py",
                 "functools.py",
-                "PIL.py",
                 "numpy.py",
-                "matplotlib.pyplot.py",
+                "matplotlib/pyplot.py",
+                "Image.py",
                 "tqdm.py",
                 "Utils/VideoUtils.py"
             ]
@@ -490,6 +774,19 @@
                 "numpy.py"
             ]
         },
+        "Utils/VideoInputs.py": {
+            "name": "VideoInputs",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/Utils/VideoInputs.py",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "Utils",
+            "dependencies": [
+                "cv2.py",
+                "numpy.py",
+                "requests.py",
+                "imutils.py"
+            ]
+        },
         "Utils/VideoUtils.py": {
             "name": "VideoUtils",
             "type": "local",
@@ -499,142 +796,311 @@
             "dependencies": [
                 "os.py",
                 "cv2.py",
-                "PIL.py",
                 "numpy.py",
-                "matplotlib.pyplot.py",
-                "tqdm.py"
+                "matplotlib/pyplot.py",
+                "Image.py",
+                "tqdm.py",
+                "*.py"
             ]
         },
-        "math.py": {
-            "name": "math",
-            "type": "inbuilt",
+        "noise.py": {
+            "name": "noise",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
-        "matplotlib.pyplot.py": {
-            "name": "matplotlib.pyplot",
-            "type": "inbuilt",
+        "tqdm.py": {
+            "name": "tqdm",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "segmentation.py": {
+            "name": "segmentation",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "filedialog.py": {
+            "name": "filedialog",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "torch.py": {
+            "name": "torch",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "StringIO.py": {
+            "name": "StringIO",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
         "PIL.py": {
             "name": "PIL",
-            "type": "inbuilt",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
-        "sys.py": {
-            "name": "sys",
-            "type": "inbuilt",
+        "ImageTk.py": {
+            "name": "ImageTk",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
-        "os.py": {
-            "name": "os",
-            "type": "inbuilt",
+        "*.py": {
+            "name": "*",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
-        "re.py": {
-            "name": "re",
-            "type": "inbuilt",
+        "EffectTransistionUtils.py": {
+            "name": "EffectTransistionUtils",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
         "functools.py": {
             "name": "functools",
-            "type": "inbuilt",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
-        "matplotlib/figure.py": {
-            "name": "figure",
+        "imutils.py": {
+            "name": "imutils",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "morphology.py": {
+            "name": "morphology",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "streamlit.py": {
+            "name": "streamlit",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "cv2.py": {
+            "name": "cv2",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "pickle.py": {
+            "name": "pickle",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "partial.py": {
+            "name": "partial",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "Py2UI.py": {
+            "name": "Py2UI",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "matplotlib/pyplot.py": {
+            "name": "pyplot",
             "type": "inbuilt",
             "link": "",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
             "subDir": "matplotlib",
             "dependencies": []
         },
-        "io.py": {
-            "name": "io",
-            "type": "inbuilt",
+        "Figure.py": {
+            "name": "Figure",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
-        "torch.py": {
-            "name": "torch",
-            "type": "inbuilt",
+        "re.py": {
+            "name": "re",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
-        "pixellib/semantic.py": {
-            "name": "semantic",
-            "type": "inbuilt",
+        "Image.py": {
+            "name": "Image",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "pixellib",
+            "parentDir": "",
+            "subDir": "",
             "dependencies": []
         },
-        "argparse.py": {
-            "name": "argparse",
+        "os.py": {
+            "name": "os",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "skimage/feature.py": {
+            "name": "feature",
             "type": "inbuilt",
             "link": "",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "skimage",
+            "dependencies": []
+        },
+        "EffectsLibrary.py": {
+            "name": "EffectsLibrary",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "torch/nn.py": {
+            "name": "nn",
+            "type": "inbuilt",
+            "link": "",
+            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "subDir": "torch",
+            "dependencies": []
+        },
+        "requests.py": {
+            "name": "requests",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
         "skimage.py": {
             "name": "skimage",
-            "type": "inbuilt",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
-        "streamlit.py": {
-            "name": "streamlit",
-            "type": "inbuilt",
+        "json.py": {
+            "name": "json",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "argparse.py": {
+            "name": "argparse",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "ENet.py": {
+            "name": "ENet",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "ttk.py": {
+            "name": "ttk",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "sys.py": {
+            "name": "sys",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "decode.py": {
+            "name": "decode",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
+            "subDir": "",
+            "dependencies": []
+        },
+        "FigureCanvasAgg.py": {
+            "name": "FigureCanvasAgg",
+            "type": "missing",
+            "link": "",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
         "importlib.py": {
             "name": "importlib",
-            "type": "inbuilt",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
-        "skimage.feature.py": {
-            "name": "skimage.feature",
-            "type": "inbuilt",
+        "numpy.py": {
+            "name": "numpy",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
-        "tqdm.py": {
-            "name": "tqdm",
+        "VideoUtils.py": {
+            "name": "VideoUtils",
             "type": "inbuilt",
             "link": "",
             "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
@@ -643,73 +1109,25 @@
         },
         "tkinter.py": {
             "name": "tkinter",
-            "type": "inbuilt",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
-        "torch.nn.py": {
-            "name": "torch.nn",
-            "type": "inbuilt",
+        "math.py": {
+            "name": "math",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         },
-        "json.py": {
-            "name": "json",
-            "type": "inbuilt",
+        "ParserUtils.py": {
+            "name": "ParserUtils",
+            "type": "missing",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "",
-            "dependencies": []
-        },
-        "numpy.py": {
-            "name": "numpy",
-            "type": "inbuilt",
-            "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "",
-            "dependencies": []
-        },
-        "pickle.py": {
-            "name": "pickle",
-            "type": "inbuilt",
-            "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "",
-            "dependencies": []
-        },
-        "matplotlib/backends/backend_agg.py": {
-            "name": "backend_agg",
-            "type": "inbuilt",
-            "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "matplotlib/backends",
-            "dependencies": []
-        },
-        "noise.py": {
-            "name": "noise",
-            "type": "inbuilt",
-            "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "",
-            "dependencies": []
-        },
-        "pixellib/instance.py": {
-            "name": "instance",
-            "type": "inbuilt",
-            "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "pixellib",
-            "dependencies": []
-        },
-        "cv2.py": {
-            "name": "cv2",
-            "type": "inbuilt",
-            "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
+            "parentDir": "",
             "subDir": "",
             "dependencies": []
         }

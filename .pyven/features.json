@@ -14,7 +14,8 @@
                     "Cached": 0
                 },
                 "checkBased": {
-                    "StartUICheck": true
+                    "StartUICheck": true,
+                    "GenReqCheck": true
                 }
             }
         }
