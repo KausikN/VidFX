@@ -6,7 +6,7 @@ opencv_python==4.5.4.58
 Pillow==9.0.1
 pixellib==0.7.1
 pyzbar==0.1.8
-requests==2.26.0
+requests
 scikit_image==0.18.3
 skimage==0.0
 streamlit==1.7.0
