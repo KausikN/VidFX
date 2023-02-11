@@ -59,17 +59,25 @@ def HomePage():
 
 #############################################################################################################################
 # Repo Based Vars
-DEFAULT_PATH_EXAMPLEIMAGE = 'TestFiles/TestImgs/Horse.PNG'
-DEFAULT_PATH_EXAMPLEVIDEO = 'TestFiles/TestVids/Test_Animation.wmv'
-AVAILABLEEFFECTS_PATH = 'StreamLitGUI/AvailableEffects.json'
-
-DEFAULT_SAVEPATH_IMAGE = 'TestFiles/TestImgs/OutputImage.png'
-DEFAULT_SAVEPATH_VIDEO = 'TestFiles/TestImgs/OutputVideo.mp4'
-DEFAULT_SAVEPATH_GIF = 'TestFiles/TestImgs/OutputGIF.gif'
-
-DEFAULT_CODE_PACKAGE = 'StreamLitGUI/CacheData/'
-DEFAULT_CACHEPATH = 'StreamLitGUI/CacheData/Cache.json'
-DEFAULT_FRAMESPATH = 'StreamLitGUI/DefaultData/Frames/'
+PATHS = {
+    "cache": "StreamLitGUI/CacheData/Cache.json",
+    "default": {
+        "example": {
+            "image": "TestFiles/TestImgs/Horse.PNG",
+            "video": "TestFiles/TestVids/Test_Animation.wmv"
+        },
+        "save": {
+            "image": "TestFiles/TestImgs/OutputImage.png",
+            "video": "TestFiles/TestImgs/OutputVideo.mp4",
+            "gif": "TestFiles/TestImgs/OutputGIF.gif"
+        },
+        "dir": {
+            "frames": "StreamLitGUI/DefaultData/Frames/",
+            "code_package": "StreamLitGUI/CacheData/"
+        }
+    },
+    "available_effects": "StreamLitGUI/AvailableEffects.json"
+}
 
 OUTPUT_NCOLS = 5
 
@@ -99,7 +107,7 @@ TRANSISTION_FUNCS = {
 }
 
 # Util Vars
-CACHE_DATA = {}
+CACHE = {}
 AVAILABLE_EFFECTS = []
 FRAMES = []
 
@@ -122,7 +130,7 @@ def GenerateImageSizeIndicatorImage(ImageSize):
 def LoadAvailableEffects():
     global AVAILABLE_EFFECTS
     # Load from JSON
-    # AVAILABLE_EFFECTS = json.load(open(AVAILABLEEFFECTS_PATH, 'r'))["effects"]
+    # AVAILABLE_EFFECTS = json.load(open(PATHS["available_effects"], 'r'))["effects"]
     # Load from EffectLibrary
     AVAILABLE_EFFECTS = EffectsLibrary.AVAILABLE_EFFECTS
 
@@ -133,17 +141,17 @@ def GetNames(data):
     return names
 
 def LoadCache():
-    global CACHE_DATA
-    CACHE_DATA = json.load(open(DEFAULT_CACHEPATH, 'r'))
+    global CACHE
+    CACHE = json.load(open(PATHS["cache"], 'r'))
 
 def SaveCache():
-    global CACHE_DATA
-    json.dump(CACHE_DATA, open(DEFAULT_CACHEPATH, 'w'))
+    global CACHE
+    json.dump(CACHE, open(PATHS["cache"], 'w'))
 
 def LoadFrames():
     global FRAMES
     FRAMES = []
-    for f in os.listdir(DEFAULT_FRAMESPATH):
+    for f in os.listdir(PATHS["default"]["dir"]["frames"]):
         FRAMES.append(f)
 
 # Main Functions
@@ -159,16 +167,16 @@ from EffectsLibrary import EffectsLibrary
 
 '''
     SavePickleCode = '''
-pickle.dump({EffectObj}, open('{DEFAULT_CODE_PACKAGE}' + '/{EffectObj}.p', 'wb'))
+pickle.dump({EffectObj}, open('{CODE_PACKAGE_PATH}' + '/{EffectObj}.p', 'wb'))
 '''
 
-    CommonEffectsCode = ImportsCode + "CommonEffects = " + VidFX.UICommonEffectsCodeParser(CommonEffectsText) + SavePickleCode.format(DEFAULT_CODE_PACKAGE=DEFAULT_CODE_PACKAGE, EffectObj='CommonEffects')
+    CommonEffectsCode = ImportsCode + "CommonEffects = " + VidFX.UICommonEffectsCodeParser(CommonEffectsText) + SavePickleCode.format(CODE_PACKAGE_PATH=PATHS["default"]["dir"]["code_package"], EffectObj='CommonEffects')
     exec(CommonEffectsCode, globals())
-    CommonEffects = pickle.load(open(os.path.join(DEFAULT_CODE_PACKAGE, "CommonEffects.p"), 'rb'))
+    CommonEffects = pickle.load(open(os.path.join(PATHS["default"]["dir"]["code_package"], "CommonEffects.p"), 'rb'))
 
-    EffectFuncsCode = ImportsCode + "EffectFuncs = " + VidFX.UIMultiEffectsCodeParser(EffectFuncsText) + SavePickleCode.format(DEFAULT_CODE_PACKAGE=DEFAULT_CODE_PACKAGE, EffectObj='EffectFuncs')
+    EffectFuncsCode = ImportsCode + "EffectFuncs = " + VidFX.UIMultiEffectsCodeParser(EffectFuncsText) + SavePickleCode.format(CODE_PACKAGE_PATH=PATHS["default"]["dir"]["code_package"], EffectObj='EffectFuncs')
     exec(EffectFuncsCode, globals())
-    EffectFuncs = pickle.load(open(os.path.join(DEFAULT_CODE_PACKAGE, "EffectFuncs.p"), 'rb'))
+    EffectFuncs = pickle.load(open(os.path.join(PATHS["default"]["dir"]["code_package"], "EffectFuncs.p"), 'rb'))
     
     return CommonEffects, EffectFuncs
 
@@ -185,7 +193,7 @@ def UI_VideoInputSource():
     if USERINPUT_VideoInputChoice == "Upload Video File":
         USERINPUT_VideoPath = st.file_uploader("Upload Video", ['avi', 'mp4', 'wmv'])
         if USERINPUT_VideoPath is None:
-            USERINPUT_VideoPath = DEFAULT_PATH_EXAMPLEVIDEO
+            USERINPUT_VideoPath = PATHS["default"]["example"]["video"]
         USERINPUT_VideoReader = functools.partial(USERINPUT_VideoReader, USERINPUT_VideoPath)
     # Video URL
     elif USERINPUT_VideoInputChoice == "Video URL":
@@ -243,7 +251,7 @@ def UI_LoadImage():
         if USERINPUT_ImageData is not None:
             USERINPUT_ImageData = USERINPUT_ImageData.read()
         else:
-            USERINPUT_ImageData = open(DEFAULT_PATH_EXAMPLEIMAGE, 'rb').read()
+            USERINPUT_ImageData = open(PATHS["default"]["example"]["image"], 'rb').read()
         USERINPUT_ImageData = cv2.imdecode(np.frombuffer(USERINPUT_ImageData, np.uint8), cv2.IMREAD_COLOR)
         USERINPUT_Image = cv2.cvtColor(USERINPUT_ImageData, cv2.COLOR_BGR2RGB)
     # Upload Image URL
@@ -311,8 +319,8 @@ def UI_DisplayEffectTransistionVideo(I=None, max_frames=-1, EffectFuncs=None, co
     extraFrames = []
     if len(frames_effect) > 1:
         extraFrames = frames_effect[1:]
-    frames_effect[0].save(DEFAULT_SAVEPATH_GIF, save_all=True, append_images=extraFrames, format='GIF', loop=0)
-    effectVideoDisplay.image(DEFAULT_SAVEPATH_GIF, caption='Effect Video', use_column_width=True)
+    frames_effect[0].save(PATHS["default"]["save"]["gif"], save_all=True, append_images=extraFrames, format='GIF', loop=0)
+    effectVideoDisplay.image(PATHS["default"]["save"]["gif"], caption='Effect Video', use_column_width=True)
 
 def UI_Param_EffectTransistions(p, col1=st, col2=st, col3=st, key=""):
     # Parse type
@@ -347,7 +355,7 @@ def UI_Param_EffectTransistions(p, col1=st, col2=st, col3=st, key=""):
         frameName = col1.selectbox("Select Frame", ["Select Frame"] + FRAMES, key=p["name"] + "_frametr_" + key)
         inp_start = None
         if not (frameName == "Select Frame"):
-            inp_start = os.path.join(DEFAULT_FRAMESPATH, frameName)
+            inp_start = os.path.join(PATHS["default"]["dir"]["frames"], frameName)
             inp_start = inp_start.replace('"', '\\"')
             inp_start = '"' + inp_start + '"'
     else:
@@ -398,7 +406,7 @@ def UI_Param_Effects(p, col=st, key=""):
         frameName = col.selectbox("Select Frame", ["Select Frame"] + FRAMES, key=p["name"] + "_framen_" + key)
         inp = None
         if not (frameName == "Select Frame"):
-            inp = os.path.join(DEFAULT_FRAMESPATH, frameName)
+            inp = os.path.join(PATHS["default"]["dir"]["frames"], frameName)
     else:
         return None
 
@@ -477,37 +485,39 @@ def videofx():
     EffectFuncsText, ParamInputs_Effects, EffectFuncs = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects)
 
     UI_SelectNCols()
-
-    # CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
-
-    # Apply Params
-    EffectFuncs_PA = []
-    CommonFuncs_PA = []
-    for i in range(len(EffectFuncs)):
-        efs = EffectFuncs[i]
-        efs_tr = []
-        for j in range(len(efs)):
-            ef = efs[j]
-            paramsData = ParamInputs_Effects[i][j]
-            funcData = functools.partial(ef.func, **paramsData)
-            efs_tr.append(funcData)
-        EffectFuncs_PA.append(efs_tr)
-    for i in range(len(CommonEffects)):
-        efs = CommonEffects[i]
-        paramsData = ParamInputs_Common[i]
-        funcData = functools.partial(efs.func, **paramsData)
-        CommonFuncs_PA.append(funcData)
-    CommonEffects = CommonFuncs_PA
-    EffectFuncs = EffectFuncs_PA
-
-    EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
-    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
-
     USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
 
-    # Process Inputs and Display Output
-    st.markdown("## Videos")
-    UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc, USERINPUT_CompactDisplay)
+    # Process Inputs
+    cols = st.columns(2)
+    USERINPUT_StreamProcess = cols[0].checkbox("Stream Process", False)
+    if not USERINPUT_StreamProcess: USERINPUT_StreamProcess = cols[1].button("Process")
+    if USERINPUT_StreamProcess:
+        # CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+        # Apply Params
+        EffectFuncs_PA = []
+        CommonFuncs_PA = []
+        for i in range(len(EffectFuncs)):
+            efs = EffectFuncs[i]
+            efs_tr = []
+            for j in range(len(efs)):
+                ef = efs[j]
+                paramsData = ParamInputs_Effects[i][j]
+                funcData = functools.partial(ef.func, **paramsData)
+                efs_tr.append(funcData)
+            EffectFuncs_PA.append(efs_tr)
+        for i in range(len(CommonEffects)):
+            efs = CommonEffects[i]
+            paramsData = ParamInputs_Common[i]
+            funcData = functools.partial(efs.func, **paramsData)
+            CommonFuncs_PA.append(funcData)
+        CommonEffects = CommonFuncs_PA
+        EffectFuncs = EffectFuncs_PA
+
+        EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
+        EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+        # Display Output
+        st.markdown("## Videos")
+        UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc, USERINPUT_CompactDisplay)
 
 def imagefx():
     # Title
@@ -529,40 +539,41 @@ def imagefx():
     EffectFuncsText, ParamInputs_Effects, EffectFuncs = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects)
 
     UI_SelectNCols()
-
-    # CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
-
-    # Apply Params
-    EffectFuncs_PA = []
-    CommonFuncs_PA = []
-    for i in range(len(EffectFuncs)):
-        efs = EffectFuncs[i]
-        efs_tr = []
-        for j in range(len(efs)):
-            ef = efs[j]
-            paramsData = ParamInputs_Effects[i][j]
-            funcData = functools.partial(ef.func, **paramsData)
-            efs_tr.append(funcData)
-        EffectFuncs_PA.append(efs_tr)
-    for i in range(len(CommonEffects)):
-        efs = CommonEffects[i]
-        paramsData = ParamInputs_Common[i]
-        funcData = functools.partial(efs.func, **paramsData)
-        CommonFuncs_PA.append(funcData)
-    CommonEffects = CommonFuncs_PA
-    EffectFuncs = EffectFuncs_PA
-
-    EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
-    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
-
     USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
 
     # Process Inputs
-    EffectImage = EffectFunc(USERINPUT_Image)
+    cols = st.columns(2)
+    USERINPUT_StreamProcess = cols[0].checkbox("Stream Process", False)
+    if not USERINPUT_StreamProcess: USERINPUT_StreamProcess = cols[1].button("Process")
+    if USERINPUT_StreamProcess:
+        # CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+        # Apply Params
+        EffectFuncs_PA = []
+        CommonFuncs_PA = []
+        for i in range(len(EffectFuncs)):
+            efs = EffectFuncs[i]
+            efs_tr = []
+            for j in range(len(efs)):
+                ef = efs[j]
+                paramsData = ParamInputs_Effects[i][j]
+                funcData = functools.partial(ef.func, **paramsData)
+                efs_tr.append(funcData)
+            EffectFuncs_PA.append(efs_tr)
+        for i in range(len(CommonEffects)):
+            efs = CommonEffects[i]
+            paramsData = ParamInputs_Common[i]
+            funcData = functools.partial(efs.func, **paramsData)
+            CommonFuncs_PA.append(funcData)
+        CommonEffects = CommonFuncs_PA
+        EffectFuncs = EffectFuncs_PA
 
-    # Display Output
-    st.markdown("## Images")
-    UI_DisplayEffectImage(USERINPUT_Image, EffectImage, USERINPUT_CompactDisplay)
+        EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
+        EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+
+        EffectImage = EffectFunc(USERINPUT_Image)
+        # Display Output
+        st.markdown("## Images")
+        UI_DisplayEffectImage(USERINPUT_Image, EffectImage, USERINPUT_CompactDisplay)
 
 def image_effect_transistion():
     # Title
@@ -584,48 +595,52 @@ def image_effect_transistion():
     EffectFuncsText, ParamsInputs_Effects, EffectFuncs = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_EffectTransistions)
 
     UI_SelectNCols()
-
-    # CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
-
-    EffectFuncs_Tr = []
-    CommonFuncs_Tr = []
-    for i in range(len(EffectFuncs)):
-        efs = EffectFuncs[i]
-        efs_tr = []
-        for j in range(len(efs)):
-            ef = efs[j]
-            paramsData = {}
-            for k in ParamsInputs_Effects[i][j].keys():
-                pD = ParamsInputs_Effects[i][j][k]
-                if pD["func"] is not None:
-                    paramsData[k] = functools.partial(pD["func"], start=pD["start"], end=pD["end"])
-            trData = [ef, paramsData]
-            efs_tr.append(trData)
-        EffectFuncs_Tr.append(efs_tr)
-    for i in range(len(CommonEffects)):
-        efs = CommonEffects[i]
-        paramsData = {}
-        for k in ParamsInputs_Common[i].keys():
-            pD = ParamsInputs_Common[i][k]
-            if pD["func"] is not None:
-                paramsData[k] = functools.partial(pD["func"], start=pD["start"], end=pD["end"])
-        trData = [efs, paramsData]
-        CommonFuncs_Tr.append(trData)
-
-    saveI_keys = EffectsLibrary.GetSaveIKeys(EffectFuncs)
-    MainFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
-    
-    EffectFunctions = {
-        "Main": MainFunc,
-        "Common": CommonFuncs_Tr,
-        "Effect": EffectFuncs_Tr
-    }
-
     USERINPUT_FrameCount = st.slider("Frames Count", 1, 100, 20, 1)
     USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
+
+    # Process Inputs
+    cols = st.columns(2)
+    USERINPUT_StreamProcess = cols[0].checkbox("Stream Process", False)
+    if not USERINPUT_StreamProcess: USERINPUT_StreamProcess = cols[1].button("Process")
+    if USERINPUT_StreamProcess:
+        # CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+        # Apply Params
+        EffectFuncs_Tr = []
+        CommonFuncs_Tr = []
+        for i in range(len(EffectFuncs)):
+            efs = EffectFuncs[i]
+            efs_tr = []
+            for j in range(len(efs)):
+                ef = efs[j]
+                paramsData = {}
+                for k in ParamsInputs_Effects[i][j].keys():
+                    pD = ParamsInputs_Effects[i][j][k]
+                    if pD["func"] is not None:
+                        paramsData[k] = functools.partial(pD["func"], start=pD["start"], end=pD["end"])
+                trData = [ef, paramsData]
+                efs_tr.append(trData)
+            EffectFuncs_Tr.append(efs_tr)
+        for i in range(len(CommonEffects)):
+            efs = CommonEffects[i]
+            paramsData = {}
+            for k in ParamsInputs_Common[i].keys():
+                pD = ParamsInputs_Common[i][k]
+                if pD["func"] is not None:
+                    paramsData[k] = functools.partial(pD["func"], start=pD["start"], end=pD["end"])
+            trData = [efs, paramsData]
+            CommonFuncs_Tr.append(trData)
+
+        saveI_keys = EffectsLibrary.GetSaveIKeys(EffectFuncs)
+        MainFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+        
+        EffectFunctions = {
+            "Main": MainFunc,
+            "Common": CommonFuncs_Tr,
+            "Effect": EffectFuncs_Tr
+        }
     
-    # Process Inputs and Display Output
-    UI_DisplayEffectTransistionVideo(USERINPUT_Image, USERINPUT_FrameCount, EffectFunctions, USERINPUT_CompactDisplay)
+        # Display Output
+        UI_DisplayEffectTransistionVideo(USERINPUT_Image, USERINPUT_FrameCount, EffectFunctions, USERINPUT_CompactDisplay)
 
 def videofx_text_based():
     # Title
@@ -638,18 +653,22 @@ def videofx_text_based():
     st.markdown("## Enter Effect Codes")
     CommonEffectsText = st.text_area("Common Effects Code", "None")
     EffectFuncsText = st.text_area("Effects Code", "None")
-    CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
 
     UI_SelectNCols()
-
-    EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
-    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
-
     USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
 
-    # Process Inputs and Display Output
-    st.markdown("## Videos")
-    UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc, USERINPUT_CompactDisplay)
+    # Process Inputs
+    cols = st.columns(2)
+    USERINPUT_StreamProcess = cols[0].checkbox("Stream Process", False)
+    if not USERINPUT_StreamProcess: USERINPUT_StreamProcess = cols[1].button("Process")
+    if USERINPUT_StreamProcess:
+        CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+        # Apply Params
+        EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
+        EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+        # Display Output
+        st.markdown("## Videos")
+        UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc, USERINPUT_CompactDisplay)
 
 def imagefx_text_based():
     # Title
@@ -662,21 +681,24 @@ def imagefx_text_based():
     st.markdown("## Enter Effect Codes")
     CommonEffectsText = st.text_area("Common Effects Code", "None")
     EffectFuncsText = st.text_area("Effects Code", "None")
-    CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
 
     UI_SelectNCols()
-
-    EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
-    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
-
     USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
 
     # Process Inputs
-    EffectImage = EffectFunc(USERINPUT_Image)
-
-    # Display Output
-    st.markdown("## Images")
-    UI_DisplayEffectImage(USERINPUT_Image, EffectImage, USERINPUT_CompactDisplay)
+    cols = st.columns(2)
+    USERINPUT_StreamProcess = cols[0].checkbox("Stream Process", False)
+    if not USERINPUT_StreamProcess: USERINPUT_StreamProcess = cols[1].button("Process")
+    if USERINPUT_StreamProcess:
+        CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
+        # Apply Params
+        EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
+        EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+    
+        EffectImage = EffectFunc(USERINPUT_Image)
+        # Display Output
+        st.markdown("## Images")
+        UI_DisplayEffectImage(USERINPUT_Image, EffectImage, USERINPUT_CompactDisplay)
 
 def effects():
     # Title
@@ -688,14 +710,19 @@ def effects():
     USERINPUT_ChosenEffectData = UI_ShowAvailableEffects()
     st.markdown("## Edit Effect Parameters")
     EffectFuncText = st.text_input("Effect Code", USERINPUT_ChosenEffectData)
-    CommonEffects, EffectFuncs = GetEffectsCode('None', EffectFuncText)
-
-    EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
-    EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
-
-    # Process Inputs and Display Output
-    st.markdown("## Videos")
-    UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc, compactDisplay=True)
+    
+    # Process Inputs
+    cols = st.columns(2)
+    USERINPUT_StreamProcess = cols[0].checkbox("Stream Process", False)
+    if not USERINPUT_StreamProcess: USERINPUT_StreamProcess = cols[1].button("Process")
+    if USERINPUT_StreamProcess:
+        CommonEffects, EffectFuncs = GetEffectsCode("None", EffectFuncText)
+        # Apply Params
+        EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
+        EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+        # Display Output
+        st.markdown("## Videos")
+        UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc, compactDisplay=True)
     
 #############################################################################################################################
 # Driver Code

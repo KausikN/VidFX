@@ -90,6 +90,7 @@ def GetSaveIKeys(EffectFuncs=None, EffectFuncsData=None):
 
     # Get Funcs Data
     if EffectFuncs is not None:
+        EffectFuncsData = []
         for EFs in EffectFuncs:
             EFKeys = []
             for e in EFs:
