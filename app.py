@@ -120,6 +120,14 @@ def Hex_to_RGB(val):
 def RGB_to_Hex(rgb):
     return "#{:02x}{:02x}{:02x}".format(rgb[0], rgb[1], rgb[2])
 
+def LoadCache():
+    global CACHE
+    CACHE = json.load(open(PATHS["cache"], 'r'))
+
+def SaveCache():
+    global CACHE
+    json.dump(CACHE, open(PATHS["cache"], 'w'))
+
 @st.cache
 def GenerateImageSizeIndicatorImage(ImageSize):
     ### Image Size Indicator Image 
@@ -135,18 +143,7 @@ def LoadAvailableEffects():
     AVAILABLE_EFFECTS = EffectsLibrary.AVAILABLE_EFFECTS
 
 def GetNames(data):
-    names = []
-    for d in data:
-        names.append(d["name"])
-    return names
-
-def LoadCache():
-    global CACHE
-    CACHE = json.load(open(PATHS["cache"], 'r'))
-
-def SaveCache():
-    global CACHE
-    json.dump(CACHE, open(PATHS["cache"], 'w'))
+    return [d["name"] for d in data]
 
 def LoadFrames():
     global FRAMES
