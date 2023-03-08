@@ -3,8 +3,7 @@ Noise Image Effects Library
 '''
 
 # Imports
-import cv2
-import numpy as np
+from .EffectUtils import *
 
 # Main Functions
 def ImageEffect_GaussianNoise(I, mean=0.0, SD=0.25):
@@ -33,52 +32,28 @@ def ImageEffect_SaltPepperNoise(I, prob=0.5):
     return I_effect
 
 # Main Vars
-EFFECTFUNCS_NOISE = [
-    {
+EFFECTFUNCS_NOISE = {
+    "GaussianNoise": {
         "name": "GaussianNoise",
         "code": "GaussianNoise(mean=0.2, SD=0.1)",
         "func": ImageEffect_GaussianNoise,
-        "params": [
-            {
-                "name": "mean",
-                "default": 0.2,
-                "type": "float",
-                "min": 0.0,
-                "max": 1.0,
-                "step": 0.05
-            },
-            {
-                "name": "SD",
-                "default": 0.1,
-                "type": "float",
-                "min": 0.0,
-                "max": 1.0,
-                "step": 0.05
-            }
-        ]
+        "params": {
+            "mean": 0.2,
+            "SD": 0.1
+        }
     },
-    {
+    "SpeckleNoise": {
         "name": "SpeckleNoise",
         "code": "SpeckleNoise",
         "func": ImageEffect_SpeckleNoise,
-        "params": []
+        "params": {}
     },
-    {
+    "SaltPepperNoise": {
         "name": "SaltPepperNoise",
         "code": "SaltPepperNoise(prob=0.5)",
         "func": ImageEffect_SaltPepperNoise,
-        "params": [
-            {
-                "name": "prob",
-                "default": 0.5,
-                "type": "float",
-                "min": 0.0,
-                "max": 1.0,
-                "step": 0.1
-            }
-        ]
+        "params": {
+            "prob": 0.5
+        }
     }
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_NOISE)
-
-# Driver Code
+}

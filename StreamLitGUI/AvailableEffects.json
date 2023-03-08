@@ -157,7 +157,7 @@
         },
         {
             "name": "Resize",
-            "code": "Resize(size=[640, 480], interpolation=cv2.INTER_LINEAR)",
+            "code": "Resize(size=[640, 480], interpolation='linear')",
             "params": [
                 {
                     "name": "size",
@@ -166,7 +166,7 @@
                 },
                 {
                     "name": "interpolation",
-                    "default": "cv2.INTER_LINEAR",
+                    "default": "linear",
                     "type": "func"
                 }
             ]

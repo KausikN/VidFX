@@ -5,28 +5,19 @@ Stream lit GUI for hosting VidFX
 # Imports
 import os
 import cv2
+import json
 import pickle
-import PIL
-import importlib
 import functools
 import numpy as np
-import streamlit as st
-import matplotlib.pyplot as plt
-import json
 from PIL import Image
 from tqdm import tqdm
+import streamlit as st
+import graphviz
 
-# from StreamLitGUI.webcam import webcam
-# from webcam import webcam
+from VidFX import *
 
-import VidFX
-# import ImageFX
-# import ImageEffectTransistionFX
-
-from Utils import VideoUtils
-from EffectsLibrary import EffectsLibrary
+from Utils.EffectTransistionUtils import *
 from Utils import ParserUtils
-from Utils import EffectTransistionUtils
 
 # Main Vars
 config = json.load(open('./StreamLitGUI/UIConfig.json', 'r'))
@@ -76,7 +67,9 @@ PATHS = {
             "code_package": "StreamLitGUI/CacheData/"
         }
     },
-    "available_effects": "StreamLitGUI/AvailableEffects.json"
+    "available_effects": "StreamLitGUI/AvailableEffects.json",
+    "tree_cache": "StreamLitGUI/CacheData/EffectTreeCache.p",
+    "transistion_tree_cache": "StreamLitGUI/CacheData/TransistionEffectTreeCache.p"
 }
 
 OUTPUT_NCOLS = 5
@@ -90,9 +83,6 @@ DISPLAY_IMAGESIZE = [512, 512]
 DISPLAY_INTERPOLATION = cv2.INTER_NEAREST
 DISPLAY_DELAY = 0.1
 
-INPUTREADERS_VIDEO = VideoUtils.INPUTREADERS_VIDEO
-INPUTREADERS_IMAGE = VideoUtils.INPUTREADERS_IMAGE
-
 TYPE_MAP = {
     "bool": bool,
     "int": int,
@@ -101,17 +91,14 @@ TYPE_MAP = {
     "list": ParserUtils.ListParser
 }
 
-TRANSISTION_FUNCS = {
-    "Constant": EffectTransistionUtils.EffectTransistion_Constant,
-    "Linear": EffectTransistionUtils.EffectTransistion_Linear
-}
-
 # Util Vars
 CACHE = {}
-AVAILABLE_EFFECTS = []
 FRAMES = []
 
 # Util Functions
+def GetNames(data):
+    return [d["name"] for d in data]
+
 def Hex_to_RGB(val):
     val = val.lstrip('#')
     lv = len(val)
@@ -123,10 +110,27 @@ def RGB_to_Hex(rgb):
 def LoadCache():
     global CACHE
     CACHE = json.load(open(PATHS["cache"], 'r'))
-
 def SaveCache():
     global CACHE
     json.dump(CACHE, open(PATHS["cache"], 'w'))
+
+def LoadEffectTreeCache():
+    global EFFECT_TREE
+    if not os.path.exists(PATHS["tree_cache"]): return EFFECT_TREE
+    EFFECT_TREE = pickle.load(open(PATHS["tree_cache"], 'rb'))
+    return EFFECT_TREE
+def SaveEffectTreeCache():
+    global EFFECT_TREE
+    pickle.dump(EFFECT_TREE, open(PATHS["tree_cache"], 'wb'))
+
+def LoadTransistionEffectTreeCache():
+    global EFFECT_TREE
+    if not os.path.exists(PATHS["transistion_tree_cache"]): return EFFECT_TREE
+    EFFECT_TREE = pickle.load(open(PATHS["transistion_tree_cache"], 'rb'))
+    return EFFECT_TREE
+def SaveTransistionEffectTreeCache():
+    global EFFECT_TREE
+    pickle.dump(EFFECT_TREE, open(PATHS["transistion_tree_cache"], 'wb'))
 
 @st.cache
 def GenerateImageSizeIndicatorImage(ImageSize):
@@ -135,60 +139,40 @@ def GenerateImageSizeIndicatorImage(ImageSize):
     ImageSizeIndicator_Image[:int((ImageSize[0]/IMAGESIZE_MAX[0])*IMAGESIZEINDICATORIMAGE_SIZE[0]), :int((ImageSize[1]/IMAGESIZE_MAX[1])*IMAGESIZEINDICATORIMAGE_SIZE[1])] = 255
     return ImageSizeIndicator_Image
 
-def LoadAvailableEffects():
-    global AVAILABLE_EFFECTS
-    # Load from JSON
-    # AVAILABLE_EFFECTS = json.load(open(PATHS["available_effects"], 'r'))["effects"]
-    # Load from EffectLibrary
-    AVAILABLE_EFFECTS = EffectsLibrary.AVAILABLE_EFFECTS
-
-def GetNames(data):
-    return [d["name"] for d in data]
-
-def LoadFrames():
+def Frames_Load():
     global FRAMES
     FRAMES = []
     for f in os.listdir(PATHS["default"]["dir"]["frames"]):
         FRAMES.append(f)
 
 # Main Functions
-def GetEffectsCode(CommonEffectsText, EffectFuncsText):
-    ImportsCode = '''
-import cv2
-import functools
-import numpy as np
-import pickle
 
-from Utils import EffectTransistionUtils
-from EffectsLibrary import EffectsLibrary
-
-'''
-    SavePickleCode = '''
-pickle.dump({EffectObj}, open('{CODE_PACKAGE_PATH}' + '/{EffectObj}.p', 'wb'))
-'''
-
-    CommonEffectsCode = ImportsCode + "CommonEffects = " + VidFX.UICommonEffectsCodeParser(CommonEffectsText) + SavePickleCode.format(CODE_PACKAGE_PATH=PATHS["default"]["dir"]["code_package"], EffectObj='CommonEffects')
-    exec(CommonEffectsCode, globals())
-    CommonEffects = pickle.load(open(os.path.join(PATHS["default"]["dir"]["code_package"], "CommonEffects.p"), 'rb'))
-
-    EffectFuncsCode = ImportsCode + "EffectFuncs = " + VidFX.UIMultiEffectsCodeParser(EffectFuncsText) + SavePickleCode.format(CODE_PACKAGE_PATH=PATHS["default"]["dir"]["code_package"], EffectObj='EffectFuncs')
-    exec(EffectFuncsCode, globals())
-    EffectFuncs = pickle.load(open(os.path.join(PATHS["default"]["dir"]["code_package"], "EffectFuncs.p"), 'rb'))
-    
-    return CommonEffects, EffectFuncs
 
 # UI Functions
-def UI_SelectNCols():
-    global OUTPUT_NCOLS
-    OUTPUT_NCOLS = st.sidebar.slider('Number of Columns', 1, 10, 5)
+def UI_ShowAvailableEffects():
+    '''
+    UI - Show Available Effects
+    '''
+    # Init
+    AvailableEffectsNames = list(AVAILABLE_EFFECTS.keys())
+    # Display
+    st.markdown("## Available Effects")
+    col1, col2 = st.columns(2)
+    USERINPUT_EffectName = st.selectbox("Select Effect", AvailableEffectsNames)
+    USERINPUT_EffectCode = AVAILABLE_EFFECTS[USERINPUT_EffectName]["code"]
+    st.markdown("<font size=\"2\">Code</font>", unsafe_allow_html=True)
+    st.markdown("\n```python\n" + USERINPUT_EffectCode)
 
+    return USERINPUT_EffectCode
+
+## UI Load Functions
 def UI_VideoInputSource():
     USERINPUT_VideoInputChoice = st.selectbox("Select Video Input Source", list(INPUTREADERS_VIDEO.keys()))
     USERINPUT_VideoReader = INPUTREADERS_VIDEO[USERINPUT_VideoInputChoice]
 
     # Upload Video File
     if USERINPUT_VideoInputChoice == "Upload Video File":
-        USERINPUT_VideoPath = st.file_uploader("Upload Video", ['avi', 'mp4', 'wmv'])
+        USERINPUT_VideoPath = st.file_uploader("Upload Video", ["avi", "mp4", "wmv"])
         if USERINPUT_VideoPath is None:
             USERINPUT_VideoPath = PATHS["default"]["example"]["video"]
         USERINPUT_VideoReader = functools.partial(USERINPUT_VideoReader, USERINPUT_VideoPath)
@@ -204,42 +188,13 @@ def UI_VideoInputSource():
     
     return USERINPUT_Video
 
-def UI_DisplayEffectVideo(vid=None, max_frames=-1, EffectFunc=None, compactDisplay=False):
-    frameCount = 0
-
-    # Check if camera opened successfully
-    if (vid.isOpened()== False):
-        print("Error opening video stream or file")
-
-    col1, col2 = st, st
-    if compactDisplay:
-        col1, col2 = st.columns(2)
-
-    inputVideoDisplay = col1.empty()
-    effectVideoDisplay = col2.empty()
-
-    # Read until video is completed
-    while(vid.isOpened() and ((not (frameCount == max_frames)) or (max_frames == -1))):
-        # Capture frame-by-frame
-        ret, frame = vid.read()
-        if ret == True:
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            inputVideoDisplay.image(frame, caption='Input Video', use_column_width=compactDisplay)
-            # Apply Effect if needed
-            if EffectFunc is not None:
-                frame = EffectFunc(frame)
-            # Display the resulting frame
-            effectVideoDisplay.image(frame, caption='Effect Video', use_column_width=compactDisplay)
-            frameCount += 1
-        # Break the loop
-        else: 
-            break
-    # When everything done, release the video capture object
-    vid.release()
-
 def UI_LoadImage():
+    '''
+    UI - Load Image
+    '''
+    # Select Image Input Source
     USERINPUT_ImageInputChoice = st.selectbox("Select Image Input Source", list(INPUTREADERS_IMAGE.keys()))
-
+    # Load Image
     USERINPUT_Image = None
     # Upload Image File
     if USERINPUT_ImageInputChoice == "Upload Image File":
@@ -269,457 +224,532 @@ def UI_LoadImage():
     
     return USERINPUT_Image
 
-def UI_DisplayEffectImage(USERINPUT_Image, EffectImage, compactDisplay=False):
+## UI - Display Functions
+def UI_DisplayEffectVideo(vid, EffectFunc, max_frames=-1, compact_display=False):
+    '''
+    UI - Display Effect Video
+    '''
+    # Check if camera opened successfully
+    if (vid.isOpened()== False): st.error("Error opening video stream or file")
+    # Set up display
     col1, col2 = st, st
-    if compactDisplay:
-        col1, col2 = st.columns(2)
+    if compact_display: col1, col2 = st.columns(2)
+    inputVideoDisplay = col1.empty()
+    effectVideoDisplay = col2.empty()
+    # Read until video is completed
+    FRAME_COUNT = 0
+    while(vid.isOpened() and ((not (FRAME_COUNT == max_frames)) or (max_frames == -1))):
+        # Capture frame-by-frame
+        ret, frame = vid.read()
+        if ret == True:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            inputVideoDisplay.image(frame, caption='Input Video', use_column_width=compact_display)
+            # Apply Effect if needed
+            if EffectFunc is not None:
+                frame = EffectFunc(frame)
+            # Display the resulting frame
+            effectVideoDisplay.image(frame, caption='Effect Video', use_column_width=compact_display)
+            FRAME_COUNT += 1
+        # Break the loop
+        else: 
+            break
+    # When everything done, release the video capture object
+    vid.release()
+
+def UI_DisplayEffectImage(USERINPUT_Image, EffectImage, compact_display=False):
+    '''
+    UI - Display Effect Image
+    '''
+    # Set up display
+    col1, col2 = st, st
+    if compact_display: col1, col2 = st.columns(2)
+    # Display Images
     col1.image(USERINPUT_Image, "Input Image", use_column_width=True)
     col2.image(EffectImage, "Effected Image", use_column_width=True)
 
-def UI_ShowAvailableEffects():
-    AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
-    st.markdown("## Available Effects")
-    col1, col2 = st.columns(2)
-    USERINPUT_EffectName = st.selectbox("Select Effect", AvailableEffectsNames)
-    USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
-    USERINPUT_EffectCode = AVAILABLE_EFFECTS[USERINPUT_EffectIndex]["code"]
-    st.markdown("<font size=\"2\">Code</font>", unsafe_allow_html=True)
-    st.markdown("\n```python\n" + USERINPUT_EffectCode)
+## UI - Effect Tree Functions
+def UI_DisplayEffectTree(ROOT_NODE, EFFECT_TREE_NODES):
+    '''
+    UI - Display Effect Tree
+    '''
+    # Construct Tree Graph
+    G = graphviz.Digraph(graph_attr={"rankdir": "LR"})
+    ## Add Nodes
+    G.node(ROOT_NODE.id, ROOT_NODE.id)
+    for node_id in EFFECT_TREE_NODES.keys():
+        G.node(node_id, node_id)
+    ## Add Edges
+    for child_conn_k in ROOT_NODE.children.keys():
+        child_conn = ROOT_NODE.children[child_conn_k]
+        conn_id = child_conn.start.id + "_" + child_conn.end.id
+        G.node(conn_id, child_conn.effect["name"], shape="box")
+        G.edge(ROOT_NODE.id, conn_id)
+        G.edge(conn_id, child_conn.end.id)
+    for node_id in EFFECT_TREE_NODES.keys():
+        node = EFFECT_TREE_NODES[node_id]
+        for child_conn_k in node.children.keys():
+            child_conn = node.children[child_conn_k]
+            conn_id = child_conn.start.id + "_" + child_conn.end.id
+            G.node(conn_id, child_conn.effect["name"], shape="box")
+            G.edge(node_id, conn_id)
+            G.edge(conn_id, child_conn.end.id)
+        # Display Tree Graph
+    st.markdown("## Effect Tree")
+    Graph_I = G.pipe(format="png")
+    st.image(Graph_I, use_column_width=False)
+    # st.write(G)
 
-    return USERINPUT_EffectCode
+def UI_AddEffectTreeNode():
+    '''
+    UI - Add Effect Tree Node
+    '''
+    global EFFECT_TREE
+    # Init
+    PARENT_NODE_IDS = [EFFECT_TREE_ROOT_ID] + list(EFFECT_TREE["nodes"].keys())
+    EFFECT_NAMES = list(AVAILABLE_EFFECTS.keys())
+    # Load Inputs
+    USERINPUT_ParentID = st.selectbox("Parent Node", PARENT_NODE_IDS)
+    cols = st.columns((1, 3))
+    USERINPUT_EffectName = cols[0].selectbox("New Effect", EFFECT_NAMES)
+    USERINPUT_EffectParams = json.loads(cols[1].text_area(
+        "New Effect Params", 
+        json.dumps(AVAILABLE_EFFECTS[USERINPUT_EffectName]["params"], indent=4),
+        height=200
+    ))
+    # Add Node
+    if st.button("Add"):
+        ParentNode = EFFECT_TREE["root"] if USERINPUT_ParentID == EFFECT_TREE_ROOT_ID else EFFECT_TREE["nodes"][USERINPUT_ParentID]
+        ## Set Connection Data
+        NEW_CONNECTION_DATA = {
+            "start": ParentNode,
+            "end": None,
+            "effect": dict(AVAILABLE_EFFECTS[USERINPUT_EffectName])
+        }
+        NEW_CONNECTION_DATA["effect"]["params"] = USERINPUT_EffectParams
+        NEW_CONNECTION = EFFECT_TREE_CONNECTION(**NEW_CONNECTION_DATA)
+        ## Set Node Data
+        NEW_NODE_DATA = {
+            "id": str(EFFECT_TREE["node_id_counter"]),
+            "parent": NEW_CONNECTION,
+        }
+        EFFECT_TREE["nodes"][NEW_NODE_DATA["id"]] = EFFECT_TREE_NODE(**NEW_NODE_DATA)
+        NEW_CONNECTION.end = EFFECT_TREE["nodes"][NEW_NODE_DATA["id"]]
+        EFFECT_TREE["node_id_counter"] += 1
+        ## Set Parent Data
+        NEW_NODE_DATA["parent"].start.children[NEW_NODE_DATA["id"]] = NEW_CONNECTION
 
-# UI TRANSISTION EFFECT FUNCTIONS ###################################################################################################################
-def UI_DisplayEffectTransistionVideo(I=None, max_frames=-1, EffectFuncs=None, compactDisplay=False):
-    MainEffectFunc = EffectFuncs['Main']
-    CommonEffects_Tr = EffectFuncs['Common']
-    EffectFuncs_Tr = EffectFuncs['Effect']
+def UI_EditEffectTreeNode():
+    '''
+    UI - Edit Effect Tree Node
+    '''
+    global EFFECT_TREE
+    # Init
+    NODE_IDS = list(EFFECT_TREE["nodes"].keys())
+    PARENT_NODE_IDS = [EFFECT_TREE_ROOT_ID] + list(EFFECT_TREE["nodes"].keys())
+    EFFECT_NAMES = list(AVAILABLE_EFFECTS.keys())
+    # Load Inputs
+    ## Select Node
+    USERINPUT_NodeID = st.selectbox("Select Node", NODE_IDS)
+    CurNode = EFFECT_TREE["nodes"][USERINPUT_NodeID]
+    CurConnection = CurNode.parent
+    ## Edit
+    USERINPUT_ParentID = st.selectbox(
+        "Edit Parent Node", PARENT_NODE_IDS, 
+        index=PARENT_NODE_IDS.index(CurConnection.start.id)
+    )
+    cols = st.columns((1, 3))
+    USERINPUT_EffectName = cols[0].selectbox(
+        "Edit Effect", EFFECT_NAMES,
+        index=EFFECT_NAMES.index(CurConnection.effect["name"])
+    )
+    USERINPUT_EffectParams = json.loads(cols[1].text_area(
+        "Edit Effect Params", 
+        json.dumps(CurConnection.effect["params"], indent=4),
+        height=200
+    ))
+    # Edit Node
+    cols = st.columns(2)
+    if cols[0].button("Edit"):
+        ParentNode = EFFECT_TREE["root"] if USERINPUT_ParentID == EFFECT_TREE_ROOT_ID else EFFECT_TREE["nodes"][USERINPUT_ParentID]
+        ## Set Connection Data
+        CurConnection.start = ParentNode
+        CurConnection.effect = dict(AVAILABLE_EFFECTS[USERINPUT_EffectName])
+        CurConnection.effect["params"] = USERINPUT_EffectParams
+        ## Set Node Data
+        CurNode.parent = CurConnection
+        ## Set Parent Data
+        CurConnection.start.children[CurNode.id] = CurConnection
+    if cols[1].button("Delete"):
+        del CurConnection.start.children[CurNode.id]
+        del EFFECT_TREE["nodes"][CurNode.id]
 
-    frames = np.linspace(0, 1, max_frames)
+def UI_ConstructEffectTree():
+    '''
+    UI - Construct Effect Tree
+    '''
+    global EFFECT_TREE
+    # Init
+    st.markdown("## Construct Effect Tree")
+    ## Load Tree Cache
+    EFFECT_TREE = LoadEffectTreeCache()
+    ## Display
+    UI_DisplayEffectTree(EFFECT_TREE["root"], EFFECT_TREE["nodes"])
+    # Node Operations
+    USERINPUT_NodeOp = st.selectbox("Node Operations", ["-", "Add", "Edit", "Clear"])
+    if USERINPUT_NodeOp == "Clear":
+        if st.button("Clear Effect Tree"):
+            EFFECT_TREE.update({
+                "root": EFFECT_TREE_NODE(EFFECT_TREE_ROOT_ID),
+                "nodes": {}
+            })
+            SaveEffectTreeCache()
+    elif USERINPUT_NodeOp == "Add":
+        UI_AddEffectTreeNode()
+        SaveEffectTreeCache()
+    elif USERINPUT_NodeOp == "Edit":
+        UI_EditEffectTreeNode()
+        SaveEffectTreeCache()
+    st.button("Refresh")
 
-    col1, col2 = st, st
-    if compactDisplay:
-        col1, col2 = st.columns(2)
+    return EFFECT_TREE
 
-    col1.image(I, "Input Image", use_column_width=True)
-    effectVideoDisplay = col2.empty()
+def UI_ConstructDisplayGrid():
+    '''
+    UI - Construct Display Grid
+    '''
+    global DISPLAY_GRID
+    # Init
+    st.markdown("## Construct Display Grid")
+    # Construct Grid
+    cols = st.columns(2)
+    USERINPUT_Grid = json.loads(cols[0].text_area(
+        "Grid", 
+        value=json.dumps(DISPLAY_GRID["grid"], indent=4), 
+        height=200
+    ))
+    USERINPUT_GridParams = json.loads(cols[1].text_area(
+        "Grid Params", 
+        value=json.dumps(DISPLAY_GRID["params"], indent=4), 
+        height=200
+    ))
+    # Update Grid
+    DISPLAY_GRID.update({
+        "grid": USERINPUT_Grid,
+        "params": USERINPUT_GridParams
+    })
 
-    # Generate
-    frames_effect = []
-    for frame in frames:
-        MainFunc = EffectTransistionUtils.GetMainFunc(MainEffectFunc, CommonEffects_Tr, EffectFuncs_Tr, frame, recursiveArgs=False)
-        outFrame = MainFunc(I)
-        frames_effect.append(outFrame)
-        effectVideoDisplay.image(outFrame, caption='Effect Video', use_column_width=True)
+    return DISPLAY_GRID
 
-    # Save
-    frames_effect = list(map(Image.fromarray, frames_effect))
-    extraFrames = []
-    if len(frames_effect) > 1:
-        extraFrames = frames_effect[1:]
-    frames_effect[0].save(PATHS["default"]["save"]["gif"], save_all=True, append_images=extraFrames, format='GIF', loop=0)
-    effectVideoDisplay.image(PATHS["default"]["save"]["gif"], caption='Effect Video', use_column_width=True)
+## UI - Effect Transistion Functions
+def UI_LoadTransistionEffectParams(DefaultTransistionParams):
+    '''
+    UI - Load Transistion Effect Params
+    '''
+    global EFFECT_TREE
+    # Load Inputs
+    USERINPUT_TransistionEffectParams = {}
+    for pk in DefaultTransistionParams.keys():
+        st.markdown("---")
+        ## Load Params
+        cols = st.columns(2)
+        USERINPUT_EffectParamStart = json.loads(cols[0].text_area(
+            f"{pk} - start", 
+            json.dumps({pk: DefaultTransistionParams[pk]["start"]}, indent=4),
+            height=200
+        ))[pk]
+        USERINPUT_EffectParamEnd = json.loads(cols[1].text_area(
+            f"{pk} - end", 
+            json.dumps({pk: DefaultTransistionParams[pk]["end"]}, indent=4),
+            height=200
+        ))[pk]
+        ## Load Transistion
+        AvailableTransistionFuncs = EffectTransistionSelect_Basic(USERINPUT_EffectParamStart, USERINPUT_EffectParamEnd)
+        cols = st.columns((1, 2))
+        USERINPUT_TransistionType = cols[0].selectbox(
+            "Transistion Type", 
+            AvailableTransistionFuncs
+        )
+        USERINPUT_TransistionParams = json.loads(cols[1].text_area(
+            f"Transistion Params", 
+            json.dumps(TRANSISTION_FUNCS[USERINPUT_TransistionType]["params"], indent=4),
+            height=200
+        ))
+        TransistionFunc = dict(TRANSISTION_FUNCS[USERINPUT_TransistionType])
+        TransistionFunc["params"] = USERINPUT_TransistionParams
+        USERINPUT_TransistionEffectParams[pk] = {
+            "start": USERINPUT_EffectParamStart,
+            "end": USERINPUT_EffectParamEnd,
+            "transistion": TransistionFunc
+        }
+    st.markdown("---")
 
-def UI_Param_EffectTransistions(p, col1=st, col2=st, col3=st, key=""):
-    # Parse type
-    inp_start = None
-    inp_end = None
-    TransistionFunc = None
-    inp_type = p["type"]
-    if p["type"] == "bool":
-        inp_start = col1.checkbox(p["name"] + " Start", p["default"], key=p["name"] + "_start_" + key)
-        inp_end = col2.checkbox(p["name"] + " End", p["default"], key=p["name"] + "_end_" + key)
-    elif p["type"] == "int":
-        inp_start = col1.slider(p["name"] + " Start", p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_start_" + key)
-        inp_end = col2.slider(p["name"] + " End", p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_end_" + key)
-    elif p["type"] == "float":
-        inp_start = col1.slider(p["name"] + " Start", p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_start_" + key)
-        inp_end = col2.slider(p["name"] + " End", p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_end_" + key)
-    elif p["type"] == "str":
-        inp_start = col1.text_input(p["name"], p["default"], key=p["name"] + "_" + key)
-        inp_end = inp_start
-    elif p["type"].startswith("list"):
-        typeSplit = p["type"].split(":")
-        if typeSplit[1] in ["str", "key", "frame"]:
-            inp_start = col1.text_area(p["name"], '\n'.join(list(map(str, p["default"]))), key=p["name"] + "_start_" + key)
-            inp_end = inp_start
-        else:
-            inp_start = col1.text_area(p["name"] + " Start", '\n'.join(list(map(str, p["default"]))), key=p["name"] + "_start_" + key)
-            inp_end = col2.text_area(p["name"] + " End", '\n'.join(list(map(str, p["default"]))), key=p["name"] + "_end_" + key)
-        
-        inp_start = TYPE_MAP[typeSplit[0]](inp_start, TYPE_MAP[typeSplit[1]])
-        inp_end = TYPE_MAP[typeSplit[0]](inp_end, TYPE_MAP[typeSplit[1]])
-    elif p["type"] == "frame":
-        frameName = col1.selectbox("Select Frame", ["Select Frame"] + FRAMES, key=p["name"] + "_frametr_" + key)
-        inp_start = None
-        if not (frameName == "Select Frame"):
-            inp_start = os.path.join(PATHS["default"]["dir"]["frames"], frameName)
-            inp_start = inp_start.replace('"', '\\"')
-            inp_start = '"' + inp_start + '"'
-    else:
-        return None, None, None
+    return USERINPUT_TransistionEffectParams
 
-    if inp_end is not None:
-        TransistionFunc = TRANSISTION_FUNCS[col3.selectbox(p["name"] + " Transistion", list(TRANSISTION_FUNCS.keys()), key=p["name"] + "_trf_" + key)]
-    else:
-        inp_end = inp_start
-        TransistionFunc = TRANSISTION_FUNCS['Constant']
 
-    return inp_start, inp_end, TransistionFunc
-    
-def UI_EffectSelector_EffectTransistions(AvailableEffectsNames, key=""):
-    col1, col2, col3, col4 = st.columns([2, 1, 1, 1])
-    USERINPUT_EffectName = col1.selectbox("", AvailableEffectsNames, key="EN_" + key)
-    USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
-    USERINPUT_EffectData = AVAILABLE_EFFECTS[USERINPUT_EffectIndex]
-    ParamsInputs = UI_Params_EffectTransistions(USERINPUT_EffectData["params"], col1=col2, col2=col3, col3=col4, key=key)
-    USERINPUT_EffectFunc = functools.partial(USERINPUT_EffectData["func"]) # Params Tranisiton is applied later
-    USERINPUT_EffectCode = USERINPUT_EffectData["name"]
-    return USERINPUT_EffectCode, ParamsInputs, USERINPUT_EffectFunc
+def UI_AddEffectTreeNode_Transistion():
+    '''
+    UI - Add Effect Tree Node - Transistion
+    '''
+    global EFFECT_TREE
+    # Init
+    PARENT_NODE_IDS = [EFFECT_TREE_ROOT_ID] + list(EFFECT_TREE["nodes"].keys())
+    EFFECT_NAMES = list(AVAILABLE_EFFECTS.keys())
+    # Load Inputs
+    USERINPUT_ParentID = st.selectbox("Parent Node", PARENT_NODE_IDS)
+    USERINPUT_EffectName = st.selectbox("New Effect", EFFECT_NAMES)
+    DefaultTransistionParams = {
+        pk: {
+            "start": AVAILABLE_EFFECTS[USERINPUT_EffectName]["params"][pk],
+            "end": AVAILABLE_EFFECTS[USERINPUT_EffectName]["params"][pk]
+        }
+        for pk in AVAILABLE_EFFECTS[USERINPUT_EffectName]["params"].keys()
+    }
+    USERINPUT_EffectParams = UI_LoadTransistionEffectParams(DefaultTransistionParams)
+    # Add Node
+    if st.button("Add"):
+        ParentNode = EFFECT_TREE["root"] if USERINPUT_ParentID == EFFECT_TREE_ROOT_ID else EFFECT_TREE["nodes"][USERINPUT_ParentID]
+        ## Set Connection Data
+        NEW_CONNECTION_DATA = {
+            "start": ParentNode,
+            "end": None,
+            "effect": dict(AVAILABLE_EFFECTS[USERINPUT_EffectName])
+        }
+        NEW_CONNECTION_DATA["effect"]["transistion"] = USERINPUT_EffectParams
+        NEW_CONNECTION = EFFECT_TREE_CONNECTION(**NEW_CONNECTION_DATA)
+        ## Set Node Data
+        NEW_NODE_DATA = {
+            "id": str(EFFECT_TREE["node_id_counter"]),
+            "parent": NEW_CONNECTION,
+        }
+        EFFECT_TREE["nodes"][NEW_NODE_DATA["id"]] = EFFECT_TREE_NODE(**NEW_NODE_DATA)
+        NEW_CONNECTION.end = EFFECT_TREE["nodes"][NEW_NODE_DATA["id"]]
+        EFFECT_TREE["node_id_counter"] += 1
+        ## Set Parent Data
+        NEW_NODE_DATA["parent"].start.children[NEW_NODE_DATA["id"]] = NEW_CONNECTION
 
-def UI_Params_EffectTransistions(paramsData, col1=st, col2=st, col3=st, key=""):
-    ParamsInputs = {}
-    for p in paramsData:
-        inp_start, inp_end, TransistionFunc = UI_Param_EffectTransistions(p, col1, col2, col3, key)
-        ParamsInputs[p["name"]] = {"start": inp_start, "end": inp_end, "func": TransistionFunc}
-    return ParamsInputs
+def UI_EditEffectTreeNode_Transistion():
+    '''
+    UI - Edit Effect Tree Node - Transistion
+    '''
+    global EFFECT_TREE
+    # Init
+    NODE_IDS = list(EFFECT_TREE["nodes"].keys())
+    PARENT_NODE_IDS = [EFFECT_TREE_ROOT_ID] + list(EFFECT_TREE["nodes"].keys())
+    EFFECT_NAMES = list(AVAILABLE_EFFECTS.keys())
+    # Load Inputs
+    ## Select Node
+    USERINPUT_NodeID = st.selectbox("Select Node", NODE_IDS)
+    CurNode = EFFECT_TREE["nodes"][USERINPUT_NodeID]
+    CurConnection = CurNode.parent
+    ## Edit
+    USERINPUT_ParentID = st.selectbox(
+        "Edit Parent Node", PARENT_NODE_IDS, 
+        index=PARENT_NODE_IDS.index(CurConnection.start.id)
+    )
+    USERINPUT_EffectName = st.selectbox(
+        "Edit Effect", EFFECT_NAMES,
+        index=EFFECT_NAMES.index(CurConnection.effect["name"])
+    )
+    DefaultTransistionParams = CurConnection.effect["transistion"]
+    if USERINPUT_EffectName != CurConnection.effect["name"]:
+        DefaultTransistionParams = {
+            pk: {
+                "start": AVAILABLE_EFFECTS[USERINPUT_EffectName]["params"][pk],
+                "end": AVAILABLE_EFFECTS[USERINPUT_EffectName]["params"][pk]
+            }
+            for pk in AVAILABLE_EFFECTS[USERINPUT_EffectName]["params"].keys()
+        }
+    USERINPUT_EffectParams = UI_LoadTransistionEffectParams(DefaultTransistionParams)
+    # Edit Node
+    cols = st.columns(2)
+    if cols[0].button("Edit"):
+        ParentNode = EFFECT_TREE["root"] if USERINPUT_ParentID == EFFECT_TREE_ROOT_ID else EFFECT_TREE["nodes"][USERINPUT_ParentID]
+        ## Set Connection Data
+        CurConnection.start = ParentNode
+        CurConnection.effect = dict(AVAILABLE_EFFECTS[USERINPUT_EffectName])
+        CurConnection.effect["transistion"] = USERINPUT_EffectParams
+        ## Set Node Data
+        CurNode.parent = CurConnection
+        ## Set Parent Data
+        CurConnection.start.children[CurNode.id] = CurConnection
+    if cols[1].button("Delete"):
+        ## Delete Node
+        deleted_node_ids = EFFECT_TREE["nodes"][CurNode.id].delete(propogate=True)
+        for deleted_node_id in deleted_node_ids:
+            del EFFECT_TREE["nodes"][deleted_node_id]
 
-# UI EFFECT FUNCTIONS ###########################################################################################################################
-def UI_Param_Effects(p, col=st, key=""):
-    # Parse type
-    inp = None
-    if p["type"] == "bool":
-        inp = col.checkbox(p["name"], p["default"], key=p["name"] + "_" + key)
-    elif p["type"] == "int":
-        inp = col.slider(p["name"], p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_" + key)
-    elif p["type"] == "float":
-        inp = col.slider(p["name"], p["min"], p["max"], p["default"], p["step"], key=p["name"] + "_" + key)
-    elif p["type"] == "str":
-        inp = col.text_input(p["name"], p["default"], key=p["name"] + "_" + key)
-    elif p["type"].startswith("list"):
-        inp = col.text_area(p["name"], '\n'.join(list(map(str, p["default"]))), key=p["name"] + "_" + key)
-        typeSplit = p["type"].split(":")
-        inp = TYPE_MAP[typeSplit[0]](inp, TYPE_MAP[typeSplit[1]])
-    elif p["type"] == "frame":
-        frameName = col.selectbox("Select Frame", ["Select Frame"] + FRAMES, key=p["name"] + "_framen_" + key)
-        inp = None
-        if not (frameName == "Select Frame"):
-            inp = os.path.join(PATHS["default"]["dir"]["frames"], frameName)
-    else:
-        return None
+def UI_ConstructEffectTree_Transistion():
+    '''
+    UI - Construct Effect Tree - Transistion
+    '''
+    global EFFECT_TREE
+    # Init
+    st.markdown("## Construct Effect Tree (Transistion)")
+    ## Load Tree Cache
+    EFFECT_TREE = LoadTransistionEffectTreeCache()
+    ## Display
+    UI_DisplayEffectTree(EFFECT_TREE["root"], EFFECT_TREE["nodes"])
+    # Node Operations
+    USERINPUT_NodeOp = st.selectbox("Node Operations", ["-", "Add", "Edit", "Clear"])
+    if USERINPUT_NodeOp == "Clear":
+        if st.button("Clear Effect Tree"):
+            EFFECT_TREE.update({
+                "root": EFFECT_TREE_NODE(EFFECT_TREE_ROOT_ID),
+                "nodes": {},
+                "node_id_counter": 1
+            })
+            SaveTransistionEffectTreeCache()
+    elif USERINPUT_NodeOp == "Add":
+        UI_AddEffectTreeNode_Transistion()
+        SaveTransistionEffectTreeCache()
+    elif USERINPUT_NodeOp == "Edit":
+        UI_EditEffectTreeNode_Transistion()
+        SaveTransistionEffectTreeCache()
+    st.button("Refresh")
 
-    return inp
-    
-def UI_EffectSelector_Effects(AvailableEffectsNames, key=""):
-    col1, col2 = st.columns(2)
-    USERINPUT_EffectName = col1.selectbox("", AvailableEffectsNames, key="EN_" + key)
-    USERINPUT_EffectIndex = AvailableEffectsNames.index(USERINPUT_EffectName)
-    USERINPUT_EffectData = AVAILABLE_EFFECTS[USERINPUT_EffectIndex]
-    ParamsInputs = UI_Params_Effects(USERINPUT_EffectData["params"], col=col2, key=key)
-    USERINPUT_EffectFunc = functools.partial(USERINPUT_EffectData["func"]) # Params are applied later
-    USERINPUT_EffectCode = USERINPUT_EffectData["name"]
-    return USERINPUT_EffectCode, ParamsInputs, USERINPUT_EffectFunc
-
-def UI_Params_Effects(paramsData, col=st, key=""):
-    ParamsInputs = {}
-    for p in paramsData:
-        inp = UI_Param_Effects(p, col, key)
-        if inp is not None:
-            ParamsInputs[p["name"]] = inp
-    return ParamsInputs
-####################################################################################################################
-def UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects):
-    USERINPUT_DisplayCount = st.slider("Select Number of Displays", 1, 10, 1, key="Dn")
-
-    EffectFuncsTextList = []
-    EffectFuncsParamsInputs = []
-    EffectFuncsGroup = []
-    for c in range(USERINPUT_DisplayCount):
-        st.markdown("<hr>", unsafe_allow_html=True)
-        st.markdown("### Display " + str(c+1))
-        EffectsListText, EffectsParamsInputs, EffectFuncs = UI_EffectsRepeater(AvailableEffectsNames, str(c+1), EffectMode=EffectMode)
-        st.markdown("<hr>", unsafe_allow_html=True)
-        EffectFuncsTextList.append(EffectsListText)
-        EffectFuncsParamsInputs.append(EffectsParamsInputs)
-        EffectFuncsGroup.append(EffectFuncs)
-    EffectFuncsText = "\n,\n".join(EffectFuncsTextList)
-    
-    return EffectFuncsText, EffectFuncsParamsInputs, EffectFuncsGroup
-
-def UI_EffectsRepeater(AvailableEffectsNames, displayKey="", EffectMode=UI_EffectSelector_Effects):
-    USERINPUT_EffectCount = st.slider("Select Number of Effects", 1, 10, 1, key="En_" + str(displayKey))
-
-    EffectsList = []
-    EffectsParamsInputs = []
-    EffectFuncs = []
-    for e in range(USERINPUT_EffectCount):
-        key = str(displayKey) + "_" + str(e)
-        EffectCode, ParamsInputs, EffectFunc = EffectMode(AvailableEffectsNames, key)
-        EffectsList.append(EffectCode)
-        EffectsParamsInputs.append(ParamsInputs)
-        EffectFuncs.append(EffectFunc)
-    EffectsListText = "\n".join(EffectsList)
-
-    return EffectsListText, EffectsParamsInputs, EffectFuncs
+    return EFFECT_TREE
 
 # Repo Based Functions
 def videofx():
+    global EFFECT_TREE
+    global DISPLAY_GRID
     # Title
     st.header("Video FX")
 
-    # Load Inputs
+    # Load Prereq Inputs
     USERINPUT_Video = UI_VideoInputSource()
-
-    LoadAvailableEffects()
-    LoadFrames()
-
-    UI_ShowAvailableEffects()
-    AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
-    
-    st.markdown("## Choose Common Effects")
-    CommonEffectsText, ParamInputs_Common, CommonEffects = UI_EffectsRepeater(AvailableEffectsNames, displayKey="CE", EffectMode=UI_EffectSelector_Effects)
-
-    st.markdown("## Choose Display Effects")
-    EffectFuncsText, ParamInputs_Effects, EffectFuncs = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects)
-
-    UI_SelectNCols()
-    USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
+    Frames_Load()
+    # UI_ShowAvailableEffects()
+    # Load Inputs
+    ## Effect Tree
+    EFFECT_TREE = UI_ConstructEffectTree()
+    ## Display Grid
+    DISPLAY_GRID = UI_ConstructDisplayGrid()
+    USERINPUT_DisplayParams = {
+        "max_frames": -1,
+        "compact_display": st.sidebar.checkbox("Compact Display", False)
+    }
 
     # Process Inputs
     cols = st.columns(2)
     USERINPUT_StreamProcess = cols[0].checkbox("Stream Process", False)
     if not USERINPUT_StreamProcess: USERINPUT_StreamProcess = cols[1].button("Process")
     if USERINPUT_StreamProcess:
-        # CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
-        # Apply Params
-        EffectFuncs_PA = []
-        CommonFuncs_PA = []
-        for i in range(len(EffectFuncs)):
-            efs = EffectFuncs[i]
-            efs_tr = []
-            for j in range(len(efs)):
-                ef = efs[j]
-                paramsData = ParamInputs_Effects[i][j]
-                funcData = functools.partial(ef.func, **paramsData)
-                efs_tr.append(funcData)
-            EffectFuncs_PA.append(efs_tr)
-        for i in range(len(CommonEffects)):
-            efs = CommonEffects[i]
-            paramsData = ParamInputs_Common[i]
-            funcData = functools.partial(efs.func, **paramsData)
-            CommonFuncs_PA.append(funcData)
-        CommonEffects = CommonFuncs_PA
-        EffectFuncs = EffectFuncs_PA
-
-        EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
-        EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+        EffectFunc = functools.partial(EffectFunc_TreeApply, EFFECT_TREE=EFFECT_TREE, DISPLAY_GRID=DISPLAY_GRID)
         # Display Output
-        st.markdown("## Videos")
-        UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc, USERINPUT_CompactDisplay)
+        st.markdown("## Video")
+        UI_DisplayEffectVideo(USERINPUT_Video, EffectFunc, **USERINPUT_DisplayParams)
 
 def imagefx():
+    global EFFECT_TREE
+    global DISPLAY_GRID
     # Title
     st.header("Image FX")
 
-    # Load Inputs
+    # Load Prereq Inputs
     USERINPUT_Image = UI_LoadImage()
-
-    LoadAvailableEffects()
-    LoadFrames()
-
-    UI_ShowAvailableEffects()
-    AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
-    
-    st.markdown("## Choose Common Effects")
-    CommonEffectsText, ParamInputs_Common, CommonEffects = UI_EffectsRepeater(AvailableEffectsNames, displayKey="CE", EffectMode=UI_EffectSelector_Effects)
-
-    st.markdown("## Choose Display Effects")
-    EffectFuncsText, ParamInputs_Effects, EffectFuncs = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_Effects)
-
-    UI_SelectNCols()
-    USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
+    Frames_Load()
+    # UI_ShowAvailableEffects()
+    # Load Inputs
+    ## Effect Graph
+    EFFECT_TREE = UI_ConstructEffectTree()
+    ## Display Grid
+    DISPLAY_GRID = UI_ConstructDisplayGrid()
+    USERINPUT_DisplayParams = {
+        "compact_display": st.sidebar.checkbox("Compact Display", False)
+    }
 
     # Process Inputs
     cols = st.columns(2)
     USERINPUT_StreamProcess = cols[0].checkbox("Stream Process", False)
     if not USERINPUT_StreamProcess: USERINPUT_StreamProcess = cols[1].button("Process")
     if USERINPUT_StreamProcess:
-        # CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
-        # Apply Params
-        EffectFuncs_PA = []
-        CommonFuncs_PA = []
-        for i in range(len(EffectFuncs)):
-            efs = EffectFuncs[i]
-            efs_tr = []
-            for j in range(len(efs)):
-                ef = efs[j]
-                paramsData = ParamInputs_Effects[i][j]
-                funcData = functools.partial(ef.func, **paramsData)
-                efs_tr.append(funcData)
-            EffectFuncs_PA.append(efs_tr)
-        for i in range(len(CommonEffects)):
-            efs = CommonEffects[i]
-            paramsData = ParamInputs_Common[i]
-            funcData = functools.partial(efs.func, **paramsData)
-            CommonFuncs_PA.append(funcData)
-        CommonEffects = CommonFuncs_PA
-        EffectFuncs = EffectFuncs_PA
-
-        EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
-        EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
-
-        EffectImage = EffectFunc(USERINPUT_Image)
+        EffectImage = EffectFunc_TreeApply(
+            USERINPUT_Image, 
+            EFFECT_TREE=EFFECT_TREE, DISPLAY_GRID=DISPLAY_GRID
+        )
         # Display Output
         st.markdown("## Images")
-        UI_DisplayEffectImage(USERINPUT_Image, EffectImage, USERINPUT_CompactDisplay)
+        UI_DisplayEffectImage(USERINPUT_Image, EffectImage, **USERINPUT_DisplayParams)
 
 def image_effect_transistion():
+    global EFFECT_TREE
+    global DISPLAY_GRID
     # Title
     st.header("Image Effect Transistion")
 
-    # Load Inputs
+    # Load Prereq Inputs
     USERINPUT_Image = UI_LoadImage()
-
-    LoadAvailableEffects()
-    LoadFrames()
-
-    UI_ShowAvailableEffects()
-    AvailableEffectsNames = GetNames(AVAILABLE_EFFECTS)
-    
-    st.markdown("## Choose Common Effects")
-    CommonEffectsText, ParamsInputs_Common, CommonEffects = UI_EffectsRepeater(AvailableEffectsNames, displayKey="CE", EffectMode=UI_EffectSelector_EffectTransistions)
-
-    st.markdown("## Choose Effects Transistions")
-    EffectFuncsText, ParamsInputs_Effects, EffectFuncs = UI_DisplayRepeater(AvailableEffectsNames, EffectMode=UI_EffectSelector_EffectTransistions)
-
-    UI_SelectNCols()
-    USERINPUT_FrameCount = st.slider("Frames Count", 1, 100, 20, 1)
-    USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
-
-    # Process Inputs
-    cols = st.columns(2)
-    USERINPUT_StreamProcess = cols[0].checkbox("Stream Process", False)
-    if not USERINPUT_StreamProcess: USERINPUT_StreamProcess = cols[1].button("Process")
-    if USERINPUT_StreamProcess:
-        # CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
-        # Apply Params
-        EffectFuncs_Tr = []
-        CommonFuncs_Tr = []
-        for i in range(len(EffectFuncs)):
-            efs = EffectFuncs[i]
-            efs_tr = []
-            for j in range(len(efs)):
-                ef = efs[j]
-                paramsData = {}
-                for k in ParamsInputs_Effects[i][j].keys():
-                    pD = ParamsInputs_Effects[i][j][k]
-                    if pD["func"] is not None:
-                        paramsData[k] = functools.partial(pD["func"], start=pD["start"], end=pD["end"])
-                trData = [ef, paramsData]
-                efs_tr.append(trData)
-            EffectFuncs_Tr.append(efs_tr)
-        for i in range(len(CommonEffects)):
-            efs = CommonEffects[i]
-            paramsData = {}
-            for k in ParamsInputs_Common[i].keys():
-                pD = ParamsInputs_Common[i][k]
-                if pD["func"] is not None:
-                    paramsData[k] = functools.partial(pD["func"], start=pD["start"], end=pD["end"])
-            trData = [efs, paramsData]
-            CommonFuncs_Tr.append(trData)
-
-        saveI_keys = EffectsLibrary.GetSaveIKeys(EffectFuncs)
-        MainFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
-        
-        EffectFunctions = {
-            "Main": MainFunc,
-            "Common": CommonFuncs_Tr,
-            "Effect": EffectFuncs_Tr
-        }
-    
-        # Display Output
-        UI_DisplayEffectTransistionVideo(USERINPUT_Image, USERINPUT_FrameCount, EffectFunctions, USERINPUT_CompactDisplay)
-
-def videofx_text_based():
-    # Title
-    st.header("Video FX (Text Based)")
-
+    Frames_Load()
+    # UI_ShowAvailableEffects()
     # Load Inputs
-    USERINPUT_Video = UI_VideoInputSource()
-    LoadAvailableEffects()
-    UI_ShowAvailableEffects()
-    st.markdown("## Enter Effect Codes")
-    CommonEffectsText = st.text_area("Common Effects Code", "None")
-    EffectFuncsText = st.text_area("Effects Code", "None")
-
-    UI_SelectNCols()
-    USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
+    ## Effect Graph Transistion
+    EFFECT_TREE = UI_ConstructEffectTree_Transistion()
+    ## Other Inputs
+    cols = st.columns(2)
+    USERINPUT_FinalNodeID = cols[0].selectbox("Select Final Effect Node", EFFECT_TREE["nodes"].keys())
+    USERINPUT_NFrames = cols[1].number_input("Select N Frames", min_value=1, max_value=100, value=10)
+    USERINPUT_FPS = st.sidebar.number_input("FPS", min_value=1, max_value=120, value=10)
 
     # Process Inputs
     cols = st.columns(2)
     USERINPUT_StreamProcess = cols[0].checkbox("Stream Process", False)
     if not USERINPUT_StreamProcess: USERINPUT_StreamProcess = cols[1].button("Process")
     if USERINPUT_StreamProcess:
-        CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
-        # Apply Params
-        EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
-        EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+        DISPLAY_GRID.update({
+            "grid": [[USERINPUT_FinalNodeID]],
+            "params": {
+                "grid_cell_space": [0, 0],
+                "grid_border_space": [0, 0]
+            },
+        })
+        TREE_APPLY_FUNC = functools.partial(
+            EffectFunc_TreeApply, 
+            DISPLAY_GRID=DISPLAY_GRID
+        )
+        PROGRESS_BAR = st.progress(0)
+        TransistionEffectImages = EffectTransistion_Apply(
+            USERINPUT_Image, 
+            EFFECT_TREE=EFFECT_TREE, TREE_APPLY_FUNC=TREE_APPLY_FUNC,
+            n_frames=USERINPUT_NFrames,
+            PROGRESS_BAR=PROGRESS_BAR.progress
+        )
         # Display Output
-        st.markdown("## Videos")
-        UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc, USERINPUT_CompactDisplay)
-
-def imagefx_text_based():
-    # Title
-    st.header("Image FX (Text Based)")
-
-    # Load Inputs
-    USERINPUT_Image = UI_LoadImage()
-    LoadAvailableEffects()
-    UI_ShowAvailableEffects()
-    st.markdown("## Enter Effect Codes")
-    CommonEffectsText = st.text_area("Common Effects Code", "None")
-    EffectFuncsText = st.text_area("Effects Code", "None")
-
-    UI_SelectNCols()
-    USERINPUT_CompactDisplay = st.sidebar.checkbox("Compact Display", False)
-
-    # Process Inputs
-    cols = st.columns(2)
-    USERINPUT_StreamProcess = cols[0].checkbox("Stream Process", False)
-    if not USERINPUT_StreamProcess: USERINPUT_StreamProcess = cols[1].button("Process")
-    if USERINPUT_StreamProcess:
-        CommonEffects, EffectFuncs = GetEffectsCode(CommonEffectsText, EffectFuncsText)
-        # Apply Params
-        EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
-        EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
-    
-        EffectImage = EffectFunc(USERINPUT_Image)
-        # Display Output
-        st.markdown("## Images")
-        UI_DisplayEffectImage(USERINPUT_Image, EffectImage, USERINPUT_CompactDisplay)
+        st.markdown("## Video")
+        VideoUtils_SaveFrames2Video(TransistionEffectImages, PATHS["default"]["save"]["video"], fps=USERINPUT_FPS)
+        st.video(PATHS["default"]["save"]["video"])
 
 def effects():
     # Title
     st.header("Effects")
 
-    # Load Inputs
+    # Load Prereq Inputs
     USERINPUT_Video = UI_VideoInputSource()
-    LoadAvailableEffects()
-    USERINPUT_ChosenEffectData = UI_ShowAvailableEffects()
-    st.markdown("## Edit Effect Parameters")
-    EffectFuncText = st.text_input("Effect Code", USERINPUT_ChosenEffectData)
-    
+    Frames_Load()
+    # USERINPUT_ChosenEffectData = UI_ShowAvailableEffects()
+    # Load Inputs
+    st.markdown("## Select Effect")
+    EFFECT_NAMES = list(AVAILABLE_EFFECTS.keys())
+    cols = st.columns(2)
+    USERINPUT_EffectName = cols[0].selectbox("Effect", EFFECT_NAMES)
+    USERINPUT_EffectParams = json.loads(cols[1].text_area(
+        "New Effect Params", 
+        json.dumps(AVAILABLE_EFFECTS[USERINPUT_EffectName]["params"], indent=4),
+        height=200
+    ))
+
     # Process Inputs
     cols = st.columns(2)
     USERINPUT_StreamProcess = cols[0].checkbox("Stream Process", False)
     if not USERINPUT_StreamProcess: USERINPUT_StreamProcess = cols[1].button("Process")
     if USERINPUT_StreamProcess:
-        CommonEffects, EffectFuncs = GetEffectsCode("None", EffectFuncText)
-        # Apply Params
-        EffectFuncs, saveI_keys = EffectsLibrary.Image_ReplaceRedundantEffectChains(EffectFuncs, display=False)
-        EffectFunc = functools.partial(EffectsLibrary.Image_MultipleImages_RemovedRecompute, CommonEffects=CommonEffects, EffectFuncs=EffectFuncs, nCols=OUTPUT_NCOLS, saveI_keys=saveI_keys)
+        EffectFunc = functools.partial(
+            EffectFunc_SingleEffect, 
+            EffectFunc=functools.partial(AVAILABLE_EFFECTS[USERINPUT_EffectName]["func"], **USERINPUT_EffectParams)
+        )
         # Display Output
-        st.markdown("## Videos")
-        UI_DisplayEffectVideo(USERINPUT_Video, -1, EffectFunc, compactDisplay=True)
+        st.markdown("## Video")
+        UI_DisplayEffectVideo(USERINPUT_Video, EffectFunc, max_frames=-1, compact_display=True)
     
 #############################################################################################################################
 # Driver Code

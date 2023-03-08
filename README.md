@@ -16,23 +16,15 @@
     - If you want to change to another app, simply click on View Other Projects in top left and choose any other project and load and deploy.
 
 # UI Effects Visualiser
-  [![Generic badge](https://img.shields.io/badge/Effects-List-<COLOR>.svg)](EffectsLibrary/Effects.txt)
+  [![Generic badge](https://img.shields.io/badge/Effects-List-<COLOR>.svg)](StreamLitGUI/Effects.txt)
    
   View/Save effects easily for webcam or any video
 
-  CommonEffects:
+  Effect Tree:
      
-    Effects that are applied to Input Video before applying further effects
+    Various effect nodes can be applied to the input frame from the video or image in a tree structure. Further we can view the effect images at various nodes of the tree in a grid format.
 
-  EffectFuncs:
-
-    - Effects applied for video to display
-
-    - Multiple effect sequences are separated by a ',' line
-
-    - Set of Sequences of effects are applied and all of them are appended as a single frame for an input frame from the video
-
-  For full list of effects with their parameters see [Effect List](EffectsLibrary/Effects.txt)
+  For full list of effects with their parameters see [Effect List](StreamLitGUI/Effects.txt)
 
 # Features
 
@@ -44,11 +36,11 @@
 
      ![Combined Effects Video Image](GeneratedVisualisations/EffectCombination_1.gif)
 
-   - Multiple Effects can be viewed at same time
+   - Multiple Effects can be viewed at same time in a grid format
 
      ![Multiple Effects Video Image](GeneratedVisualisations/MultipleEffects_1.gif)
   
-   - Effects Transistion can be applied to an image to form a video of the image under an effect with varying parameters (Decreasing Scale and Increasing Rotation)
+   - Effects Transistion can be applied to an image to form a video of the image under an effect with varying parameters (This example is obtained by decreasing scale and increasing rotation parameters in GeometricTransform effect)
 
      ![EffectsTransistion Video](GeneratedVisualisations/Effects/EffectTransistion_GeometricTransform.gif)
 
@@ -144,4 +136,4 @@
 
    - And many more! :O
    
-     For full list of effects with their parameters see [Effect List](EffectsLibrary/Effects.txt).
+     For full list of effects with their parameters see [Effect List](StreamLitGUI/Effects.txt).

@@ -3,8 +3,7 @@ Transparency Image Effects Library
 '''
 
 # Imports
-import cv2
-import numpy as np
+from .EffectUtils import *
 
 # Main Functions
 def ImageEffect_ColorKeyTransparent(I, keyColor=[0.0, 0.0, 0.0]):
@@ -13,20 +12,13 @@ def ImageEffect_ColorKeyTransparent(I, keyColor=[0.0, 0.0, 0.0]):
     return I_filtered
 
 # Main Vars
-EFFECTFUNCS_TRANSPARENCY = [
-    {
+EFFECTFUNCS_TRANSPARENCY = {
+    "ColorKeyTransparent": {
         "name": "ColorKeyTransparent",
         "code": "ColorKeyTransparent(keyColor=[0.0, 0.0, 0.0])",
         "func": ImageEffect_ColorKeyTransparent,
-        "params": [
-            {
-                "name": "keyColor",
-                "default": [0.0, 0.0, 0.0],
-                "type": "list:float"
-            }
-        ]
+        "params": {
+            "keyColor": [0.0, 0.0, 0.0]
+        }
     }
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_TRANSPARENCY)
-
-# Driver Code
+}

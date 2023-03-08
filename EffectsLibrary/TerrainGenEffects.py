@@ -3,9 +3,9 @@ TerrainGen Image Effects Library
 '''
 
 # Imports
-import cv2
+from .EffectUtils import *
+
 import noise
-import numpy as np
 
 # Main Functions
 # Util Functions
@@ -72,93 +72,29 @@ def ImageEffect_Archipelago(I, thresholds=[0.25, 0.4, 0.85, 0.95]):
     return I_effect
 
 # Main Vars
-EFFECTFUNCS_TERRAINGEN = [
-    {
+EFFECTFUNCS_TERRAINGEN = {
+    "TerrainGen": {
         "name": "TerrainGen",
         "code": "TerrainGen(random_seed=False, seed=0, thresholds=[0.25, 0.4, 0.85, 0.95], scale=100.0, octaves=6, persistence=0.5, lacunarity=2.0, repeatx=1024, repeaty=1024)",
         "func": ImageEffect_TerrainGen,
-        "params": [
-            {
-                "name": "random_seed",
-                "default": False,
-                "type": "bool"
-            },
-            {
-                "name": "seed",
-                "default": 0,
-                "type": "int",
-                "min": 0,
-                "max": 1024,
-                "step": 1
-            },
-            {
-                "name": "thresholds",
-                "default": [0.25, 0.4, 0.85, 0.95],
-                "type": "list:float"
-            },
-            {
-                "name": "scale",
-                "default": 100.0,
-                "type": "float",
-                "min": 1.0,
-                "max": 500.0,
-                "step": 100.0
-            },
-            {
-                "name": "octaves",
-                "default": 6,
-                "type": "int",
-                "min": 1,
-                "max": 12,
-                "step": 1
-            },
-            {
-                "name": "persistence",
-                "default": 0.5,
-                "type": "float",
-                "min": 0.0,
-                "max": 1.0,
-                "step": 0.1
-            },
-            {
-                "name": "lacunarity",
-                "default": 2.0,
-                "type": "float",
-                "min": 1.0,
-                "max": 20.0,
-                "step": 1.0
-            },
-            {
-                "name": "repeatx",
-                "default": 1024,
-                "type": "int",
-                "min": 0,
-                "max": 2048,
-                "step": 128
-            },
-            {
-                "name": "repeaty",
-                "default": 1024,
-                "type": "int",
-                "min": 0,
-                "max": 2048,
-                "step": 128
-            }
-        ]
+        "params": {
+            "random_seed": False,
+            "seed": 0,
+            "thresholds": [0.25, 0.4, 0.85, 0.95],
+            "scale": 100.0,
+            "octaves": 6,
+            "persistence": 0.5,
+            "lacunarity": 2.0,
+            "repeatx": 1024,
+            "repeaty": 1024
+        }
     },
-    {
+    "Archipelago": {
         "name": "Archipelago",
         "code": "Archipelago(thresholds=[0.25, 0.4, 0.85, 0.95])",
         "func": ImageEffect_Archipelago,
-        "params": [
-            {
-                "name": "thresholds",
-                "default": [0.25, 0.4, 0.85, 0.95],
-                "type": "list:float"
-            }
-        ]
+        "params": {
+            "thresholds": [0.25, 0.4, 0.85, 0.95]
+        }
     },
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_TERRAINGEN)
-
-# Driver Code
+}

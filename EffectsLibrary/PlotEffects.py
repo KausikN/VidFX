@@ -3,9 +3,8 @@ Plot Effects Library
 '''
 
 # Imports
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
+from .EffectUtils import *
+
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 
@@ -125,69 +124,38 @@ def ImageEffect_ValueCount_Plot(I, plots=['bar', 'point', 'line'], showAxis=True
     return I_effect
 
 # Main Vars
-EFFECTFUNCS_PLOT = [
-    {
+EFFECTFUNCS_PLOT = {
+    "ValueCount_BarPlot": {
         "name": "ValueCount_BarPlot",
         "code": "ValueCount_BarPlot(showAxis=True)",
         "func": ImageEffect_ValueCount_BarPlot,
-        "params": [
-            {
-                "name": "showAxis",
-                "default": True,
-                "type": "bool"
-            }
-        ]
+        "params": {
+            "showAxis": True
+        }
     },
-    {
+    "ValueCount_LinePlot": {
         "name": "ValueCount_LinePlot",
         "code": "ValueCount_LinePlot(showAxis=True)",
         "func": ImageEffect_ValueCount_LinePlot,
-        "params": [
-            {
-                "name": "showAxis",
-                "default": True,
-                "type": "bool"
-            }
-        ]
+        "params": {
+            "showAxis": True
+        }
     },
-    {
+    "ValueCount_PointPlot": {
         "name": "ValueCount_PointPlot",
         "code": "ValueCount_PointPlot(showAxis=True)",
         "func": ImageEffect_ValueCount_PointPlot,
-        "params": [
-            {
-                "name": "showAxis",
-                "default": True,
-                "type": "bool"
-            }
-        ]
+        "params": {
+            "showAxis": True
+        }
     },
-    {
+    "ValueCount_Plot": {
         "name": "ValueCount_Plot",
         "code": "ValueCount_Plot(plots=['bar', 'point', 'line'], showAxis=True)",
         "func": ImageEffect_ValueCount_Plot,
-        "params": [
-            {
-                "name": "plots",
-                "default": ["bar", "point", "line"],
-                "type": "list:str"
-            },
-            {
-                "name": "showAxis",
-                "default": True,
-                "type": "bool"
-            }
-        ]
+        "params": {
+            "plots": ['bar', 'point', 'line'],
+            "showAxis": True
+        }
     }
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_PLOT)
-
-# Driver Code
-# Resize(size=(320, 240))
-# GreyScale
-# ,
-# PlotValueCount
-# fig = Figure()
-# canvas = FigureCanvasAgg(fig)
-# # print(dir(fig))
-# print(fig.get_figwidth(), fig.get_dpi())
+}

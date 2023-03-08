@@ -3,8 +3,8 @@ Morphological Image Effects Library
 '''
 
 # Imports
-import cv2
-import numpy as np
+from .EffectUtils import *
+
 from skimage import morphology, segmentation
 
 # Utils Functions
@@ -16,13 +16,13 @@ def FilterPostProcess(I, I_filtered):
     return I_effect
 
 # Main Functions
-def ImageEffect_Skeleton(I, method=None, bin_threshold=127):
-    I_bin = cv2.cvtColor(I, cv2.COLOR_RGBA2GRAY) >= bin_threshold
+def ImageEffect_Skeleton(I, method=None, bin_threshold=0.5):
+    I_bin = cv2.cvtColor(I, cv2.COLOR_RGBA2GRAY) >= (bin_threshold*255)
     I_filtered = morphology.skeletonize(I_bin, method=method)
     return FilterPostProcess(I, I_filtered)
 
-def ImageEffect_Thin(I, max_iters=None, bin_threshold=127):
-    I_bin = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY) >= bin_threshold
+def ImageEffect_Thin(I, max_iters=None, bin_threshold=0.5):
+    I_bin = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY) >= (bin_threshold*255)
     I_filtered = morphology.thin(I_bin, max_iter=max_iters)
     return FilterPostProcess(I, I_filtered)
 
@@ -47,90 +47,51 @@ def ImageEffect_ConvexHull(I, obj=False):
     return FilterPostProcess(I, I_filtered)
 
 # Main Vars
-EFFECTFUNCS_MORPHOLOGICAL = [
-    {
+EFFECTFUNCS_MORPHOLOGICAL = {
+    "Skeleton": {
         "name": "Skeleton",
         "code": "Skeleton(method=None, bin_threshold=0.5)",
         "func": ImageEffect_Skeleton,
-        "params": [
-            {
-                "name": "method",
-                "default": None,
-                "type": "str"
-            },
-            {
-                "name": "bin_threshold",
-                "default": 0.5,
-                "type": "float",
-                "min": 0.0,
-                "max": 1.0,
-                "step": 0.1
-            }
-        ]
+        "params": {
+            "method": None,
+            "bin_threshold": 0.5
+        }
     },
-    {
+    "Thin": {
         "name": "Thin",
         "code": "Thin(max_iters=None, bin_threshold=0.5)",
         "func": ImageEffect_Thin,
-        "params": [
-            {
-                "name": "max_iters",
-                "default": 1,
-                "type": "int",
-                "min": 1,
-                "max": 5,
-                "step": 1
-            },
-            {
-                "name": "bin_threshold",
-                "default": 0.5,
-                "type": "float",
-                "min": 0.0,
-                "max": 1.0,
-                "step": 0.1
-            }
-        ]
+        "params": {
+            "max_iters": None,
+            "bin_threshold": 0.5
+        }
     },
-    {
+    "Dilate": {
         "name": "Dilate",
         "code": "Dilate",
         "func": ImageEffect_Dilate,
-        "params": []
+        "params": {}
     },
-    {
+    "RemoveSmallObjects": {
         "name": "RemoveSmallObjects",
         "code": "RemoveSmallObjects(min_size=64)",
         "func": ImageEffect_RemoveSmallObjects,
-        "params": [
-            {
-                "name": "min_size",
-                "default": 64,
-                "type": "int",
-                "min": 0,
-                "max": 1024,
-                "step": 32
-            }
-        ]
+        "params": {
+            "min_size": 64
+        }
     },
-    {
+    "Erode": {
         "name": "Erode",
         "code": "Erode",
         "func": ImageEffect_Erode,
-        "params": []
+        "params": {}
     },
-    {
+    "ConvexHull": {
         "name": "ConvexHull",
         "code": "ConvexHull(obj=False)",
         "func": ImageEffect_ConvexHull,
-        "params": [
-            {
-                "name": "obj",
-                "default": False,
-                "type": "bool"
-            }
-        ]
+        "params": {
+            "obj": False
+        }
     }
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_MORPHOLOGICAL)
-
-# Driver Code
+}

@@ -2,7 +2,7 @@ None
 Add(keys, keepOriginalSizes=False, normaliseFit=False)
 Sub(keys, keepOriginalSizes=False, normaliseFit=False)
 Avg(keys, keepOriginalSizes=False, normaliseFit=False)
-Binarise(threshold=0.5)
+Binarise(threshold=127)
 GreyScale
 RGB2BGR
 RedChannel
@@ -11,11 +11,11 @@ GreenChannel
 MostDominantColor
 LeastDominantColor
 ScaleValues(scaleFactor=[1.75, 1.75, 1.75])
-ClipValues(threshold=[0.25, 0.75], replace=[0.25, 0.75])
-BinValues(bins=[0.0, 0.5, 1.0])
-Resize(size=[640, 480], interpolation=cv2.INTER_LINEAR)
+ClipValues(threshold=[100, 200], replace=[100, 200])
+BinValues(bins=[0, 64, 128, 196, 255])
+Resize(size=(640, 480), interpolation='linear')
 AddFrame(imgPath='Frames/Frame_Nintendo_111_303_430_107_285_607.PNG')
-GaussianNoise(mean=0.2, SD=0.1)
+GaussianNoise(mean=50, SD=25)
 SpeckleNoise
 SaltPepperNoise(prob=0.5)
 SemanticSegmentation(overlay=True)
@@ -35,8 +35,8 @@ FaridEdges
 FaridVerticalEdges
 FaridHorizontalEdges
 CannyEdges(sigma=0.0, low_threshold=0.1, high_threshold=0.9)
-Skeleton(method=None, bin_threshold=0.5)
-Thin(max_iters=None, bin_threshold=0.5)
+Skeleton(method=None, bin_threshold=127)
+Thin(max_iters=None, bin_threshold=127)
 Watershed(watershed_line=True)
 Dilate
 RemoveSmallObjects(min_size=64)
@@ -53,6 +53,6 @@ Translate(offset=[0.0, 0.0])
 Rotate(angle=0.0, center=[0.5, 0.5])
 Scale(scale=[1.0, 1.0])
 GeometricTransform(translate=[0.0, 0.0], rotate=0.0, scale=[1.0, 1.0])
-ColorKeyTransparent(keyColor=[0.0, 0.0, 0.0])
+ColorKeyTransparent(keyColor=[0,0,0])
 ShufflePixelsRandom
 QRCode(box_padding_color=(0, 0, 0), box_padding_thickness=1,box_color=(0, 0, 255), box_thickness=3,text_color=(0, 255, 0), text_scale=0.8, text_thickness=1, text_formatting="[{codeType}]: {data}")

@@ -3,10 +3,7 @@ Frame Image Effects Library
 '''
 
 # Imports
-import cv2
-import numpy as np
-
-from Utils import VideoUtils
+from .EffectUtils import *
 
 # Main Functions
 def ImageEffect_AddFrameOLD(I, FrameFileData=None, FrameImage=None, ImageReplaceBox=[[0, 0], [0, 0]]):
@@ -15,8 +12,8 @@ def ImageEffect_AddFrameOLD(I, FrameFileData=None, FrameImage=None, ImageReplace
             FrameFileData['imgSize'] = None
         if not ('keepAspectRatio' in FrameFileData.keys()):
             FrameFileData['keepAspectRatio'] = False
-        FrameImage = VideoUtils.ReadImage(FrameFileData['imgPath'], imgSize=FrameFileData['imgSize'], keepAspectRatio=FrameFileData['keepAspectRatio'])
-        ImageReplaceBox = VideoUtils.GetFillBoxFromFrameName(FrameFileData['imgPath'])
+        FrameImage = ReadImage(FrameFileData['imgPath'], imgSize=FrameFileData['imgSize'], keepAspectRatio=FrameFileData['keepAspectRatio'])
+        ImageReplaceBox = GetFillBoxFromFrameName(FrameFileData['imgPath'])
 
     ImageReplaceBox = [
         [int(ImageReplaceBox[0][0]*FrameImage.shape[1]), int(ImageReplaceBox[0][1]*FrameImage.shape[1])],
@@ -34,8 +31,8 @@ def ImageEffect_AddFrameOLD(I, FrameFileData=None, FrameImage=None, ImageReplace
 def ImageEffect_AddFrame(I, imgPath=None):
     if imgPath is None:
         return I
-    FrameImage = VideoUtils.ReadImage(imgPath, imgSize=None, keepAspectRatio=True)
-    ImageReplaceBox = VideoUtils.GetFillBoxFromFrameName(imgPath)
+    FrameImage = ReadImage(imgPath, imgSize=None, keepAspectRatio=True)
+    ImageReplaceBox = GetFillBoxFromFrameName(imgPath)
 
     ImageReplaceBox = [
         [int(ImageReplaceBox[0][0]*FrameImage.shape[1]), int(ImageReplaceBox[0][1]*FrameImage.shape[1])],
@@ -51,20 +48,13 @@ def ImageEffect_AddFrame(I, imgPath=None):
     return FrameImage
 
 # Main Vars
-EFFECTFUNCS_FRAME = [
-    {
+EFFECTFUNCS_FRAME = {
+    "AddFrame": {
         "name": "AddFrame",
         "code": "AddFrame(imgPath='Frames/Frame_Nintendo_111_303_430_107_285_607.PNG')",
         "func": ImageEffect_AddFrame,
-        "params": [
-            {
-                "name": "imgPath",
-                "default": "Frames/Frame_Nintendo_111_303_430_107_285_607.PNG",
-                "type": "frame"
-            }
-        ]
+        "params": {
+            "imgPath": "Frames/Frame_Nintendo_111_303_430_107_285_607.PNG"
+        }
     }
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_FRAME)
-
-# Driver Code
+}

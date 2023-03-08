@@ -3,9 +3,8 @@ Segmentation Image Effects Library
 '''
 
 # Imports
-import os
-import cv2
-import numpy as np
+from .EffectUtils import *
+
 from skimage import segmentation
 
 # Main Vars
@@ -66,44 +65,29 @@ def ImageEffect_Watershed(I, watershed_line=True):#, bin_threshold=127):
     return I_effect
 
 # Main Vars
-EFFECTFUNCS_SEGMENTATION = [
-    {
+EFFECTFUNCS_SEGMENTATION = {
+    "SemanticSegmentation": {
         "name": "SemanticSegmentation",
         "code": "SemanticSegmentation(overlay=True)",
         "func": ImageEffect_SemanticSegmentation,
-        "params": [
-            {
-                "name": "overlay",
-                "default": True,
-                "type": "bool"
-            }
-        ]
+        "params": {
+            "overlay": True
+        }
     },
-    {
+    "InstanceSegmentation": {
         "name": "InstanceSegmentation",
         "code": "InstanceSegmentation(show_bboxes=True)",
         "func": ImageEffect_InstanceSegmentation,
-        "params": [
-            {
-                "name": "show_bboxes",
-                "default": True,
-                "type": "bool"
-            }
-        ]
+        "params": {
+            "show_bboxes": True
+        }
     },
-    {
+    "Watershed": {
         "name": "Watershed",
         "code": "Watershed(watershed_line=True)",
         "func": ImageEffect_Watershed,
-        "params": [
-            {
-                "name": "watershed_line",
-                "default": True,
-                "type": "bool"
-            }
-        ]
+        "params": {
+            "watershed_line": True
+        }
     }
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_SEGMENTATION)
-
-# Driver Code
+}

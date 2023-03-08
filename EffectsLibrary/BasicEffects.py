@@ -3,9 +3,15 @@ Basic Image Effects Library
 '''
 
 # Imports
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
+from .EffectUtils import *
+
+# Main Vars
+INTERPOLATIONS = {
+    "nearest": cv2.INTER_NEAREST,
+    "linear": cv2.INTER_LINEAR,
+    "cubic": cv2.INTER_CUBIC,
+    "area": cv2.INTER_AREA
+}
 
 # Main Functions
 def ImageEffect_None(I):
@@ -91,9 +97,9 @@ def ImageEffect_BinValues(I, bins=[0.0, 0.5, 1.0]):
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_Resize(I, size=(480, 640), interpolation=cv2.INTER_LINEAR):
+def ImageEffect_Resize(I, size=(480, 640), interpolation="linear"):
     size = tuple(map(int, size))
-    I_effect = cv2.resize(I, size, interpolation=interpolation)
+    I_effect = cv2.resize(I, size, interpolation=INTERPOLATIONS[interpolation])
     return I_effect
 
 def ImageEffect_Mirror(I):
@@ -145,210 +151,142 @@ def ImageEffect_GeometricTransform(I, translate=[0, 0], rotate=0.0, scale=[1.0, 
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-EFFECTFUNCS_BASIC = [
-    {
+EFFECTFUNCS_BASIC = {
+    "None": {
         "name": "None",
         "code": "None",
         "func": ImageEffect_None,
-        "params": []
+        "params": {}
     },
-    {
+    "Binarise": {
         "name": "Binarise",
         "code": "Binarise(threshold=0.5)",
         "func": ImageEffect_Binarise,
-        "params": [
-            {
-                "name": "threshold",
-                "default": 0.5,
-                "type": "float",
-                "min": 0.0,
-                "max": 1.0,
-                "step": 0.1
-            }
-        ]
+        "params": {
+            "threshold": 0.5
+        }
     },
-    {
+    "GreyScale": {
         "name": "GreyScale",
         "code": "GreyScale",
         "func": ImageEffect_GreyScale,
-        "params": []
+        "params": {}
     },
-    {
+    "RGB2BGR": {
         "name": "RGB2BGR",
         "code": "RGB2BGR",
         "func": ImageEffect_RGB2BGR,
-        "params": []
+        "params": {}
     },
-    {
+    "RedChannel": {
         "name": "RedChannel",
         "code": "RedChannel",
         "func": ImageEffect_RedChannel,
-        "params": []
+        "params": {}
     },
-    {
+    "BlueChannel": {
         "name": "BlueChannel",
         "code": "BlueChannel",
         "func": ImageEffect_BlueChannel,
-        "params": []
+        "params": {}
     },
-    {
+    "GreenChannel": {
         "name": "GreenChannel",
         "code": "GreenChannel",
         "func": ImageEffect_GreenChannel,
-        "params": []
+        "params": {}
     },
-    {
+    "Invert": {
         "name": "Invert",
         "code": "Invert",
         "func": ImageEffect_Invert,
-        "params": []
+        "params": {}
     },
-    {
+    "MostDominantColor": {
         "name": "MostDominantColor",
         "code": "MostDominantColor",
         "func": ImageEffect_MostDominantColor,
-        "params": []
+        "params": {}
     },
-    {
+    "LeastDominantColor": {
         "name": "LeastDominantColor",
         "code": "LeastDominantColor",
         "func": ImageEffect_LeastDominantColor,
-        "params": []
+        "params": {}
     },
-    {
+    "ScaleValues": {
         "name": "ScaleValues",
         "code": "ScaleValues(scaleFactor=[1.75, 1.75, 1.75])",
         "func": ImageEffect_ScaleValues,
-        "params": [
-            {
-                "name": "scaleFactor",
-                "default": [1.75, 1.75, 1.75],
-                "type": "list:float"
-            }
-        ]
+        "params": {
+            "scaleFactor": [1.75, 1.75, 1.75]
+        }
     },
-    {
+    "ClipValues": {
         "name": "ClipValues",
         "code": "ClipValues(threshold=[0.25, 0.75], replace=[0.25, 0.75])",
         "func": ImageEffect_ClipValues,
-        "params": [
-            {
-                "name": "threshold",
-                "default": [0.25, 0.75],
-                "type": "list:float"
-            },
-            {
-                "name": "replace",
-                "default": [0.25, 0.75],
-                "type": "list:float"
-            }
-        ]
+        "params": {
+            "threshold": [0.25, 0.75],
+            "replace": [0.25, 0.75]
+        }
     },
-    {
+    "BinValues": {
         "name": "BinValues",
         "code": "BinValues(bins=[0.0, 0.5, 1.0])",
         "func": ImageEffect_BinValues,
-        "params": [
-            {
-                "name": "bins",
-                "default": [0.0, 0.5, 1.0],
-                "type": "list:float"
-            }
-        ]
+        "params": {
+            "bins": [0.0, 0.5, 1.0]
+        }
     },
-    {
+    "Resize": {
         "name": "Resize",
-        "code": "Resize(size=[640, 480], interpolation=cv2.INTER_LINEAR)",
+        "code": "Resize(size=[640, 480], interpolation='linear')",
         "func": ImageEffect_Resize,
-        "params": [
-            {
-                "name": "size",
-                "default": [640, 480],
-                "type": "list:int"
-            },
-            {
-                "name": "interpolation",
-                "default": "cv2.INTER_LINEAR",
-                "type": "func"
-            }
-        ]
+        "params": {
+            "size": [640, 480],
+            "interpolation": "linear"
+        }
     },
-    {
+    "Mirror": {
         "name": "Mirror",
         "code": "Mirror",
         "func": ImageEffect_Mirror,
-        "params": []
+        "params": {}
     },
-    {
+    "Translate": {
         "name": "Translate",
         "code": "Translate(offset=[0.0, 0.0])",
         "func": ImageEffect_Translate,
-        "params": [
-            {
-                "name": "offset",
-                "default": [0.0, 0.0],
-                "type": "list:float"
-            }
-        ]
+        "params": {
+            "offset": [0.0, 0.0]
+        }
     },
-    {
+    "Rotate": {
         "name": "Rotate",
         "code": "Rotate(angle=0.0, center=[0.5, 0.5])",
         "func": ImageEffect_Rotate,
-        "params": [
-            {
-                "name": "angle",
-                "default": 0.0,
-                "type": "float",
-                "min": 0.0,
-                "max": 360.0,
-                "step": 1.0
-            },
-            {
-                "name": "center",
-                "default": [0.5, 0.5],
-                "type": "list:float"
-            }
-        ]
+        "params": {
+            "angle": 0.0,
+            "center": [0.5, 0.5]
+        }
     },
-    {
+    "Scale": {
         "name": "Scale",
         "code": "Scale(scale=[1.0, 1.0])",
         "func": ImageEffect_Scale,
-        "params": [
-            {
-                "name": "scale",
-                "default": [1.0, 1.0],
-                "type": "list:float"
-            }
-        ]
+        "params": {
+            "scale": [1.0, 1.0]
+        }
     },
-    {
+    "GeometricTransform": {
         "name": "GeometricTransform",
         "code": "GeometricTransform(translate=[0.0, 0.0], rotate=0.0, scale=[1.0, 1.0])",
         "func": ImageEffect_GeometricTransform,
-        "params": [
-            {
-                "name": "translate",
-                "default": [0.0, 0.0],
-                "type": "list:float"
-            },
-            {
-                "name": "rotate",
-                "default": 0.0,
-                "type": "float",
-                "min": 0.0,
-                "max": 360.0,
-                "step": 1.0
-            },
-            {
-                "name": "scale",
-                "default": [1.0, 1.0],
-                "type": "list:float"
-            }
-        ]
+        "params": {
+            "translate": [0.0, 0.0],
+            "rotate": 0.0,
+            "scale": [1.0, 1.0]
+        }
     }
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_BASIC)
-
-# Driver Code
+}

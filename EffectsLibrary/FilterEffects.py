@@ -3,21 +3,20 @@ Filter Image Effects Library
 '''
 
 # Imports
-import cv2
-import numpy as np
+from .EffectUtils import *
+
 import skimage
 import skimage.feature
 
 # Utils Functions
 def FilterPostProcess(I, I_filtered):
     I_effect = np.clip(I_filtered, 0.0, 1.0)
-    if I_effect.ndim == 2:
-        I_effect = np.dstack((I_effect, I_effect, I_effect))
+    if I_effect.ndim == 2: I_effect = np.dstack((I_effect, I_effect, I_effect))
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
 # Main Functions
-def ImageEffect_GaussianFilter(I, sigma=1):
+def ImageEffect_GaussianFilter(I, sigma=1.0):
     I_filtered = skimage.filters.gaussian(image=np.array(I[:, :, :3]), sigma=sigma)
     return FilterPostProcess(I, I_filtered)
 
@@ -90,141 +89,103 @@ def ImageEffect_CannyEdges(I, sigma=0.0, low_threshold=0.1, high_threshold=0.9):
     return edges
 
 # Main Vars
-EFFECTFUNCS_FILTER = [
-    {
+EFFECTFUNCS_FILTER = {
+    "GaussianFilter": {
         "name": "GaussianFilter",
         "code": "GaussianFilter(sigma=2)",
         "func": ImageEffect_GaussianFilter,
-        "params": [
-            {
-                "name": "sigma",
-                "default": 2,
-                "type": "int",
-                "min": 0,
-                "max": 5,
-                "step": 1
-            }
-        ]
+        "params": {
+            "sigma": 1.0
+        }
     },
-    {
+    "SobelFilter": {
         "name": "SobelFilter",
         "code": "SobelFilter",
         "func": ImageEffect_SobelFilter,
-        "params": []
+        "params": {}
     },
-    {
+    "SobelVerticalFilter": {
         "name": "SobelVerticalFilter",
         "code": "SobelVerticalFilter",
         "func": ImageEffect_SobelVerticalFilter,
-        "params": []
+        "params": {}
     },
-    {
+    "SobelHorizontalFilter": {
         "name": "SobelHorizontalFilter",
         "code": "SobelHorizontalFilter",
         "func": ImageEffect_SobelHorizontalFilter,
-        "params": []
+        "params": {}
     },
-    {
+    "RobertsFilter": {
         "name": "RobertsFilter",
         "code": "RobertsFilter",
         "func": ImageEffect_RobertsFilter,
-        "params": []
+        "params": {}
     },
-    {
+    "ScharrFilter": {
         "name": "ScharrFilter",
         "code": "ScharrFilter",
         "func": ImageEffect_ScharrFilter,
-        "params": []
+        "params": {}
     },
-    {
+    "ScharrVerticalFilter": {
         "name": "ScharrVerticalFilter",
         "code": "ScharrVerticalFilter",
         "func": ImageEffect_ScharrVerticalFilter,
-        "params": []
+        "params": {}
     },
-    {
+    "ScharrHorizontalFilter": {
         "name": "ScharrHorizontalFilter",
         "code": "ScharrHorizontalFilter",
         "func": ImageEffect_ScharrHorizontalFilter,
-        "params": []
+        "params": {}
     },
-    {
+    "PrewittFilter": {
         "name": "PrewittFilter",
         "code": "PrewittFilter",
         "func": ImageEffect_PrewittFilter,
-        "params": []
+        "params": {}
     },
-    {
+    "MedianFilter": {
         "name": "MedianFilter",
         "code": "MedianFilter",
         "func": ImageEffect_MedianFilter,
-        "params": []
+        "params": {}
     },
-    {
+    "LaplaceFilter": {
         "name": "LaplaceFilter",
         "code": "LaplaceFilter(ksize=3)",
         "func": ImageEffect_LaplaceFilter,
-        "params": [
-            {
-                "name": "ksize",
-                "default": 3,
-                "type": "int",
-                "min": 0,
-                "max": 5,
-                "step": 1
-            }
-        ]
+        "params": {
+            "ksize": 3
+        }
     },
-    {
+    "FaridEdges": {
         "name": "FaridEdges",
         "code": "FaridEdges",
         "func": ImageEffect_FaridEdges,
-        "params": []
+        "params": {}
     },
-    {
+    "FaridVerticalEdges": {
         "name": "FaridVerticalEdges",
         "code": "FaridVerticalEdges",
         "func": ImageEffect_FaridVerticalEdges,
-        "params": []
+        "params": {}
     },
-    {
+    "FaridHorizontalEdges": {
         "name": "FaridHorizontalEdges",
         "code": "FaridHorizontalEdges",
         "func": ImageEffect_FaridHorizontalEdges,
-        "params": []
+        "params": {}
     },
-    {
+    "CannyEdges": {
         "name": "CannyEdges",
         "code": "CannyEdges(sigma=0.0, low_threshold=0.1, high_threshold=0.9)",
         "func": ImageEffect_CannyEdges,
-        "params": [
-            {
-                "name": "sigma",
-                "default": 0.0,
-                "type": "float",
-                "min": 0.0,
-                "max": 3.0,
-                "step": 0.1
-            },
-            {
-                "name": "low_threshold",
-                "default": 0.1,
-                "type": "float",
-                "min": 0.0,
-                "max": 1.0,
-                "step": 0.1
-            },
-            {
-                "name": "high_threshold",
-                "default": 0.9,
-                "type": "float",
-                "min": 0.0,
-                "max": 1.0,
-                "step": 0.1
-            }
-        ]
+        "params": {
+            "sigma": 0.0,
+            "low_threshold": 0.1,
+            "high_threshold": 0.9
+        }
     }
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_FILTER)
-
-# Driver Code
+}

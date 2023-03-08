@@ -3,8 +3,7 @@ Shuffling Image Effects Library
 '''
 
 # Imports
-import cv2
-import numpy as np
+from .EffectUtils import *
 
 # Main Functions
 def ImageEffect_ShufflePixelsRandom(I):
@@ -15,14 +14,11 @@ def ImageEffect_ShufflePixelsRandom(I):
     return I_shuffled
 
 # Main Vars
-EFFECTFUNCS_SHUFFLING = [
-    {
+EFFECTFUNCS_SHUFFLING = {
+    "ShufflePixelsRandom": {
         "name": "ShufflePixelsRandom",
         "code": "ShufflePixelsRandom",
         "func": ImageEffect_ShufflePixelsRandom,
-        "params": []
+        "params": {}
     }
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_SHUFFLING)
-
-# Driver Code
+}

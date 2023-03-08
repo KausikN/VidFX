@@ -3,9 +3,7 @@ Time based Image Effects Library
 '''
 
 # Imports
-import os
-import cv2
-import numpy as np
+from .EffectUtils import *
 
 # Main Vars
 savedFrames = {}
@@ -42,23 +40,13 @@ def ImageEffect_FrameDelay(I, delay=12, funcKey='FrameDelay_0'):
     return output
 
 # Main Vars
-EFFECTFUNCS_TIME = [
-    {
+EFFECTFUNCS_TIME = {
+    "FrameDelay": {
         "name": "FrameDelay",
         "code": "FrameDelay(delay=12)",
         "func": ImageEffect_FrameDelay,
-        "params": [
-            {
-                "name": "delay",
-                "default": 12,
-                "type": "int",
-                "min": 0,
-                "max": 120,
-                "step": 6
-            }
-        ]
+        "params": {
+            "delay": 12
+        }
     },
-]
-AVAILABLE_EFFECTS.extend(EFFECTFUNCS_TIME)
-
-# Driver Code
+}
