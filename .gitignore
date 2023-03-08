@@ -1,4 +1,10 @@
 __pycache__/
 
+# Models
 ModelFiles/
+# Dump Files
 DumpFiles/
+# Generated Files
+TestFiles/TestImgs/OutputImage.png
+TestFiles/TestImgs/OutputVideo.mp4
+TestFiles/TestImgs/OutputGIF.gif
