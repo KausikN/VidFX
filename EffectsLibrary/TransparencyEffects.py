@@ -6,7 +6,7 @@ Transparency Image Effects Library
 from .EffectUtils import *
 
 # Main Functions
-def ImageEffect_ColorKeyTransparent(I, keyColor=[0.0, 0.0, 0.0]):
+def ImageEffect_ColorKeyTransparent(I, keyColor=[0.0, 0.0, 0.0], **params):
     I_filtered = np.array(I)
     I_filtered[:, :, 3] = np.logical_not(np.all((I_filtered[:, :, :3] == keyColor), axis=-1))
     return I_filtered

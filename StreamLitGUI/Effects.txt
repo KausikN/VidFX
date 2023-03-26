@@ -1,7 +1,7 @@
 None
-Add(keys, keepOriginalSizes=False, normaliseFit=False)
-Sub(keys, keepOriginalSizes=False, normaliseFit=False)
-Avg(keys, keepOriginalSizes=False, normaliseFit=False)
+Add(keys=['input'], keepOriginalSizes=False, normaliseFit=False)
+Sub(keys=['input'], keepOriginalSizes=False, normaliseFit=False)
+Avg(keys=['input'], keepOriginalSizes=False, normaliseFit=False)
 Binarise(threshold=127)
 GreyScale
 RGB2BGR

@@ -25,7 +25,7 @@ def SetupPlots():
     canvas = FigureCanvasAgg(fig)
 
 # Effect Functions
-def ImageEffect_ValueCount_BarPlot(I, showAxis=True):
+def ImageEffect_ValueCount_BarPlot(I, showAxis=True, **params):
     global fig
     global canvas
     fig.clear(True)
@@ -48,7 +48,7 @@ def ImageEffect_ValueCount_BarPlot(I, showAxis=True):
 
     return I_effect
 
-def ImageEffect_ValueCount_LinePlot(I, showAxis=True):
+def ImageEffect_ValueCount_LinePlot(I, showAxis=True, **params):
     global fig
     global canvas
     fig.clear(True)
@@ -71,7 +71,7 @@ def ImageEffect_ValueCount_LinePlot(I, showAxis=True):
 
     return I_effect
 
-def ImageEffect_ValueCount_PointPlot(I, showAxis=True):
+def ImageEffect_ValueCount_PointPlot(I, showAxis=True, **params):
     global fig
     global canvas
     fig.clear(True)
@@ -94,7 +94,7 @@ def ImageEffect_ValueCount_PointPlot(I, showAxis=True):
 
     return I_effect
 
-def ImageEffect_ValueCount_Plot(I, plots=['bar', 'point', 'line'], showAxis=True):
+def ImageEffect_ValueCount_Plot(I, plots=['bar', 'point', 'line'], showAxis=True, **params):
     global fig
     global canvas
     fig.clear(True)

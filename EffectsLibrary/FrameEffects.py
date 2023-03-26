@@ -6,7 +6,7 @@ Frame Image Effects Library
 from .EffectUtils import *
 
 # Main Functions
-def ImageEffect_AddFrameOLD(I, FrameFileData=None, FrameImage=None, ImageReplaceBox=[[0, 0], [0, 0]]):
+def ImageEffect_AddFrameOLD(I, FrameFileData=None, FrameImage=None, ImageReplaceBox=[[0, 0], [0, 0]], **params):
     if FrameFileData is not None:
         if not ('imgSize' in FrameFileData.keys()):
             FrameFileData['imgSize'] = None
@@ -28,7 +28,7 @@ def ImageEffect_AddFrameOLD(I, FrameFileData=None, FrameImage=None, ImageReplace
     FrameImage[ImageReplaceBox[1][0]:ImageReplaceBox[1][1], ImageReplaceBox[0][0]:ImageReplaceBox[0][1]] = I
     return FrameImage
 
-def ImageEffect_AddFrame(I, imgPath=None):
+def ImageEffect_AddFrame(I, imgPath=None, **params):
     if imgPath is None:
         return I
     FrameImage = ReadImage(imgPath, imgSize=None, keepAspectRatio=True)

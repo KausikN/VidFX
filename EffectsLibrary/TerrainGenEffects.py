@@ -9,7 +9,7 @@ import noise
 
 # Main Functions
 # Util Functions
-def GeneratePerlinNoise_2D(WorldSize, scale=100.0, octaves=6, persistence=0.5, lacunarity=2.0, repeatx=1024, repeaty=1024, base=0):
+def GeneratePerlinNoise_2D(WorldSize, scale=100.0, octaves=6, persistence=0.5, lacunarity=2.0, repeatx=1024, repeaty=1024, base=0, **params):
     world = np.zeros((WorldSize[0], WorldSize[1]))
     for i in (range(WorldSize[0])):
         for j in range(WorldSize[1]):
@@ -18,7 +18,7 @@ def GeneratePerlinNoise_2D(WorldSize, scale=100.0, octaves=6, persistence=0.5, l
     
     return world
 
-def ColoriseTerrain2D_ValueThresholdColorMapped(terrain, thresholdColors=[[]], defaultColor=[65/255.0, 105/255.0, 225/255.0]):
+def ColoriseTerrain2D_ValueThresholdColorMapped(terrain, thresholdColors=[[]], defaultColor=[65/255.0, 105/255.0, 225/255.0], **params):
     color_world = np.ones((terrain.shape[0], terrain.shape[1], 3), float) * defaultColor
     for i in (range(terrain.shape[0])):
         for j in range(terrain.shape[1]):
@@ -27,7 +27,7 @@ def ColoriseTerrain2D_ValueThresholdColorMapped(terrain, thresholdColors=[[]], d
                     color_world[i, j] = th[2]
     return color_world
 
-def ColoriseTerrain2D_ArchipelagoSimple(terrain, thresholds=[0.25, 0.6, 0.85, 0.95]):
+def ColoriseTerrain2D_ArchipelagoSimple(terrain, thresholds=[0.25, 0.6, 0.85, 0.95], **params):
     blue = [65/255.0, 105/255.0, 225/255.0]
     beach = [238/255.0, 214/255.0, 175/255.0]
     green = [34/255.0, 139/255.0, 34/255.0]
@@ -44,7 +44,7 @@ def ColoriseTerrain2D_ArchipelagoSimple(terrain, thresholds=[0.25, 0.6, 0.85, 0.
     return color_world
 
 # Effect Functions
-def ImageEffect_TerrainGen(I, random_seed=False, seed=0, thresholds=[0.25, 0.4, 0.85, 0.95], scale=100.0, octaves=6, persistence=0.5, lacunarity=2.0, repeatx=1024, repeaty=1024):
+def ImageEffect_TerrainGen(I, random_seed=False, seed=0, thresholds=[0.25, 0.4, 0.85, 0.95], scale=100.0, octaves=6, persistence=0.5, lacunarity=2.0, repeatx=1024, repeaty=1024, **params):
     if random_seed:
         seed = np.random.randint(0, 1000)
     # Generate and normalise perlin noise
@@ -60,7 +60,7 @@ def ImageEffect_TerrainGen(I, random_seed=False, seed=0, thresholds=[0.25, 0.4, 
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_Archipelago(I, thresholds=[0.25, 0.4, 0.85, 0.95]):
+def ImageEffect_Archipelago(I, thresholds=[0.25, 0.4, 0.85, 0.95], **params):
     # GreyScale Input image
     I_grey = np.mean(I[:, :, :3], axis=2)
     I_greynorm = (I_grey - np.min(I_grey)) / (np.max(I_grey) - np.min(I_grey))

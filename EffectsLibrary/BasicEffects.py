@@ -14,44 +14,44 @@ INTERPOLATIONS = {
 }
 
 # Main Functions
-def ImageEffect_None(I):
+def ImageEffect_None(I, **params):
     return I
 
-def ImageEffect_Binarise(I, threshold=0.5):
+def ImageEffect_Binarise(I, threshold=0.5, **params):
     size_RGB = I[:, :, :3].shape
     I_effect = np.zeros(size_RGB, dtype=float) + (I[:, :, :3] >= threshold)*np.ones(size_RGB, dtype=float)
 
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_GreyScale(I):
+def ImageEffect_GreyScale(I, **params):
     I_effect = np.mean(I[:, :, :3], axis=2)
 
     I_effect = np.dstack((I_effect, I_effect, I_effect, I[:, :, 3]))
     return I_effect
 
-def ImageEffect_Grey2RGB(I):
+def ImageEffect_Grey2RGB(I, **params):
     return cv2.cvtColor(I, cv2.COLOR_GRAY2RGBA)
 
-def ImageEffect_RGB2BGR(I):
+def ImageEffect_RGB2BGR(I, **params):
     return cv2.cvtColor(I, cv2.COLOR_RGBA2BGRA)
 
-def ImageEffect_RedChannel(I):
+def ImageEffect_RedChannel(I, **params):
     return I[:, :, :] * np.array([1, 0, 0, 1])
 
-def ImageEffect_BlueChannel(I):
+def ImageEffect_BlueChannel(I, **params):
     return I[:, :, :] * np.array([0, 0, 1, 1])
 
-def ImageEffect_GreenChannel(I):
+def ImageEffect_GreenChannel(I, **params):
     return I[:, :, :] * np.array([0, 1, 0, 1])
 
-def ImageEffect_Invert(I):
+def ImageEffect_Invert(I, **params):
     I_effect = 1.0 - I[:, :, :3]
 
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_MostDominantColor(I):
+def ImageEffect_MostDominantColor(I, **params):
     I_dom = np.max(I[:, :, :3], axis=2)
     I_dom = np.dstack((I_dom, I_dom, I_dom))
     I_effect = (I[:, :, :3])*(I_dom == I[:, :, :3])
@@ -59,7 +59,7 @@ def ImageEffect_MostDominantColor(I):
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_LeastDominantColor(I):
+def ImageEffect_LeastDominantColor(I, **params):
     I_dom = np.min(I[:, :, :3], axis=2)
     I_dom = np.dstack((I_dom, I_dom, I_dom))
     I_effect = (I[:, :, :3])*(I_dom == I[:, :, :3])
@@ -67,7 +67,7 @@ def ImageEffect_LeastDominantColor(I):
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_ScaleValues(I, scaleFactor=[0.0, 0.0, 0.0]):
+def ImageEffect_ScaleValues(I, scaleFactor=[0.0, 0.0, 0.0], **params):
     scaleFactor = np.array(scaleFactor, dtype=float)
     I_effect = np.multiply(I[:, :, :3], scaleFactor)
     I_effect = np.clip(I_effect, 0.0, 1.0, dtype=float)
@@ -75,7 +75,7 @@ def ImageEffect_ScaleValues(I, scaleFactor=[0.0, 0.0, 0.0]):
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_ClipValues(I, threshold=[0.25, 0.75], replace=[0.25, 0.75]):
+def ImageEffect_ClipValues(I, threshold=[0.25, 0.75], replace=[0.25, 0.75], **params):
     threshold = np.array(threshold, dtype=float)
     replace = np.array(replace, dtype=float)
     I_effect = np.clip(I[:, :, :3], threshold[0], threshold[1], dtype=float)
@@ -88,7 +88,7 @@ def ImageEffect_ClipValues(I, threshold=[0.25, 0.75], replace=[0.25, 0.75]):
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_BinValues(I, bins=[0.0, 0.5, 1.0]):
+def ImageEffect_BinValues(I, bins=[0.0, 0.5, 1.0], **params):
     bins = np.array(bins, dtype=float)
     binMaps = np.digitize(I[:, :, :3], bins)
     binMaps = np.clip(binMaps, 0, bins.shape[0]-1)
@@ -97,16 +97,16 @@ def ImageEffect_BinValues(I, bins=[0.0, 0.5, 1.0]):
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_Resize(I, size=(480, 640), interpolation="linear"):
+def ImageEffect_Resize(I, size=(480, 640), interpolation="linear", **params):
     size = tuple(map(int, size))
     I_effect = cv2.resize(I, size, interpolation=INTERPOLATIONS[interpolation])
     return I_effect
 
-def ImageEffect_Mirror(I):
+def ImageEffect_Mirror(I, **params):
     I_effect = I[:, ::-1]
     return I_effect
 
-def ImageEffect_Translate(I, offset=[0.0, 0.0]):
+def ImageEffect_Translate(I, offset=[0.0, 0.0], **params):
     offset = np.array(offset, dtype=float)
     M = np.float32([
         [1, 0, offset[0]*I.shape[1]],
@@ -117,7 +117,7 @@ def ImageEffect_Translate(I, offset=[0.0, 0.0]):
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_Rotate(I, angle=0.0, center=[0.5, 0.5]):
+def ImageEffect_Rotate(I, angle=0.0, center=[0.5, 0.5], **params):
     center = np.array(center, dtype=float)
     angle = float(angle)
     centerPoint = tuple(np.array(I.shape[1::-1]) * center)
@@ -127,7 +127,7 @@ def ImageEffect_Rotate(I, angle=0.0, center=[0.5, 0.5]):
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_Scale(I, scale=[1.0, 1.0]):
+def ImageEffect_Scale(I, scale=[1.0, 1.0], **params):
     scale = np.array(scale, dtype=float)
     M = np.float32([
         [scale[0], 0, 0],
@@ -138,7 +138,7 @@ def ImageEffect_Scale(I, scale=[1.0, 1.0]):
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_GeometricTransform(I, translate=[0, 0], rotate=0.0, scale=[1.0, 1.0]):
+def ImageEffect_GeometricTransform(I, translate=[0, 0], rotate=0.0, scale=[1.0, 1.0], **params):
     scale = np.array(scale, dtype=float)
     translate = np.array(translate, dtype=float)
     rotate = float(rotate)

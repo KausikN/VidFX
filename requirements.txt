@@ -10,6 +10,7 @@ Pillow
 scikit_image
 skimage
 torch
+pyvis
 
 noise==1.2.2
 pixellib==0.7.1

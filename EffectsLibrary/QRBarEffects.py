@@ -13,7 +13,8 @@ def ImageEffect_QRCode(
     box_padding_color=(0, 0, 0), box_padding_thickness=1,
     box_color=(0, 0, 255), box_thickness=3,
     text_color=(0, 255, 0), text_scale=0.8, text_thickness=1,
-    text_formatting="[{codeType}]: {data}"
+    text_formatting="[{codeType}]: {data}", 
+    **params
     ):
     # Fix Params
     box_padding_color = (int(box_padding_color[0]), int(box_padding_color[1]), int(box_padding_color[2]))

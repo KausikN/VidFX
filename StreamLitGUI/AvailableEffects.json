@@ -7,11 +7,11 @@
         },
         {
             "name": "Add",
-            "code": "Add(keys, keepOriginalSizes=False, normaliseFit=False)",
+            "code": "Add(keys=['input'], keepOriginalSizes=False, normaliseFit=False)",
             "params": [
                 {
                     "name": "keys",
-                    "default": ["0_0"],
+                    "default": ["input"],
                     "type": "list:str"
                 },
                 {
@@ -28,11 +28,11 @@
         },
         {
             "name": "Sub",
-            "code": "Sub(keys, keepOriginalSizes=False, normaliseFit=False)",
+            "code": "Sub(keys=['input'], keepOriginalSizes=False, normaliseFit=False)",
             "params": [
                 {
                     "name": "keys",
-                    "default": ["0_0"],
+                    "default": ["input"],
                     "type": "list:key"
                 },
                 {
@@ -49,11 +49,11 @@
         },
         {
             "name": "Avg",
-            "code": "Avg(keys, keepOriginalSizes=False, normaliseFit=False)",
+            "code": "Avg(keys=['input'], keepOriginalSizes=False, normaliseFit=False)",
             "params": [
                 {
                     "name": "keys",
-                    "default": ["0_0"],
+                    "default": ["input"],
                     "type": "list:key"
                 },
                 {

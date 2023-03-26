@@ -29,18 +29,18 @@ def LoadInstanceSegmenter():
     Segmenter_Instance.load_model(ModelsDir + "mask_rcnn_coco.h5")
 
 # Direct Video Effects
-def VideoEffect_SemanticSegmentation(videoPath, outputPath, overlay=False, fps=20):
+def VideoEffect_SemanticSegmentation(videoPath, outputPath, overlay=False, fps=20, **params):
     if Segmenter_Semantic is None:
         LoadSemanticSegmenter()
     Segmenter_Semantic.process_video_pascalvoc(videoPath, overlay=overlay, frames_per_second=fps, output_video_name=outputPath)
 
-def VideoEffect_InstanceSegmentation(videoPath, outputPath, show_bboxes=False, fps=20):
+def VideoEffect_InstanceSegmentation(videoPath, outputPath, show_bboxes=False, fps=20, **params):
     if Segmenter_Instance is None:
         LoadInstanceSegmenter()
     Segmenter_Instance.process_video(videoPath, show_bboxes=show_bboxes, frames_per_second=fps, output_video_name=outputPath)
 
 # Effect Functions
-def ImageEffect_SemanticSegmentation(I, overlay=False):
+def ImageEffect_SemanticSegmentation(I, overlay=False, **params):
     if Segmenter_Semantic is None:
         LoadSemanticSegmenter()
     segmap, output = Segmenter_Semantic.segmentFrameAsPascalvoc(I[:, :, :3], overlay=overlay)
@@ -48,7 +48,7 @@ def ImageEffect_SemanticSegmentation(I, overlay=False):
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_InstanceSegmentation(I, show_bboxes=False):
+def ImageEffect_InstanceSegmentation(I, show_bboxes=False, **params):
     if Segmenter_Instance is None:
         LoadInstanceSegmenter()
     segmap, output = Segmenter_Instance.segmentFrame(I[:, :, :3], show_bboxes=show_bboxes)
@@ -56,7 +56,7 @@ def ImageEffect_InstanceSegmentation(I, show_bboxes=False):
     I_effect = np.dstack((I_effect[:, :, 0], I_effect[:, :, 1], I_effect[:, :, 2], I[:, :, 3]))
     return I_effect
 
-def ImageEffect_Watershed(I, watershed_line=True):#, bin_threshold=127):
+def ImageEffect_Watershed(I, watershed_line=True, **params):#, bin_threshold=127):
     # I = cv2.cvtColor(I, cv2.COLOR_RGB2GRAY)# >= bin_threshold
     I_filtered = segmentation.watershed(I[:, :, :3], watershed_line=watershed_line)
     

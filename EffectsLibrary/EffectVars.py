@@ -53,7 +53,10 @@ class EFFECT_TREE_NODE:
             ## If propogate or parent image not generated, generate parent first
             if propogate or self.parent.start.I is None: self.parent.start.generate(propogate=propogate)
             ## Generate
-            self.I = self.parent.effect["func"](self.parent.start.I, **self.parent.effect["params"])
+            other_params = {
+                "node": self
+            }
+            self.I = self.parent.effect["func"](self.parent.start.I, **self.parent.effect["params"], **other_params)
         else:
             self.I = self.parent.start.I
         # Update History
@@ -66,9 +69,14 @@ class EFFECT_TREE_NODE:
         Update History
         '''
         # Update
-        if self.history_length > 0:
+        if self.history_length == 0: return
+        if self.history_length == len(self.history):
             self.history.pop(0)
             self.history.append(self.I)
+        elif self.history_length > len(self.history):
+            self.history.append(self.I)
+        else:
+            self.history = self.history[-self.history_length:]
 
     def delete(self, propogate=False):
         '''

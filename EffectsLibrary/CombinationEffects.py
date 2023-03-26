@@ -6,7 +6,7 @@ Image Effects Library
 from .EffectUtils import *
 
 # Main Functions
-def ImageEffect_Substitute(I, key=EFFECT_TREE_ROOT_ID):
+def ImageEffect_Substitute(I, key=EFFECT_TREE_ROOT_ID, **params):
     global EFFECT_TREE
     # Substitute
     if key in EFFECT_TREE["nodes"].keys():
@@ -18,7 +18,7 @@ def ImageEffect_Substitute(I, key=EFFECT_TREE_ROOT_ID):
         return I
 
 # Combination Effects
-def ImageEffect_Add(I, keys=[EFFECT_TREE_ROOT_ID], keepOriginalSizes=False, normaliseFit=False):
+def ImageEffect_Add(I, keys=[EFFECT_TREE_ROOT_ID], keepOriginalSizes=False, normaliseFit=False, **params):
     global EFFECT_TREE
     # Check
     if len(keys) == 0: return I
@@ -38,7 +38,7 @@ def ImageEffect_Add(I, keys=[EFFECT_TREE_ROOT_ID], keepOriginalSizes=False, norm
 
     return I_effect
 
-def ImageEffect_Sub(I, keys=[EFFECT_TREE_ROOT_ID], keepOriginalSizes=False, normaliseFit=False):
+def ImageEffect_Sub(I, keys=[EFFECT_TREE_ROOT_ID], keepOriginalSizes=False, normaliseFit=False, **params):
     global EFFECT_TREE
     # Check
     if len(keys) == 0: return I
@@ -65,7 +65,7 @@ def ImageEffect_Sub(I, keys=[EFFECT_TREE_ROOT_ID], keepOriginalSizes=False, norm
 
     return I_effect
 
-def ImageEffect_Avg(I, keys=[EFFECT_TREE_ROOT_ID], keepOriginalSizes=False, normaliseFit=False):
+def ImageEffect_Avg(I, keys=[EFFECT_TREE_ROOT_ID], keepOriginalSizes=False, normaliseFit=False, **params):
     global EFFECT_TREE
     # Check
     if len(keys) == 0: return I
@@ -86,7 +86,7 @@ def ImageEffect_Avg(I, keys=[EFFECT_TREE_ROOT_ID], keepOriginalSizes=False, norm
 
     return I_effect
 
-def ImageEffect_Mul(I, keys=[EFFECT_TREE_ROOT_ID], keepOriginalSizes=False, normaliseFit=False):
+def ImageEffect_Mul(I, keys=[EFFECT_TREE_ROOT_ID], keepOriginalSizes=False, normaliseFit=False, **params):
     global EFFECT_TREE
     # Check
     if len(keys) == 0: return I

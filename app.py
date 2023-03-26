@@ -12,7 +12,11 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 import streamlit as st
+import streamlit.components.v1 as components
 import graphviz
+import networkx as nx
+from pyvis.network import Network as pyvis_network
+import streamlit_agraph
 
 from VidFX import *
 
@@ -69,7 +73,11 @@ PATHS = {
     },
     "available_effects": "StreamLitGUI/AvailableEffects.json",
     "tree_cache": "StreamLitGUI/CacheData/EffectTreeCache.p",
-    "transistion_tree_cache": "StreamLitGUI/CacheData/TransistionEffectTreeCache.p"
+    "transistion_tree_cache": "StreamLitGUI/CacheData/TransistionEffectTreeCache.p",
+    "graph_cache": {
+        "dot": "StreamLitGUI/CacheData/EffectTree.dot",
+        "html": "StreamLitGUI/CacheData/EffectTree.html"
+    }
 }
 
 OUTPUT_NCOLS = 5
@@ -268,36 +276,108 @@ def UI_DisplayEffectImage(USERINPUT_Image, EffectImage, compact_display=False):
     col2.image(EffectImage, "Effected Image", use_column_width=True)
 
 ## UI - Effect Tree Functions
+def UI_DisplayEffectTree_Agraph(GRAPH_DATA):
+    '''
+    UI - Display Effect Tree
+    '''
+    # Init
+    AGRAPH_DATA = {
+        "nodes": [],
+        "edges": []
+    }
+    ## Add Nodes
+    for node in GRAPH_DATA["nodes"]:
+        AGRAPH_DATA["nodes"].append(streamlit_agraph.Node(id=node["id"], title=node["label"], label=node["label"], shape=node["shape"]))
+    ## Add Edges
+    for edge in GRAPH_DATA["edges"]:
+        AGRAPH_DATA["edges"].append(streamlit_agraph.Edge(edge["start"], edge["end"]))
+    # Display
+    G = streamlit_agraph.agraph(
+        nodes=AGRAPH_DATA["nodes"], edges=AGRAPH_DATA["edges"],
+        config=streamlit_agraph.Config(
+            height=600, width=600,
+        )
+    )
+
 def UI_DisplayEffectTree(ROOT_NODE, EFFECT_TREE_NODES):
     '''
     UI - Display Effect Tree
     '''
-    # Construct Tree Graph
-    G = graphviz.Digraph(graph_attr={"rankdir": "LR"})
+    # Init
+    st.markdown("## Effect Tree")
+    GRAPH_DATA = {
+        "nodes": [],
+        "edges": []
+    }
     ## Add Nodes
-    G.node(ROOT_NODE.id, ROOT_NODE.id)
+    GRAPH_DATA["nodes"].append({
+        "id": ROOT_NODE.id,
+        "label": ROOT_NODE.id,
+        "shape": "oval"
+    })
     for node_id in EFFECT_TREE_NODES.keys():
-        G.node(node_id, node_id)
+        GRAPH_DATA["nodes"].append({
+            "id": node_id,
+            "label": " " + node_id,
+            "shape": "circle"
+        })
     ## Add Edges
     for child_conn_k in ROOT_NODE.children.keys():
         child_conn = ROOT_NODE.children[child_conn_k]
         conn_id = child_conn.start.id + "_" + child_conn.end.id
-        G.node(conn_id, child_conn.effect["name"], shape="box")
-        G.edge(ROOT_NODE.id, conn_id)
-        G.edge(conn_id, child_conn.end.id)
+        GRAPH_DATA["nodes"].append({
+            "id": conn_id,
+            "label": child_conn.effect["name"],
+            "shape": "box"
+        })
+        GRAPH_DATA["edges"].append({
+            "start": ROOT_NODE.id,
+            "end": conn_id
+        })
+        GRAPH_DATA["edges"].append({
+            "start": conn_id,
+            "end": child_conn.end.id
+        })
     for node_id in EFFECT_TREE_NODES.keys():
         node = EFFECT_TREE_NODES[node_id]
         for child_conn_k in node.children.keys():
             child_conn = node.children[child_conn_k]
             conn_id = child_conn.start.id + "_" + child_conn.end.id
-            G.node(conn_id, child_conn.effect["name"], shape="box")
-            G.edge(node_id, conn_id)
-            G.edge(conn_id, child_conn.end.id)
-        # Display Tree Graph
-    st.markdown("## Effect Tree")
+            GRAPH_DATA["nodes"].append({
+                "id": conn_id,
+                "label": child_conn.effect["name"],
+                "shape": "box"
+            })
+            GRAPH_DATA["edges"].append({
+                "start": node_id,
+                "end": conn_id
+            })
+            GRAPH_DATA["edges"].append({
+                "start": conn_id,
+                "end": child_conn.end.id
+            })
+    # Construct Graph
+    G = graphviz.Digraph(graph_attr={"rankdir": "LR"})
+    for node in GRAPH_DATA["nodes"]:
+        G.node(node["id"], node["label"], shape=node["shape"])
+    for edge in GRAPH_DATA["edges"]:
+        G.edge(edge["start"], edge["end"])
+    # Display
+    ## Graph Image
     Graph_I = G.pipe(format="png")
     st.image(Graph_I, use_column_width=False)
     # st.write(G)
+    ## Graph HTML
+    # G_pyvis = pyvis_network(
+    #     bgcolor="#222222", font_color="white",
+    # )
+    # G.save(PATHS["graph_cache"]["dot"])
+    # G_pyvis.from_DOT(PATHS["graph_cache"]["dot"])
+    # G_pyvis.repulsion()
+    # G_pyvis.save_graph(PATHS["graph_cache"]["html"])
+    # components.html(open(PATHS["graph_cache"]["html"], "r", encoding="utf-8").read(), height=615)
+    ## Graph Agraph
+    UI_DisplayEffectTree_Agraph(GRAPH_DATA)
 
 def UI_AddEffectTreeNode():
     '''
@@ -381,7 +461,14 @@ def UI_EditEffectTreeNode():
         CurConnection.start.children[CurNode.id] = CurConnection
     if cols[1].button("Delete"):
         del CurConnection.start.children[CurNode.id]
-        del EFFECT_TREE["nodes"][CurNode.id]
+        ## Cascade Delete
+        DelNodesList = [CurNode]
+        while True:
+            if len(DelNodesList) == 0: break
+            ChildNodes = [cNode.end for cNode in DelNodesList[0].children.values()]
+            DelNodesList += ChildNodes
+            del EFFECT_TREE["nodes"][DelNodesList[0].id]
+            del DelNodesList[0]
 
 def UI_ConstructEffectTree():
     '''
@@ -400,7 +487,8 @@ def UI_ConstructEffectTree():
         if st.button("Clear Effect Tree"):
             EFFECT_TREE.update({
                 "root": EFFECT_TREE_NODE(EFFECT_TREE_ROOT_ID),
-                "nodes": {}
+                "nodes": {},
+                "node_id_counter": 1
             })
             SaveEffectTreeCache()
     elif USERINPUT_NodeOp == "Add":
