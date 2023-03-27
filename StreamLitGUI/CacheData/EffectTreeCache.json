@@ -1,0 +1,26 @@
+{
+    "EFFECT_TREE": {
+        "root": {
+            "id": "input",
+            "parent": null
+        },
+        "nodes": {
+            "1": {
+                "id": "1",
+                "parent": "input"
+            }
+        },
+        "node_id_counter": 2,
+        "connections": {
+            "1": {
+                "start": "input",
+                "end": "1",
+                "effect": {
+                    "name": "None",
+                    "code": "None",
+                    "params": {}
+                }
+            }
+        }
+    }
+}

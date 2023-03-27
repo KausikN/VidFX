@@ -4,6 +4,7 @@ Effect Variables
 
 # Imports
 import numpy as np
+from copy import deepcopy
 
 # Main Classes
 class EFFECT_TREE_CONNECTION:
@@ -16,13 +17,38 @@ class EFFECT_TREE_CONNECTION:
         self.effect = effect # Has ["name", "func", "params", ...]
         self.__dict__.update(params)
 
+    def get_dict(self, transistion=False):
+        '''
+        Get Dict Data
+        '''
+        # Init
+        d = {}
+        # Get
+        d["start"] = self.start.id
+        d["end"] = self.end.id
+        if not transistion:
+            d["effect"] = {
+                k: deepcopy(self.effect[k]) for k in self.effect.keys() if k != "func"
+            }
+        else:
+            d["effect"] = {
+                k: deepcopy(self.effect[k]) for k in self.effect.keys() if k not in ["func", "params"]
+            }
+            for pk in self.effect["transistion"].keys():
+                d["effect"]["transistion"][pk]["transistion"] = {
+                    k: d["effect"]["transistion"][pk]["transistion"][k]
+                    for k in d["effect"]["transistion"][pk]["transistion"].keys() if k != "func"
+                }
+
+        return d
+
 class EFFECT_TREE_NODE:
     '''
     Effect Tree Node
     '''
     def __init__(self, 
         id, 
-        parent=None, children={}, 
+        parent=None, children=None, 
         I=None, 
         history_length=0,
         **params
@@ -31,7 +57,7 @@ class EFFECT_TREE_NODE:
         self.id = id
         # Connection Params
         self.parent = parent
-        self.children = children
+        self.children = children if children is not None else {}
         # Image Params
         self.I = I
         # Other Params
@@ -69,7 +95,9 @@ class EFFECT_TREE_NODE:
         Update History
         '''
         # Update
-        if self.history_length == 0: return
+        if self.history_length == 0:
+            if len(self.history) > 0: self.history = []
+            return
         if self.history_length == len(self.history):
             self.history.pop(0)
             self.history.append(self.I)
@@ -99,6 +127,23 @@ class EFFECT_TREE_NODE:
         # del self
 
         return list(set(deleted_node_ids))
+    
+    def get_dict(self, children=True, I=False, history=False):
+        '''
+        Get Dict Data
+        '''
+        # Init
+        d = {}
+        # Get
+        d["id"] = self.id
+        d["parent"] = self.parent.start.id if self.parent is not None else None
+        if children: d["children"] = list(self.children.keys())
+        if I: d["I"] = self.I.tolist()
+        if history:
+            d["history_length"] = self.history_length
+            d["history"] = [h.tolist() for h in self.history]
+        
+        return d
 
 # Main Vars
 PIXELDATA_DIMENSIONS = 4 # RGB - 3, RGBA - 4

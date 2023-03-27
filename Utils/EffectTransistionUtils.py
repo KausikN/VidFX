@@ -35,10 +35,9 @@ def EffectTransistion_Apply(I, EFFECT_TREE, TREE_APPLY_FUNC, n_frames=2, PROGRES
                     EFFECT_TREE["nodes"][nk].parent.effect["transistion"][pk]["end"],
                     **EFFECT_TREE["nodes"][nk].parent.effect["transistion"][pk]["transistion"]["params"]
                 )
-                for pk in EFFECT_TREE["nodes"][nk].parent.effect["params"].keys()
+                for pk in EFFECT_TREE["nodes"][nk].parent.effect["transistion"].keys()
             }
             EFFECT_TREE["nodes"][nk].parent.effect["params"] = CurParams
-            print(i, nk, EFFECT_TREE["nodes"][nk].parent.effect["params"])
         ## Apply and Record
         frame = TREE_APPLY_FUNC(I, EFFECT_TREE=EFFECT_TREE)
         Transistion_Is.append(frame)
@@ -101,20 +100,24 @@ def EffectTransistion_Sin(prop, start, end, frequency=1.0):
 # Main Vars
 TRANSISTION_FUNCS = {
     "Constant": {
+        "name": "Constant",
         "func": EffectTransistion_Constant,
         "params": {}
     },
     "Switch": {
+        "name": "Switch",
         "func": EffectTransistion_Switch,
         "params": {
             "threshold": 0.5
         }
     },
     "Linear": {
+        "name": "Linear",
         "func": EffectTransistion_Linear,
         "params": {}
     },
     "Sin": {
+        "name": "Sin",
         "func": EffectTransistion_Sin,
         "params": {
             "frequency": 1.0

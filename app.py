@@ -72,8 +72,14 @@ PATHS = {
         }
     },
     "available_effects": "StreamLitGUI/AvailableEffects.json",
-    "tree_cache": "StreamLitGUI/CacheData/EffectTreeCache.p",
-    "transistion_tree_cache": "StreamLitGUI/CacheData/TransistionEffectTreeCache.p",
+    "tree_cache": {
+        "pickle": "StreamLitGUI/CacheData/EffectTreeCache.p",
+        "json": "StreamLitGUI/CacheData/EffectTreeCache.json"
+    },
+    "transistion_tree_cache": {
+        "pickle": "StreamLitGUI/CacheData/TransistionEffectTreeCache.p",
+        "json": "StreamLitGUI/CacheData/TransistionEffectTreeCache.json"
+    },
     "graph_cache": {
         "dot": "StreamLitGUI/CacheData/EffectTree.dot",
         "html": "StreamLitGUI/CacheData/EffectTree.html"
@@ -124,21 +130,33 @@ def SaveCache():
 
 def LoadEffectTreeCache():
     global EFFECT_TREE
-    if not os.path.exists(PATHS["tree_cache"]): return EFFECT_TREE
-    EFFECT_TREE = pickle.load(open(PATHS["tree_cache"], 'rb'))
+    cache_path = PATHS["tree_cache"]["json"]
+    if not os.path.exists(cache_path): return EFFECT_TREE
+    # EFFECT_TREE = pickle.load(open(cache_path, 'rb'))
+    EFFECT_TREE_DATA = json.load(open(cache_path, "r"))
+    EFFECT_TREE = EffectTreeCache_Dict2Tree(EFFECT_TREE_DATA)["EFFECT_TREE"]
     return EFFECT_TREE
 def SaveEffectTreeCache():
     global EFFECT_TREE
-    pickle.dump(EFFECT_TREE, open(PATHS["tree_cache"], 'wb'))
+    cache_path = PATHS["tree_cache"]["json"]
+    # pickle.dump(EFFECT_TREE, open(cache_path, 'wb'))
+    EFFECT_TREE_DATA = EffectTreeCache_Tree2Dict(EFFECT_TREE)
+    json.dump(EFFECT_TREE_DATA, open(cache_path, "w"), indent=4)
 
 def LoadTransistionEffectTreeCache():
     global EFFECT_TREE
-    if not os.path.exists(PATHS["transistion_tree_cache"]): return EFFECT_TREE
-    EFFECT_TREE = pickle.load(open(PATHS["transistion_tree_cache"], 'rb'))
+    cache_path = PATHS["transistion_tree_cache"]["json"]
+    if not os.path.exists(cache_path): return EFFECT_TREE
+    # EFFECT_TREE = pickle.load(open(cache_path, 'rb'))
+    EFFECT_TREE_DATA = json.load(open(cache_path, "r"))
+    EFFECT_TREE = EffectTreeCache_Dict2Tree(EFFECT_TREE_DATA, transistion=True)["EFFECT_TREE"]
     return EFFECT_TREE
 def SaveTransistionEffectTreeCache():
     global EFFECT_TREE
-    pickle.dump(EFFECT_TREE, open(PATHS["transistion_tree_cache"], 'wb'))
+    cache_path = PATHS["transistion_tree_cache"]["json"]
+    # pickle.dump(EFFECT_TREE, open(cache_path, 'wb'))
+    EFFECT_TREE_DATA = EffectTreeCache_Tree2Dict(EFFECT_TREE, transistion=True)
+    json.dump(EFFECT_TREE_DATA, open(cache_path, "w"), indent=4)
 
 @st.cache
 def GenerateImageSizeIndicatorImage(ImageSize):
@@ -229,6 +247,8 @@ def UI_LoadImage():
         RegenerateWebcameSnapshot = st.button("Retake")
         ret, USERINPUT_Image = webcamVid.read()
         USERINPUT_Image = cv2.cvtColor(USERINPUT_Image, cv2.COLOR_BGR2RGB)
+    # Display Image
+    st.image(USERINPUT_Image, use_column_width=True)
     
     return USERINPUT_Image
 
@@ -377,7 +397,7 @@ def UI_DisplayEffectTree(ROOT_NODE, EFFECT_TREE_NODES):
     # G_pyvis.save_graph(PATHS["graph_cache"]["html"])
     # components.html(open(PATHS["graph_cache"]["html"], "r", encoding="utf-8").read(), height=615)
     ## Graph Agraph
-    UI_DisplayEffectTree_Agraph(GRAPH_DATA)
+    # UI_DisplayEffectTree_Agraph(GRAPH_DATA)
 
 def UI_AddEffectTreeNode():
     '''
@@ -410,7 +430,7 @@ def UI_AddEffectTreeNode():
         ## Set Node Data
         NEW_NODE_DATA = {
             "id": str(EFFECT_TREE["node_id_counter"]),
-            "parent": NEW_CONNECTION,
+            "parent": NEW_CONNECTION
         }
         EFFECT_TREE["nodes"][NEW_NODE_DATA["id"]] = EFFECT_TREE_NODE(**NEW_NODE_DATA)
         NEW_CONNECTION.end = EFFECT_TREE["nodes"][NEW_NODE_DATA["id"]]
@@ -458,6 +478,7 @@ def UI_EditEffectTreeNode():
         ## Set Node Data
         CurNode.parent = CurConnection
         ## Set Parent Data
+        CurConnection.start.history_length = 0
         CurConnection.start.children[CurNode.id] = CurConnection
     if cols[1].button("Delete"):
         del CurConnection.start.children[CurNode.id]
@@ -602,6 +623,7 @@ def UI_AddEffectTreeNode_Transistion():
             "end": None,
             "effect": dict(AVAILABLE_EFFECTS[USERINPUT_EffectName])
         }
+        del NEW_CONNECTION_DATA["effect"]["params"]
         NEW_CONNECTION_DATA["effect"]["transistion"] = USERINPUT_EffectParams
         NEW_CONNECTION = EFFECT_TREE_CONNECTION(**NEW_CONNECTION_DATA)
         ## Set Node Data
