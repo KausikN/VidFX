@@ -1,0 +1,11 @@
+{
+    "grid": [["1", "6"]],
+    "params": {
+        "grid_cell_space": [0, 0],
+        "grid_border_space": [0, 0]
+    },
+    "overall": {
+        "grid_size": [1, 1],
+        "image_size": [512, 512]
+    }
+}

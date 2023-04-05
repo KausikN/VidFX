@@ -25,8 +25,7 @@ def ApplyAlphaToImage(I):
     I_aa = np.dstack((I_ra, I_ga, I_ba, np.ones(I.shape[:2], dtype=float)))
     return np.array(I_aa, dtype=float)
 
-def NormaliseSize(keys, keepOriginalSizes=False):
-    global EFFECT_TREE
+def NormaliseSize(keys, keepOriginalSizes=False, EFFECT_TREE=None):
     # Init
     size = [100, 100, PIXELDATA_DIMENSIONS]
     # Check

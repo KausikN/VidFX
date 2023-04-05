@@ -8,17 +8,94 @@
             "1": {
                 "id": "1",
                 "parent": "input"
+            },
+            "2": {
+                "id": "2",
+                "parent": "1"
+            },
+            "3": {
+                "id": "3",
+                "parent": "input"
+            },
+            "4": {
+                "id": "4",
+                "parent": "1"
+            },
+            "5": {
+                "id": "5",
+                "parent": "2"
+            },
+            "6": {
+                "id": "6",
+                "parent": "5"
             }
         },
-        "node_id_counter": 2,
+        "node_id_counter": 7,
         "connections": {
             "1": {
                 "start": "input",
                 "end": "1",
                 "effect": {
-                    "name": "None",
-                    "code": "None",
+                    "name": "FrameDelay",
+                    "code": "FrameDelay(delay=12)",
+                    "params": {
+                        "delay": 12
+                    }
+                }
+            },
+            "2": {
+                "start": "1",
+                "end": "2",
+                "effect": {
+                    "name": "FrameDelay",
+                    "code": "FrameDelay(delay=12)",
+                    "params": {
+                        "delay": 12
+                    }
+                }
+            },
+            "3": {
+                "start": "input",
+                "end": "3",
+                "effect": {
+                    "name": "RedChannel",
+                    "code": "RedChannel",
                     "params": {}
+                }
+            },
+            "4": {
+                "start": "1",
+                "end": "4",
+                "effect": {
+                    "name": "BlueChannel",
+                    "code": "BlueChannel",
+                    "params": {}
+                }
+            },
+            "5": {
+                "start": "2",
+                "end": "5",
+                "effect": {
+                    "name": "GreenChannel",
+                    "code": "GreenChannel",
+                    "params": {}
+                }
+            },
+            "6": {
+                "start": "5",
+                "end": "6",
+                "effect": {
+                    "name": "Add",
+                    "code": "Add(keys=['input'], keepOriginalSizes=False, normaliseFit=False)",
+                    "params": {
+                        "keys": [
+                            "3",
+                            "4",
+                            "5"
+                        ],
+                        "keepOriginalSizes": true,
+                        "normaliseFit": true
+                    }
                 }
             }
         }

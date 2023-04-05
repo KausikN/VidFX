@@ -58,7 +58,8 @@ def EffectTreeCache_Dict2Tree(DICT_DATA, transistion=False):
         END_NODE = EFFECT_TREE["nodes"][conn_data["end"]]
         CONNECTIONS[k] = EFFECT_TREE_CONNECTION(
             START_NODE, END_NODE, 
-            EFFECT_FUNC_DATA
+            EFFECT_FUNC_DATA,
+            effect_tree_pointer=EFFECT_TREE # Pass Effect Tree Pointer
         )
     ## Connect Nodes
     for k in CONNECTIONS.keys():

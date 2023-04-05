@@ -82,6 +82,7 @@ class EFFECT_TREE_NODE:
             other_params = {
                 "node": self
             }
+            ### Check if combination effect
             self.I = self.parent.effect["func"](self.parent.start.I, **self.parent.effect["params"], **other_params)
         else:
             self.I = self.parent.start.I

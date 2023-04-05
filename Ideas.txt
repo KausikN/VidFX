@@ -1,7 +1,5 @@
 VidFX
- - Saving Mechanism to not recompute effects on same inputs -- DONE
- - Addition, Subtraction, etc binary effects
+ - 
 
 Streamlit UI
- - Better UI for applying effects other than text area
- - UI for effect transistions
+ - Display all node images in effect tree graph using agraph component
