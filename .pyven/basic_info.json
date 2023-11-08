@@ -11,7 +11,6 @@
         "imutils",
         "Pillow",
         "scikit_image",
-        "skimage",
         "torch",
         "noise==1.2.2",
         "pixellib==0.7.1",

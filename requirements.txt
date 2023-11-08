@@ -9,7 +9,6 @@ tqdm
 imutils
 Pillow
 scikit_image
-skimage
 torch
 pyvis
 
