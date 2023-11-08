@@ -15,51 +15,42 @@
             },
             "3": {
                 "id": "3",
-                "parent": "input"
+                "parent": "1"
             },
             "4": {
                 "id": "4",
                 "parent": "1"
-            },
-            "5": {
-                "id": "5",
-                "parent": "2"
-            },
-            "6": {
-                "id": "6",
-                "parent": "5"
             }
         },
-        "node_id_counter": 7,
+        "node_id_counter": 5,
         "connections": {
             "1": {
                 "start": "input",
                 "end": "1",
                 "effect": {
-                    "name": "FrameDelay",
-                    "code": "FrameDelay(delay=12)",
-                    "params": {
-                        "delay": 12
-                    }
+                    "name": "Mirror",
+                    "code": "Mirror",
+                    "params": {}
                 }
             },
             "2": {
                 "start": "1",
                 "end": "2",
                 "effect": {
-                    "name": "FrameDelay",
-                    "code": "FrameDelay(delay=12)",
+                    "name": "GaussianNoise",
+                    "code": "GaussianNoise(mean=0.2, SD=0.1)",
                     "params": {
-                        "delay": 12
+                        "mean": 0.25,
+                        "SD": 0.1
                     }
                 }
             },
             "3": {
-                "start": "input",
+                "start": "1",
                 "end": "3",
                 "effect": {
-                    "name": "RedChannel",
-                    "code": "RedChannel",
+                    "name": "SpeckleNoise",
+                    "code": "SpeckleNoise",
                     "params": {}
                 }
             },
@@ -67,34 +58,10 @@
                 "start": "1",
                 "end": "4",
                 "effect": {
-                    "name": "BlueChannel",
-                    "code": "BlueChannel",
-                    "params": {}
-                }
-            },
-            "5": {
-                "start": "2",
-                "end": "5",
-                "effect": {
-                    "name": "GreenChannel",
-                    "code": "GreenChannel",
-                    "params": {}
-                }
-            },
-            "6": {
-                "start": "5",
-                "end": "6",
-                "effect": {
-                    "name": "Add",
-                    "code": "Add(keys=['input'], keepOriginalSizes=False, normaliseFit=False)",
+                    "name": "SaltPepperNoise",
+                    "code": "SaltPepperNoise(prob=0.5)",
                     "params": {
-                        "keys": [
-                            "3",
-                            "4",
-                            "5"
-                        ],
-                        "keepOriginalSizes": true,
-                        "normaliseFit": true
+                        "prob": 0.5
                     }
                 }
             }

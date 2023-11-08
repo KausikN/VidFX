@@ -2,6 +2,7 @@
     "repo_name": "VidFX",
     "requirements": [
         "streamlit",
+        "streamlit_webrtc",
         "matplotlib",
         "numpy",
         "opencv_python",

@@ -24,7 +24,7 @@ def ImageEffect_SpeckleNoise(I, **params):
 def ImageEffect_SaltPepperNoise(I, prob=0.5, **params):
     h, w, c = I.shape
     mask = np.random.choice((0, 1, 2), size=(h, w), p=[1-prob, prob/2., prob/2.])
-    I_effect = I[:, :, :3]
+    I_effect = np.copy(I[:, :, :3])
     I_effect[mask == 1] = 1.0
     I_effect[mask == 2] = 0.0
     

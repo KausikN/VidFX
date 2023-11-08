@@ -4,6 +4,7 @@ Stream lit GUI for hosting VidFX
 
 # Imports
 import os
+import av
 import cv2
 import json
 import pickle
@@ -13,6 +14,7 @@ from PIL import Image
 from tqdm import tqdm
 import streamlit as st
 import streamlit.components.v1 as components
+from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
 import graphviz
 import networkx as nx
 from pyvis.network import Network as pyvis_network
@@ -24,33 +26,33 @@ from Utils.EffectTransistionUtils import *
 from Utils import ParserUtils
 
 # Main Vars
-config = json.load(open('./StreamLitGUI/UIConfig.json', 'r'))
+config = json.load(open("./StreamLitGUI/UIConfig.json", "r"))
 
 # Main Functions
 def main():
     # Create Sidebar
     selected_box = st.sidebar.selectbox(
-    'Choose one of the following',
+    "Choose one of the following",
         tuple(
-            [config['PROJECT_NAME']] + 
-            config['PROJECT_MODES']
+            [config["PROJECT_NAME"]] + 
+            config["PROJECT_MODES"]
         )
     )
     
-    if selected_box == config['PROJECT_NAME']:
+    if selected_box == config["PROJECT_NAME"]:
         HomePage()
     else:
-        correspondingFuncName = selected_box.replace(' ', '_').lower()
+        correspondingFuncName = selected_box.replace(" ", "_").lower()
         if correspondingFuncName in globals().keys():
             globals()[correspondingFuncName]()
  
 
 def HomePage():
-    st.title(config['PROJECT_NAME'])
-    st.markdown('Github Repo: ' + "[" + config['PROJECT_LINK'] + "](" + config['PROJECT_LINK'] + ")")
-    st.markdown(config['PROJECT_DESC'])
+    st.title(config["PROJECT_NAME"])
+    st.markdown("Github Repo: " + "[" + config["PROJECT_LINK"] + "](" + config["PROJECT_LINK"] + ")")
+    st.markdown(config["PROJECT_DESC"])
 
-    # st.write(open(config['PROJECT_README'], 'r').read())
+    # st.write(open(config["PROJECT_README"], "r").read())
 
 #############################################################################################################################
 # Repo Based Vars
@@ -108,13 +110,17 @@ TYPE_MAP = {
 # Util Vars
 CACHE = {}
 FRAMES = []
+RTC_CONFIGURATION = RTCConfiguration(
+    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+)
+ProcessFunc_WebcamImageProcess = None
 
 # Util Functions
 def GetNames(data):
     return [d["name"] for d in data]
 
 def Hex_to_RGB(val):
-    val = val.lstrip('#')
+    val = val.lstrip("#")
     lv = len(val)
     return tuple(int(val[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
 
@@ -123,23 +129,23 @@ def RGB_to_Hex(rgb):
 
 def LoadCache():
     global CACHE
-    CACHE = json.load(open(PATHS["cache"], 'r'))
+    CACHE = json.load(open(PATHS["cache"], "r"))
 def SaveCache():
     global CACHE
-    json.dump(CACHE, open(PATHS["cache"], 'w'))
+    json.dump(CACHE, open(PATHS["cache"], "w"))
 
 def LoadEffectTreeCache():
     global EFFECT_TREE
     cache_path = PATHS["tree_cache"]["json"]
     if not os.path.exists(cache_path): return EFFECT_TREE
-    # EFFECT_TREE = pickle.load(open(cache_path, 'rb'))
+    # EFFECT_TREE = pickle.load(open(cache_path, "rb"))
     EFFECT_TREE_DATA = json.load(open(cache_path, "r"))
     EFFECT_TREE = EffectTreeCache_Dict2Tree(EFFECT_TREE_DATA)["EFFECT_TREE"]
     return EFFECT_TREE
 def SaveEffectTreeCache():
     global EFFECT_TREE
     cache_path = PATHS["tree_cache"]["json"]
-    # pickle.dump(EFFECT_TREE, open(cache_path, 'wb'))
+    # pickle.dump(EFFECT_TREE, open(cache_path, "wb"))
     EFFECT_TREE_DATA = EffectTreeCache_Tree2Dict(EFFECT_TREE)
     json.dump(EFFECT_TREE_DATA, open(cache_path, "w"), indent=4)
 
@@ -147,14 +153,14 @@ def LoadTransistionEffectTreeCache():
     global EFFECT_TREE
     cache_path = PATHS["transistion_tree_cache"]["json"]
     if not os.path.exists(cache_path): return EFFECT_TREE
-    # EFFECT_TREE = pickle.load(open(cache_path, 'rb'))
+    # EFFECT_TREE = pickle.load(open(cache_path, "rb"))
     EFFECT_TREE_DATA = json.load(open(cache_path, "r"))
     EFFECT_TREE = EffectTreeCache_Dict2Tree(EFFECT_TREE_DATA, transistion=True)["EFFECT_TREE"]
     return EFFECT_TREE
 def SaveTransistionEffectTreeCache():
     global EFFECT_TREE
     cache_path = PATHS["transistion_tree_cache"]["json"]
-    # pickle.dump(EFFECT_TREE, open(cache_path, 'wb'))
+    # pickle.dump(EFFECT_TREE, open(cache_path, "wb"))
     EFFECT_TREE_DATA = EffectTreeCache_Tree2Dict(EFFECT_TREE, transistion=True)
     json.dump(EFFECT_TREE_DATA, open(cache_path, "w"), indent=4)
 
@@ -170,6 +176,23 @@ def Frames_Load():
     FRAMES = []
     for f in os.listdir(PATHS["default"]["dir"]["frames"]):
         FRAMES.append(f)
+
+# Main Classes
+class VideoProcessor:
+    '''
+    Video Processor - Intermediary for Stream Image Processing
+    '''
+    def recv(self, frame):
+        global ProcessFunc_WebcamImageProcess
+        # Init
+        I = frame.to_ndarray(format="bgr24")
+        # Process
+        if ProcessFunc_WebcamImageProcess is not None: I = ProcessFunc_WebcamImageProcess(I)
+        # Postprocess
+        I_uint8 = np.array(np.round(I * 255.0, 0), dtype=np.uint8)
+        I = I_uint8
+        # Return
+        return av.VideoFrame.from_ndarray(I, format="bgra")
 
 # Main Functions
 
@@ -225,11 +248,11 @@ def UI_LoadImage():
     # Upload Image File
     if USERINPUT_ImageInputChoice == "Upload Image File":
         USERINPUT_ImageReader = INPUTREADERS_IMAGE[USERINPUT_ImageInputChoice] # Unused Reader as image is loaded directly
-        USERINPUT_ImageData = st.file_uploader("Upload Image", ['png', 'jpg', 'jpeg', 'bmp'])
+        USERINPUT_ImageData = st.file_uploader("Upload Image", ["png", "jpg", "jpeg", "bmp"])
         if USERINPUT_ImageData is not None:
             USERINPUT_ImageData = USERINPUT_ImageData.read()
         else:
-            USERINPUT_ImageData = open(PATHS["default"]["example"]["image"], 'rb').read()
+            USERINPUT_ImageData = open(PATHS["default"]["example"]["image"], "rb").read()
         USERINPUT_ImageData = cv2.imdecode(np.frombuffer(USERINPUT_ImageData, np.uint8), cv2.IMREAD_COLOR)
         USERINPUT_Image = cv2.cvtColor(USERINPUT_ImageData, cv2.COLOR_BGR2RGB)
     # Upload Image URL
@@ -253,6 +276,25 @@ def UI_LoadImage():
     return USERINPUT_Image
 
 ## UI - Display Functions
+def UI_DisplayEffectWebcam(EffectFunc):
+    '''
+    UI - Display Effect Video
+    '''
+    global ProcessFunc_WebcamImageProcess
+    # Form Process Function
+    ProcessFunc_WebcamImageProcess = EffectFunc
+    # Form Video Widget
+    VIDEO_WIDGET = webrtc_streamer(
+        key="WYH",
+        mode=WebRtcMode.SENDRECV,
+        rtc_configuration=RTC_CONFIGURATION,
+        media_stream_constraints={"video": True, "audio": False},
+        video_processor_factory=VideoProcessor,
+        async_processing=True,
+    )
+
+    return VIDEO_WIDGET
+
 def UI_DisplayEffectVideo(vid, EffectFunc, max_frames=-1, compact_display=False):
     '''
     UI - Display Effect Video
@@ -271,12 +313,12 @@ def UI_DisplayEffectVideo(vid, EffectFunc, max_frames=-1, compact_display=False)
         ret, frame = vid.read()
         if ret == True:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            inputVideoDisplay.image(frame, caption='Input Video', use_column_width=compact_display)
+            inputVideoDisplay.image(frame, caption="Input Video", use_column_width=compact_display)
             # Apply Effect if needed
             if EffectFunc is not None:
                 frame = EffectFunc(frame)
             # Display the resulting frame
-            effectVideoDisplay.image(frame, caption='Effect Video', use_column_width=compact_display)
+            effectVideoDisplay.image(frame, caption="Effect Video", use_column_width=compact_display)
             FRAME_COUNT += 1
         # Break the loop
         else: 
@@ -720,6 +762,30 @@ def UI_ConstructEffectTree_Transistion():
     return EFFECT_TREE
 
 # Repo Based Functions
+def webcamfx():
+    global EFFECT_TREE
+    global DISPLAY_GRID
+    # Title
+    st.header("Webcam FX")
+
+    # Load Prereq Inputs
+    Frames_Load()
+    # UI_ShowAvailableEffects()
+    # Load Inputs
+    ## Effect Tree
+    EFFECT_TREE = UI_ConstructEffectTree()
+    ## Display Grid
+    DISPLAY_GRID = UI_ConstructDisplayGrid()
+    USERINPUT_DisplayParams = {}
+
+    # Process Inputs
+    USERINPUT_StreamProcess = st.checkbox("Stream Process", True)
+    if USERINPUT_StreamProcess:
+        EffectFunc = functools.partial(EffectFunc_TreeApply, EFFECT_TREE=EFFECT_TREE, DISPLAY_GRID=DISPLAY_GRID)
+        # Display Output
+        st.markdown("## Video")
+        UI_DisplayEffectWebcam(EffectFunc, **USERINPUT_DisplayParams)
+
 def videofx():
     global EFFECT_TREE
     global DISPLAY_GRID
