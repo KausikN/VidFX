@@ -55,7 +55,6 @@ def VideoUtils_SaveFrames2Video(frames, pathOut, fps=20, size=None):
     VideoUtils - Save Frames to Video
     '''
     if os.path.splitext(pathOut)[-1] == ".gif":
-        
         frames_images = [Image.fromarray(np.array(frame*255, dtype=np.uint8)) for frame in frames]
         extraFrames = []
         if len(frames_images) > 1: extraFrames = frames_images[1:]

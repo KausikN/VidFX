@@ -30,109 +30,109 @@
 
    - Add same effects for images
 
-     ![Effect Image](GeneratedVisualisations/Effects/Effect_CannyEdges.jpg)
+     ![Effect Image](Data/GeneratedVisualisations/Effects/Effect_CannyEdges.jpg)
    
    - Effects can also be used in combination with each other (BinValues + Blur)
 
-     ![Combined Effects Video Image](GeneratedVisualisations/EffectCombination_1.gif)
+     ![Combined Effects Video Image](Data/GeneratedVisualisations/EffectCombination_1.gif)
 
    - Multiple Effects can be viewed at same time in a grid format
 
-     ![Multiple Effects Video Image](GeneratedVisualisations/MultipleEffects_1.gif)
+     ![Multiple Effects Video Image](Data/GeneratedVisualisations/MultipleEffects_1.gif)
   
    - Effects Transistion can be applied to an image to form a video of the image under an effect with varying parameters (This example is obtained by decreasing scale and increasing rotation parameters in GeometricTransform effect)
 
-     ![EffectsTransistion Video](GeneratedVisualisations/Effects/EffectTransistion_GeometricTransform.gif)
+     ![EffectsTransistion Video](Data/GeneratedVisualisations/Effects/EffectTransistion_GeometricTransform.gif)
 
 # Effects
 
    - None
 
-     ![None Effect](GeneratedVisualisations/Effects/Effect_None.jpg)
+     ![None Effect](Data/GeneratedVisualisations/Effects/Effect_None.jpg)
 
    - Binarise
 
-     ![Binarise Effect](GeneratedVisualisations/Effects/Effect_Binarise.jpg)
+     ![Binarise Effect](Data/GeneratedVisualisations/Effects/Effect_Binarise.jpg)
 
    - GreyScale
 
-     ![GreyScale Effect](GeneratedVisualisations/Effects/Effect_GreyScale.jpg)
+     ![GreyScale Effect](Data/GeneratedVisualisations/Effects/Effect_GreyScale.jpg)
 
    - RGB2BGR
 
-     ![RGB2BGR Effect](GeneratedVisualisations/Effects/Effect_RGB2BGR.jpg)
+     ![RGB2BGR Effect](Data/GeneratedVisualisations/Effects/Effect_RGB2BGR.jpg)
 
    - RedChannel
 
-     ![RedChannel Effect](GeneratedVisualisations/Effects/Effect_RedChannel.jpg)
+     ![RedChannel Effect](Data/GeneratedVisualisations/Effects/Effect_RedChannel.jpg)
 
    - BlueChannel
 
-     ![BlueChannel Effect](GeneratedVisualisations/Effects/Effect_BlueChannel.jpg)
+     ![BlueChannel Effect](Data/GeneratedVisualisations/Effects/Effect_BlueChannel.jpg)
 
    - GreenChannel
 
-     ![GreenChannel Effect](GeneratedVisualisations/Effects/Effect_GreenChannel.jpg)
+     ![GreenChannel Effect](Data/GeneratedVisualisations/Effects/Effect_GreenChannel.jpg)
 
    - MostDominantColor
 
-     ![MostDominantColor Effect](GeneratedVisualisations/Effects/Effect_MostDominantColor.jpg)
+     ![MostDominantColor Effect](Data/GeneratedVisualisations/Effects/Effect_MostDominantColor.jpg)
 
    - LeastDominantColor
 
-     ![LeastDominantColor Effect](GeneratedVisualisations/Effects/Effect_LeastDominantColor.jpg)
+     ![LeastDominantColor Effect](Data/GeneratedVisualisations/Effects/Effect_LeastDominantColor.jpg)
 
    - ScaleValues
 
-     ![ScaleValues Effect](GeneratedVisualisations/Effects/Effect_ScaleValues.jpg)
+     ![ScaleValues Effect](Data/GeneratedVisualisations/Effects/Effect_ScaleValues.jpg)
 
    - ClipValues
 
-     ![ClipValues Effect](GeneratedVisualisations/Effects/Effect_ClipValues.jpg)
+     ![ClipValues Effect](Data/GeneratedVisualisations/Effects/Effect_ClipValues.jpg)
 
    - BinValues
 
-     ![BinValues Effect](GeneratedVisualisations/Effects/Effect_BinValues.jpg)
+     ![BinValues Effect](Data/GeneratedVisualisations/Effects/Effect_BinValues.jpg)
 
    - ResizeBlur
 
-     ![ResizeBlur Effect](GeneratedVisualisations/Effects/Effect_ResizeBlur.jpg)
+     ![ResizeBlur Effect](Data/GeneratedVisualisations/Effects/Effect_ResizeBlur.jpg)
 
    - AddFrame
 
-     ![AddFrame Effect](GeneratedVisualisations/Effects/Effect_AddFrame.jpg)
+     ![AddFrame Effect](Data/GeneratedVisualisations/Effects/Effect_AddFrame.jpg)
 
    - GaussianNoise
 
-     ![GaussianNoise Effect](GeneratedVisualisations/Effects/Effect_GaussianNoise.jpg)
+     ![GaussianNoise Effect](Data/GeneratedVisualisations/Effects/Effect_GaussianNoise.jpg)
 
    - SpeckleNoise
 
-     ![SpeckleNoise Effect](GeneratedVisualisations/Effects/Effect_SpeckleNoise.jpg)
+     ![SpeckleNoise Effect](Data/GeneratedVisualisations/Effects/Effect_SpeckleNoise.jpg)
 
    - SaltPepperNoise
 
-     ![SaltPepperNoise Effect](GeneratedVisualisations/Effects/Effect_SaltPepperNoise.jpg)
+     ![SaltPepperNoise Effect](Data/GeneratedVisualisations/Effects/Effect_SaltPepperNoise.jpg)
 
    - SemanticSegmentation
 
-     ![SemanticSegmentation Effect](GeneratedVisualisations/Effects/Effect_SemanticSegmentation.jpg)
+     ![SemanticSegmentation Effect](Data/GeneratedVisualisations/Effects/Effect_SemanticSegmentation.jpg)
 
    - InstanceSegmentation
 
-     ![InstanceSegmentation Effect](GeneratedVisualisations/Effects/Effect_InstanceSegmentation.jpg)
+     ![InstanceSegmentation Effect](Data/GeneratedVisualisations/Effects/Effect_InstanceSegmentation.jpg)
 
    - CannyEdges
 
-     ![CannyEdges Effect](GeneratedVisualisations/Effects/Effect_CannyEdges.jpg)
+     ![CannyEdges Effect](Data/GeneratedVisualisations/Effects/Effect_CannyEdges.jpg)
 
    - ValueCount Plot
 
-     ![ValueCount Effect](GeneratedVisualisations/Effects/Effect_ValueCount.jpg)
+     ![ValueCount Effect](Data/GeneratedVisualisations/Effects/Effect_ValueCount.jpg)
 
    - FrameDelay
 
-     ![FrameDelay Effect](GeneratedVisualisations/Effects/Effect_FrameDelay.gif)
+     ![FrameDelay Effect](Data/GeneratedVisualisations/Effects/Effect_FrameDelay.gif)
 
    - And many more! :O
    

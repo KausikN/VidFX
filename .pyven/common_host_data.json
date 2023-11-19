@@ -5,7 +5,7 @@
         "VidFX.py",
         "Utils/",
         "EffectsLibrary/",
-        "TestFiles/TestImgs/Horse.PNG",
-        "TestFiles/TestVids/Test_Animation.wmv"
+        "Data/TestFiles/TestImgs/Horse.PNG",
+        "Data/TestFiles/TestVids/Test_Animation.wmv"
     ]
 }

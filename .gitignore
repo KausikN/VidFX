@@ -5,7 +5,7 @@ ModelFiles/
 # Dump Files
 DumpFiles/
 # Generated Files
-TestFiles/TestImgs/OutputImage.png
-TestFiles/TestImgs/OutputVideo.mp4
-TestFiles/TestImgs/OutputGIF.gif
+Data/TestFiles/TestImgs/OutputImage.png
+Data/TestFiles/TestImgs/OutputVideo.mp4
+Data/TestFiles/TestImgs/OutputGIF.gif
 lib/

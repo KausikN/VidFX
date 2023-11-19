@@ -60,13 +60,13 @@ PATHS = {
     "cache": "StreamLitGUI/CacheData/Cache.json",
     "default": {
         "example": {
-            "image": "TestFiles/TestImgs/Horse.PNG",
-            "video": "TestFiles/TestVids/Test_Animation.wmv"
+            "image": "Data/TestFiles/TestImgs/Horse.PNG",
+            "video": "Data/TestFiles/TestVids/Test_Animation.wmv"
         },
         "save": {
-            "image": "TestFiles/TestImgs/OutputImage.png",
-            "video": "TestFiles/TestImgs/OutputVideo.mp4",
-            "gif": "TestFiles/TestImgs/OutputGIF.gif"
+            "image": "Data/TestFiles/TestImgs/OutputImage.png",
+            "video": "Data/TestFiles/TestImgs/OutputVideo.mp4",
+            "gif": "Data/TestFiles/TestImgs/OutputGIF.gif"
         },
         "dir": {
             "frames": "StreamLitGUI/DefaultData/Frames/",
