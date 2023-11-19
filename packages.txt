@@ -1,3 +1,5 @@
 libgl1
 libzbar0
 graphviz
+libx264-dev
+ffmpeg
