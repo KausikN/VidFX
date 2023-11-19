@@ -12,6 +12,9 @@
         "Pillow",
         "scikit_image",
         "torch",
+        "pyvis",
+        "graphviz",
+        "streamlit-agraph",
         "noise==1.2.2",
         "pixellib==0.7.1",
         "pyzbar==0.1.8"

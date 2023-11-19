@@ -1,59 +1,22 @@
 {
     "name": "VidFX",
-    "repoLink": "https://github.com/KausikN/VidFX",
-    "localPath": "E:/Github Codes and Projects/Projects/VidFX",
+    "repo_link": "https://github.com/KausikN/VidFX",
+    "local_path": "E:/Github Codes and Projects/Projects/VidFX",
     "modules": {
-        "app.py": {
-            "name": "app",
-            "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/app.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "",
-            "dependencies": [
-                "os.py",
-                "cv2.py",
-                "json.py",
-                "pickle.py",
-                "functools.py",
-                "numpy.py",
-                "streamlit.py",
-                "graphviz.py",
-                "Image.py",
-                "tqdm.py",
-                "*.py",
-                "*.py",
-                "ParserUtils.py"
-            ]
-        },
-        "TestIPCamera.py": {
-            "name": "TestIPCamera",
-            "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/TestIPCamera.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "",
-            "dependencies": [
-                "cv2.py",
-                "requests.py",
-                "numpy.py",
-                "imutils.py"
-            ]
-        },
-        "VidFX.py": {
-            "name": "VidFX",
-            "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/VidFX.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "",
-            "dependencies": [
-                "*.py"
-            ]
+        "*.py": {
+            "name": "*",
+            "type": "missing",
+            "link": "",
+            "parent_dir": "",
+            "sub_dir": "",
+            "dependencies": []
         },
         "EffectsLibrary/BasicEffects.py": {
             "name": "BasicEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/BasicEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
                 "*.py"
             ]
@@ -62,32 +25,9 @@
             "name": "CombinationEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/CombinationEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
-                "*.py"
-            ]
-        },
-        "EffectsLibrary/EffectsLibrary.py": {
-            "name": "EffectsLibrary",
-            "type": "local",
-            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/EffectsLibrary.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
-            "dependencies": [
-                "*.py",
-                "*.py",
-                "*.py",
-                "*.py",
-                "*.py",
-                "*.py",
-                "*.py",
-                "*.py",
-                "*.py",
-                "*.py",
-                "*.py",
-                "*.py",
-                "*.py",
                 "*.py"
             ]
         },
@@ -95,46 +35,70 @@
             "name": "EffectUtils",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/EffectUtils.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
-                "os.py",
-                "cv2.py",
-                "math.py",
-                "functools.py",
-                "numpy.py",
                 "*.py",
-                "*.py"
+                "*.py",
+                "cv2.py",
+                "functools.py",
+                "math.py",
+                "numpy.py",
+                "os.py"
             ]
         },
         "EffectsLibrary/EffectVars.py": {
             "name": "EffectVars",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/EffectVars.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
+                "deepcopy.py",
                 "numpy.py"
+            ]
+        },
+        "EffectsLibrary/EffectsLibrary.py": {
+            "name": "EffectsLibrary",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/EffectsLibrary.py",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
+            "dependencies": [
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py",
+                "*.py"
             ]
         },
         "EffectsLibrary/FilterEffects.py": {
             "name": "FilterEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/FilterEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
+                "*.py",
                 "skimage.py",
-                "skimage/feature.py",
-                "*.py"
+                "skimage/feature.py"
             ]
         },
         "EffectsLibrary/FrameEffects.py": {
             "name": "FrameEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/FrameEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
                 "*.py"
             ]
@@ -143,8 +107,8 @@
             "name": "MorphologicalEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/MorphologicalEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
                 "*.py",
                 "morphology.py",
@@ -155,8 +119,8 @@
             "name": "NoiseEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/NoiseEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
                 "*.py"
             ]
@@ -165,8 +129,8 @@
             "name": "PlotEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/PlotEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
                 "*.py",
                 "Figure.py",
@@ -177,8 +141,8 @@
             "name": "QRBarEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/QRBarEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
                 "*.py",
                 "decode.py"
@@ -188,8 +152,8 @@
             "name": "SegmentationEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/SegmentationEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
                 "*.py",
                 "segmentation.py"
@@ -199,8 +163,8 @@
             "name": "ShufflingEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/ShufflingEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
                 "*.py"
             ]
@@ -209,19 +173,19 @@
             "name": "TerrainGenEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/TerrainGenEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
-                "noise.py",
-                "*.py"
+                "*.py",
+                "noise.py"
             ]
         },
         "EffectsLibrary/TimeEffects.py": {
             "name": "TimeEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/TimeEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
                 "*.py"
             ]
@@ -230,43 +194,104 @@
             "name": "TransparencyEffects",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/EffectsLibrary/TransparencyEffects.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "EffectsLibrary",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "EffectsLibrary",
             "dependencies": [
                 "*.py"
             ]
+        },
+        "Figure.py": {
+            "name": "Figure",
+            "type": "missing",
+            "link": "",
+            "parent_dir": "",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "FigureCanvasAgg.py": {
+            "name": "FigureCanvasAgg",
+            "type": "missing",
+            "link": "",
+            "parent_dir": "",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "Image.py": {
+            "name": "Image",
+            "type": "missing",
+            "link": "",
+            "parent_dir": "",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "Network.py": {
+            "name": "Network",
+            "type": "missing",
+            "link": "",
+            "parent_dir": "",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "ParserUtils.py": {
+            "name": "ParserUtils",
+            "type": "missing",
+            "link": "",
+            "parent_dir": "",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "RTCConfiguration.py": {
+            "name": "RTCConfiguration",
+            "type": "missing",
+            "link": "",
+            "parent_dir": "",
+            "sub_dir": "",
+            "dependencies": []
         },
         "StreamLitGUI/__init__.py": {
             "name": "__init__",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/StreamLitGUI/__init__.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "StreamLitGUI",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "StreamLitGUI",
             "dependencies": []
+        },
+        "TestIPCamera.py": {
+            "name": "TestIPCamera",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/TestIPCamera.py",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": [
+                "cv2.py",
+                "imutils.py",
+                "numpy.py",
+                "requests.py"
+            ]
         },
         "Utils/EffectTransistionUtils.py": {
             "name": "EffectTransistionUtils",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/Utils/EffectTransistionUtils.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "Utils",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "Utils",
             "dependencies": [
-                "os.py",
+                "Image.py",
+                "Utils/VideoUtils.py",
                 "cv2.py",
                 "functools.py",
-                "numpy.py",
                 "matplotlib/pyplot.py",
-                "Image.py",
-                "tqdm.py",
-                "Utils/VideoUtils.py"
+                "numpy.py",
+                "os.py",
+                "tqdm.py"
             ]
         },
         "Utils/ParserUtils.py": {
             "name": "ParserUtils",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/Utils/ParserUtils.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "Utils",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "Utils",
             "dependencies": [
                 "numpy.py"
             ]
@@ -275,221 +300,302 @@
             "name": "VideoInputs",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/Utils/VideoInputs.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "Utils",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "Utils",
             "dependencies": [
                 "cv2.py",
+                "imutils.py",
                 "numpy.py",
-                "requests.py",
-                "imutils.py"
+                "requests.py"
             ]
         },
         "Utils/VideoUtils.py": {
             "name": "VideoUtils",
             "type": "local",
             "link": "https://github.com/KausikN/VidFX/blob/master/Utils/VideoUtils.py",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "Utils",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "Utils",
             "dependencies": [
-                "os.py",
-                "cv2.py",
-                "numpy.py",
-                "matplotlib/pyplot.py",
+                "*.py",
                 "Image.py",
-                "tqdm.py",
+                "cv2.py",
+                "matplotlib/pyplot.py",
+                "numpy.py",
+                "os.py",
+                "tqdm.py"
+            ]
+        },
+        "VidFX.py": {
+            "name": "VidFX",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/VidFX.py",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": [
+                "*.py",
                 "*.py"
             ]
         },
-        "graphviz.py": {
-            "name": "graphviz",
+        "WebRtcMode.py": {
+            "name": "WebRtcMode",
             "type": "missing",
             "link": "",
-            "parentDir": "",
-            "subDir": "",
+            "parent_dir": "",
+            "sub_dir": "",
             "dependencies": []
         },
-        "ParserUtils.py": {
-            "name": "ParserUtils",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
+        "app.py": {
+            "name": "app",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/app.py",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": [
+                "*.py",
+                "*.py",
+                "Image.py",
+                "Network.py",
+                "ParserUtils.py",
+                "RTCConfiguration.py",
+                "WebRtcMode.py",
+                "av.py",
+                "cv2.py",
+                "functools.py",
+                "graphviz.py",
+                "json.py",
+                "networkx.py",
+                "numpy.py",
+                "os.py",
+                "pickle.py",
+                "streamlit.py",
+                "streamlit/components/v1.py",
+                "streamlit_agraph.py",
+                "tqdm.py",
+                "webrtc_streamer.py"
+            ]
         },
-        "json.py": {
-            "name": "json",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
+        "app_lite.py": {
+            "name": "app_lite",
+            "type": "local",
+            "link": "https://github.com/KausikN/VidFX/blob/master/app_lite.py",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": [
+                "*.py",
+                "argparse.py",
+                "cv2.py",
+                "functools.py",
+                "json.py",
+                "numpy.py",
+                "os.py"
+            ]
         },
-        "morphology.py": {
-            "name": "morphology",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "Figure.py": {
-            "name": "Figure",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "streamlit.py": {
-            "name": "streamlit",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "segmentation.py": {
-            "name": "segmentation",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "os.py": {
-            "name": "os",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "Image.py": {
-            "name": "Image",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "numpy.py": {
-            "name": "numpy",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "noise.py": {
-            "name": "noise",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "pickle.py": {
-            "name": "pickle",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "matplotlib/pyplot.py": {
-            "name": "pyplot",
+        "argparse.py": {
+            "name": "argparse",
             "type": "inbuilt",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "matplotlib",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
             "dependencies": []
         },
-        "functools.py": {
-            "name": "functools",
-            "type": "missing",
+        "av.py": {
+            "name": "av",
+            "type": "inbuilt",
             "link": "",
-            "parentDir": "",
-            "subDir": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
             "dependencies": []
         },
         "cv2.py": {
             "name": "cv2",
-            "type": "missing",
+            "type": "inbuilt",
             "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "math.py": {
-            "name": "math",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "imutils.py": {
-            "name": "imutils",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "*.py": {
-            "name": "*",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "skimage.py": {
-            "name": "skimage",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "requests.py": {
-            "name": "requests",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
-            "dependencies": []
-        },
-        "FigureCanvasAgg.py": {
-            "name": "FigureCanvasAgg",
-            "type": "missing",
-            "link": "",
-            "parentDir": "",
-            "subDir": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
             "dependencies": []
         },
         "decode.py": {
             "name": "decode",
             "type": "missing",
             "link": "",
-            "parentDir": "",
-            "subDir": "",
+            "parent_dir": "",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "deepcopy.py": {
+            "name": "deepcopy",
+            "type": "missing",
+            "link": "",
+            "parent_dir": "",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "functools.py": {
+            "name": "functools",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "graphviz.py": {
+            "name": "graphviz",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "imutils.py": {
+            "name": "imutils",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "json.py": {
+            "name": "json",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "math.py": {
+            "name": "math",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "matplotlib/pyplot.py": {
+            "name": "pyplot",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "matplotlib",
+            "dependencies": []
+        },
+        "morphology.py": {
+            "name": "morphology",
+            "type": "missing",
+            "link": "",
+            "parent_dir": "",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "networkx.py": {
+            "name": "networkx",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "noise.py": {
+            "name": "noise",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "numpy.py": {
+            "name": "numpy",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "os.py": {
+            "name": "os",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "pickle.py": {
+            "name": "pickle",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "requests.py": {
+            "name": "requests",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "segmentation.py": {
+            "name": "segmentation",
+            "type": "missing",
+            "link": "",
+            "parent_dir": "",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "skimage.py": {
+            "name": "skimage",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
             "dependencies": []
         },
         "skimage/feature.py": {
             "name": "feature",
             "type": "inbuilt",
             "link": "",
-            "parentDir": "E:/Github Codes and Projects/Projects/VidFX",
-            "subDir": "skimage",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "skimage",
+            "dependencies": []
+        },
+        "streamlit.py": {
+            "name": "streamlit",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "streamlit/components/v1.py": {
+            "name": "v1",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "streamlit/components",
+            "dependencies": []
+        },
+        "streamlit_agraph.py": {
+            "name": "streamlit_agraph",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
             "dependencies": []
         },
         "tqdm.py": {
             "name": "tqdm",
+            "type": "inbuilt",
+            "link": "",
+            "parent_dir": "E:/Github Codes and Projects/Projects/VidFX",
+            "sub_dir": "",
+            "dependencies": []
+        },
+        "webrtc_streamer.py": {
+            "name": "webrtc_streamer",
             "type": "missing",
             "link": "",
-            "parentDir": "",
-            "subDir": "",
+            "parent_dir": "",
+            "sub_dir": "",
             "dependencies": []
         }
     }
