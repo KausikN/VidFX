@@ -2,8 +2,8 @@ streamlit
 streamlit_webrtc
 matplotlib
 numpy
-# opencv_python
-opencv-python-headless
+opencv_python
+# opencv-python-headless
 requests
 tqdm
 
@@ -12,6 +12,7 @@ Pillow
 scikit_image
 torch
 pyvis
+graphviz
 
 noise==1.2.2
 pixellib==0.7.1
