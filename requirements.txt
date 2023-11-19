@@ -2,7 +2,8 @@ streamlit
 streamlit_webrtc
 matplotlib
 numpy
-opencv_python
+# opencv_python
+opencv-python-headless
 requests
 tqdm
 
