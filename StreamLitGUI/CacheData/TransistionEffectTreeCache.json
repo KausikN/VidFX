@@ -23,8 +23,10 @@
                             "start": 0.1,
                             "end": 1.0,
                             "transistion": {
-                                "name": "Linear",
-                                "params": {}
+                                "name": "Sin",
+                                "params": {
+                                    "frequency": 2.0
+                                }
                             }
                         }
                     }

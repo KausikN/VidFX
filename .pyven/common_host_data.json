@@ -6,7 +6,6 @@
         "Utils/",
         "EffectsLibrary/",
         "TestFiles/TestImgs/Horse.PNG",
-        "TestFiles/TestVids/Test_Animation.wmv",
-        "Frames/"
+        "TestFiles/TestVids/Test_Animation.wmv"
     ]
 }

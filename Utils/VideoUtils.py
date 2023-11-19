@@ -66,7 +66,7 @@ def VideoUtils_SaveFrames2Video(frames, pathOut, fps=20, size=None):
         # frames = [ResizeImage_Pad(frame, size=size[::-1]) for frame in frames]
         if size is None: size = (frames[0].shape[1], frames[0].shape[0])
         frames = [np.array(frame*255, dtype=np.uint8) for frame in frames]
-        codec = cv2.VideoWriter_fourcc(*'AVC1')
+        codec = cv2.VideoWriter_fourcc(*'avc1')
         out = cv2.VideoWriter(pathOut, codec, fps, size)
         for frame in frames:
             out.write(frame)

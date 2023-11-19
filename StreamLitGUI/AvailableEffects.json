@@ -173,11 +173,11 @@
         },
         {
             "name": "AddFrame",
-            "code": "AddFrame(imgPath='Frames/Frame_Nintendo_111_303_430_107_285_607.PNG')",
+            "code": "AddFrame(imgPath='StreamLitGUI/DefaultData/Frames/Frame_Nintendo_111_303_430_107_285_607.PNG')",
             "params": [
                 {
                     "name": "imgPath",
-                    "default": "Frames/Frame_Nintendo_111_303_430_107_285_607.PNG",
+                    "default": "StreamLitGUI/DefaultData/Frames/Frame_Nintendo_111_303_430_107_285_607.PNG",
                     "type": "frame"
                 }
             ]
